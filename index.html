@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hostel Manager">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>Hostel Manager</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div class="loading-screen" id="loading-screen">
+    <div class="spinner"></div>
+    <div>Загрузка...</div>
+  </div>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen" style="display:none">
+    <div class="auth-screen">
+      <div class="auth-box">
+        <div class="auth-logo">🏠</div>
+        <div class="auth-title">Hostel Manager</div>
+        <div class="auth-subtitle">Управление жильцами</div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchAuthTab('login',this)">Войти</button>
+          <button class="auth-tab" onclick="switchAuthTab('register',this)">Регистрация</button>
+        </div>
+        <div id="auth-error" class="auth-error"></div>
+        <div id="auth-login-form">
+          <input class="auth-field" type="email" id="auth-email" placeholder="Email" autocomplete="email">
+          <div class="pass-wrap">
+            <input class="auth-field" type="password" id="auth-pass" placeholder="Пароль"
+              autocomplete="current-password">
+            <button type="button" class="pass-eye" onclick="togglePassVis('auth-pass',this)">👁</button>
+          </div>
+          <div class="auth-forgot" onclick="doForgotPass()" id="auth-forgot">Забыли пароль?</div>
+          <button class="auth-btn primary" onclick="doLogin()">Войти</button>
+        </div>
+        <div id="auth-register-form" style="display:none">
+          <input class="auth-field" type="text" id="auth-name" placeholder="Ваше имя" autocomplete="name">
+          <input class="auth-field" type="email" id="auth-reg-email" placeholder="Email" autocomplete="email">
+          <div class="pass-wrap">
+            <input class="auth-field" type="password" id="auth-reg-pass" placeholder="Пароль (мин. 6 символов)"
+              autocomplete="new-password">
+            <button type="button" class="pass-eye" onclick="togglePassVis('auth-reg-pass',this)">👁</button>
+          </div>
+          <button class="auth-btn primary" onclick="doRegister()">Создать аккаунт</button>
+        </div>
+        <div class="auth-divider"><span id="auth-or-text">или</span></div>
+        <div id="auth-google-wrap">
+          <button class="auth-btn google" onclick="doGoogle()">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+              <path fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+              <path fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+              <path fill="#FBBC05"
+                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+              <path fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+            </svg>
+            <span id="auth-google-text">Войти через Google</span>
+          </button>
+        </div>
+        <div style="margin-top:16px">
+          <select class="auth-field" id="auth-lang" onchange="switchAuthLang()"
+            style="text-align:center;cursor:pointer">
+            <option value="RU">🇷🇺 Русский</option>
+            <option value="PL">🇵🇱 Polski</option>
+            <option value="UA">🇺🇦 Українська</option>
+            <option value="EN">🇬🇧 English</option>
+            <option value="LT">🇱🇹 Lietuvių</option>
+          </select>
+        </div>
+        <div class="auth-footer" id="auth-footer">Данные хранятся в облаке Firebase</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-app" style="display:none">
+
+    <header class="header">
+      <div class="header-left">
+        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Обновить">🏠</div>
+        <div>
+          <h1>Hostel Manager</h1>
+          <div class="header-sub">
+            <p id="hdr-sub">Управление жильцами</p>
+            <span class="conn-status">☁ Облако</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-right" id="hdr-right">
+        <div class="user-badge" id="user-badge" onclick="toggleUserMenu(event)">
+          <span class="user-avatar" id="user-avatar">?</span>
+          <span id="user-name">User</span>
+          <span style="font-size:10px;opacity:.5">▼</span>
+          <div class="user-menu" id="user-menu">
+            <div class="user-menu-header">
+              <div class="user-menu-name" id="um-name">User</div>
+              <div class="user-menu-email" id="um-email">email</div>
+            </div>
+            <button class="user-menu-item" onclick="doSwitchAccount()">🔄 <span id="um-switch">Сменить
+                аккаунт</span></button>
+            <button class="user-menu-item danger" onclick="doLogout()">⏻ <span id="um-logout">Выйти</span></button>
+          </div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme">🌙</button>
+        <button class="btn btn-secondary" onclick="openSettings()">⚙</button>
+        <button class="btn btn-secondary" onclick="openReport()" id="btn-report">📄 Отчёт</button>
+        <button class="btn btn-primary" onclick="openForm()" id="btn-add">🏠 Заселить</button>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div>
+          <div class="stat-value" id="stat-active">0</div>
+          <div class="stat-label" id="lbl-residents">Жильцов</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" id="stat-currency-icon">zł</div>
+        <div>
+          <div class="stat-value" id="stat-owed">0.00 zł</div>
+          <div class="stat-label" id="lbl-owed">К оплате (текущие)</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">Σ</div>
+        <div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label" id="lbl-total">Всего записей</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span>🏢 <span
+          id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
+        onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-secondary"
+          onclick="togglePropSelect()" style="padding:6px 10px;font-size:12px" id="btn-sel-prop">☑ <span
+            id="lbl-sel-prop">Выбрать</span></button><button class="btn btn-primary" onclick="openPropForm()"
+          style="padding:6px 14px;font-size:12px" id="btn-add-prop">＋ Добавить объект</button></span></div>
+    <div class="prop-list section-content" id="prop-list"></div>
+
+    <div class="section-title" onclick="toggleSection('residents')"><span>👥 <span
+          id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
+    </div>
+    <div class="section-content" id="residents-section">
+      <div class="tabs" id="tabs-bar">
+        <button class="tab active" onclick="setFilter('active',this)" id="tab-active">Проживают</button>
+        <button class="tab" onclick="setFilter('checkedOut',this)" id="tab-out">Выселены</button>
+        <button class="tab" onclick="setFilter('all',this)" id="tab-all">Все</button>
+        <button class="tab" onclick="document.getElementById('filter-panel').classList.toggle('open')"
+          id="tab-filter">🔍 Фильтр</button>
+        <button class="tab" onclick="toggleSelectMode()" id="tab-select">☑ <span
+            id="lbl-sel-res">Выбрать</span></button>
+      </div>
+
+      <div class="filter-panel" id="filter-panel">
+        <div class="fp-row">
+          <div class="fp-group" style="flex:2"><label id="lbl-search">Поиск по имени</label><input class="field"
+              id="ff-name" type="text" placeholder="🔍" oninput="render()"
+              style="width:100%;padding:6px 8px;font-size:12px"></div>
+          <div class="fp-group"><label id="lbl-city">Город</label><select class="field" id="ff-city"
+              onchange="render()">
+              <option value="">—</option>
+            </select></div>
+          <div class="fp-group"><label id="lbl-addr">Адрес</label><select class="field" id="ff-addr"
+              onchange="render()">
+              <option value="">—</option>
+            </select></div>
+        </div>
+        <div class="fp-group"><label id="lbl-htype">Тип жилья</label>
+          <div class="fp-checks" id="ff-types"></div>
+        </div>
+      </div>
+
+      <div class="select-bar" id="select-bar">
+        <label><input type="checkbox" class="sel-check" id="sel-all" onchange="toggleSelectAll()"> <span
+            id="lbl-sel-all">Выбрать все</span></label>
+        <span class="sel-count" id="sel-count"></span>
+        <button class="btn btn-secondary" onclick="deleteSelected()" id="btn-del-sel"
+          style="font-size:11px;padding:4px 10px;color:var(--red)">🗑 Удалить</button>
+        <button class="btn btn-secondary" onclick="checkoutSelected()" id="btn-co-sel"
+          style="font-size:11px;padding:4px 10px">↪ Выселить</button>
+        <button class="btn btn-secondary" onclick="cancelSelect()" style="font-size:11px;padding:4px 10px"
+          id="btn-cancel-sel">✕</button>
+      </div>
+      <div class="list" id="residents-list"></div>
+      <div class="pagination" id="pagination-bar"></div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="overlay hidden" id="form-overlay"
+      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('resident')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h3 id="form-title">Новый жилец</h3>
+        <input type="hidden" id="edit-id">
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-fname">Имя</label><input class="field" id="f-firstname"
+              placeholder=""></div>
+          <div><label class="field-label" id="lbl-lname">Фамилия</label><input class="field" id="f-lastname"
+              placeholder=""></div>
+        </div>
+        <div id="prop-select-row">
+          <label class="field-label" id="lbl-select-prop">Объект</label>
+          <select class="field" id="f-prop" onchange="onPropSelect()">
+            <option value="">— Выберите объект —</option>
+          </select>
+          <div id="prop-spots-info" style="font-size:11px;color:var(--green);margin-top:4px"></div>
+        </div>
+        <input type="hidden" id="f-address"><input type="hidden" id="f-city">
+        <datalist id="dl-addr"></datalist><datalist id="dl-city"></datalist>
+        <div class="form-row">
+          <div id="f-type-wrap"><label class="field-label" id="lbl-ftype">Тип жилья</label>
+            <select class="field" id="f-type">
+              <option value="hostel">Хостел</option>
+              <option value="apartment">Квартира</option>
+              <option value="house">Дом</option>
+              <option value="room">Комната</option>
+            </select>
+          </div>
+          <div><label class="field-label" id="lbl-fcheckin">Дата поселения</label><input class="field" id="f-date"
+              type="date"></div>
+        </div>
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-frate">Оплата / мес.</label><input class="field" id="f-rate"
+              type="number" min="0" step="50" value="0"></div>
+          <div></div>
+        </div>
+        <!-- Rate change (edit only) -->
+        <div id="rate-change-section" style="display:none">
+          <div class="rate-change-box">
+            <label id="lbl-rate-change">📅 Изменить ставку с даты:</label>
+            <div class="form-row" style="margin-top:6px">
+              <div><input class="field" id="f-rate-new" type="number" min="0" step="50" placeholder=""></div>
+              <div><input class="field" id="f-rate-from" type="date"></div>
+            </div>
+          </div>
+          <div id="rate-history-box"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-cancel" onclick="closeForm()" id="btn-fcancel">Отмена</button>
+          <button class="btn btn-cancel" onclick="saveResident()" id="btn-fsave"
+            style="color:var(--accent);border-color:var(--accent)">Принять</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="overlay hidden" id="settings-overlay"
+      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('settings')">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
+        <h3 id="lbl-settings">⚙ Настройки</h3>
+        <label class="field-label">Язык / Language</label>
+        <select class="field" id="s-lang" onchange="applyLangImmediate(this.value)">
+          <option value="RU">🇷🇺 Русский</option>
+          <option value="PL">🇵🇱 Polski</option>
+          <option value="UA">🇺🇦 Українська</option>
+          <option value="EN">🇬🇧 English</option>
+          <option value="LT">🇱🇹 Lietuvių</option>
+        </select>
+        <label class="field-label" id="lbl-theme">Тема</label>
+        <div class="theme-row">
+          <div class="theme-option" onclick="setThemeOption('dark')" id="theme-opt-dark">
+            <div class="theme-icon">🌙</div>Dark
+          </div>
+          <div class="theme-option" onclick="setThemeOption('light')" id="theme-opt-light">
+            <div class="theme-icon">☀️</div>Light
+          </div>
+          <div class="theme-option" onclick="setThemeOption('auto')" id="theme-opt-auto">
+            <div class="theme-icon">💻</div>Auto
+          </div>
+        </div>
+        <label class="field-label" id="lbl-currency">Валюта</label>
+        <select class="field" id="s-currency" onchange="previewCurrency()">
+          <option value="PLN">PLN — Польский злотый (zł)</option>
+          <option value="EUR">EUR — Евро (€)</option>
+          <option value="USD">USD — Доллар США ($)</option>
+        </select>
+        <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px">
+          <span style="font-size:12px;color:#6a6a7a" id="lbl-example">Пример:</span>
+          <div style="font-size:18px;font-weight:700;margin-top:4px" id="currency-preview">600.00 zł</div>
+        </div>
+        <div id="fieldmgr-wrap">
+          <label class="field-label" style="cursor:pointer;user-select:none"
+            onclick="document.getElementById('field-manager').classList.toggle('rpt-hidden');this.querySelector('span').textContent=document.getElementById('field-manager').classList.contains('rpt-hidden')?'▶':'▼'"
+            id="lbl-fieldmgr">Управление полями <span style="font-size:11px;color:var(--text4)">▼</span></label>
+          <div id="field-manager" style="margin-top:4px"></div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+          <label class="field-label" id="lbl-data">Данные</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="importCSV()" id="btn-import" style="font-size:12px">📥 Импорт
+              CSV</button>
+            <button class="btn btn-secondary" onclick="inviteUser()" id="btn-invite" style="font-size:12px">👤+
+              Пригласить</button>
+          </div>
+          <input type="file" id="csv-file" accept=".csv" style="display:none">
+        </div>
+        <div id="members-section" style="margin-top:12px;display:none">
+          <label class="field-label" style="cursor:pointer;user-select:none"
+            onclick="document.getElementById('members-list').classList.toggle('rpt-hidden');this.querySelector('span').textContent=document.getElementById('members-list').classList.contains('rpt-hidden')?'▶':'▼'"
+            id="lbl-members">👥 Пользователи <span style="font-size:11px;color:var(--text4)">▼</span></label>
+          <div id="members-list" style="margin-top:4px"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-cancel" onclick="closeSettings()" id="btn-scancel">Отмена</button>
+          <button class="btn btn-cancel" onclick="saveSettings()" id="btn-ssave"
+            style="color:var(--accent);border-color:var(--accent)">Принять</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="overlay hidden" id="report-overlay"
+      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('report')">
+      <div class="modal wide" onclick="event.stopPropagation()">
+        <h3 id="lbl-report">📄 Отчёт</h3>
+        <div class="period-bar">
+          <button class="period-btn active" onclick="setPeriod('all',this)" id="pb-all">Всё время</button>
+          <button class="period-btn" onclick="setPeriod('week',this)" id="pb-week">За неделю</button>
+          <button class="period-btn" onclick="setPeriod('month',this)" id="pb-month">За месяц</button>
+          <button class="period-btn" onclick="setPeriod('year',this)" id="pb-year">За год</button>
+          <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
+        </div>
+        <div class="period-dates" id="custom-dates">
+          <span>От:</span><input type="date" id="period-from" onchange="refreshReport()">
+          <span>До:</span><input type="date" id="period-to" onchange="refreshReport()">
+        </div>
+        <div class="period-info" id="period-info"></div>
+        <div id="report-content"></div>
+        <div class="form-actions">
+          <button class="btn btn-cancel" onclick="closeReport()" id="btn-rclose">Закрыть</button>
+          <button class="btn btn-primary" onclick="showExportDialog()" id="btn-generate"
+            style="background:var(--green);border-color:var(--green)">📋 Сгенерировать</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rate History Modal -->
+    <div class="overlay hidden" id="hist-overlay">
+      <div class="modal hist-modal">
+        <h3 id="hist-title">📋 История ставок</h3>
+        <div id="hist-content"></div>
+        <div class="form-actions">
+          <button class="btn btn-cancel"
+            onclick="document.getElementById('hist-overlay').classList.add('hidden')">Закрыть</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Form Modal -->
+    <div class="overlay hidden" id="prop-overlay"
+      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('props')">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
+        <h3 id="prop-form-title">🏢 Новый объект</h3>
+        <input type="hidden" id="prop-edit-id">
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-prop-city">Город</label><input class="field" id="p-city"
+              placeholder=""></div>
+          <div><label class="field-label" id="lbl-prop-addr">Адрес</label><input class="field" id="p-address"
+              placeholder=""></div>
+        </div>
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-prop-type">Тип</label>
+            <select class="field" id="p-type">
+              <option value="hostel" id="opt-hostel">Хостел</option>
+              <option value="apartment" id="opt-apartment">Квартира</option>
+              <option value="house" id="opt-house">Дом</option>
+              <option value="room" id="opt-room">Комната</option>
+            </select>
+          </div>
+          <div><label class="field-label" id="lbl-prop-spots">Кол-во мест</label><input class="field" id="p-spots"
+              type="number" min="1" value="10"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-cancel" onclick="closePropForm()" id="btn-prop-cancel">Отмена</button>
+          <button class="btn btn-cancel" onclick="saveProp()" id="btn-prop-save"
+            style="color:var(--accent);border-color:var(--accent)">Принять</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
