@@ -7,38 +7,39 @@ export const FREE_LIMITS = { residents: 10, properties: 3 };
 
 // Check plan
 export function isPro() {
-    const sub = window._subscription || {};
-    if (sub.plan !== 'pro') return false;
-    if (sub.validUntil && new Date(sub.validUntil) < new Date()) return false;
-    return true;
+  const sub = window._subscription || {};
+  if (sub.plan !== 'pro') return false;
+  if (sub.validUntil && new Date(sub.validUntil) < new Date()) return false;
+  return true;
 }
 
 export function canAddResident() {
-    if (isPro()) return true;
-    const active = residents().filter(r => !r.checkOutDate).length;
-    return active < FREE_LIMITS.residents;
+  if (isPro()) return true;
+  const active = residents().filter(r => !r.checkOutDate).length;
+  return active < FREE_LIMITS.residents;
 }
 
 export function canAddProperty() {
-    if (isPro()) return true;
-    return properties().length < FREE_LIMITS.properties;
+  if (isPro()) return true;
+  return properties().length < FREE_LIMITS.properties;
 }
 
 // ---- Upgrade Modal ----
 export function showUpgradeModal(reason) {
-    // Remove existing if any
-    const old = document.getElementById('upgrade-overlay');
-    if (old) old.remove();
+  // Remove existing if any
+  const old = document.getElementById('upgrade-overlay');
+  if (old) old.remove();
 
-    const activeCount = residents().filter(r => !r.checkOutDate).length;
-    const propCount = properties().length;
-    const isResLimit = reason === 'residents';
+  const activeCount = residents().filter(r => !r.checkOutDate).length;
+  const propCount = properties().length;
+  const isResLimit = reason === 'residents';
+  const pm = t('perMonth');
 
-    const el = document.createElement('div');
-    el.id = 'upgrade-overlay';
-    el.className = 'confirm-overlay';
-    el.style.cssText = 'z-index:300;backdrop-filter:blur(8px)';
-    el.innerHTML = `
+  const el = document.createElement('div');
+  el.id = 'upgrade-overlay';
+  el.className = 'confirm-overlay';
+  el.style.cssText = 'z-index:300;backdrop-filter:blur(8px)';
+  el.innerHTML = `
     <div style="
       background:var(--modal-bg);
       border-radius:20px;
@@ -57,11 +58,11 @@ export function showUpgradeModal(reason) {
         border-bottom:1px solid rgba(255,255,255,.06)
       ">
         <div style="font-size:40px;margin-bottom:8px">🚀</div>
-        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Upgrade to Pro</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">${t('upgradeToPro')}</div>
         <div style="font-size:13px;color:rgba(255,255,255,.5)">
           ${isResLimit
-            ? `Лимит жильцов достигнут (${activeCount}/${FREE_LIMITS.residents})`
-            : `Лимит объектов достигнут (${propCount}/${FREE_LIMITS.properties})`}
+      ? `${t('limitResidents')} (${activeCount}/${FREE_LIMITS.residents})`
+      : `${t('limitProps')} (${propCount}/${FREE_LIMITS.properties})`}
         </div>
       </div>
 
@@ -75,18 +76,18 @@ export function showUpgradeModal(reason) {
           background:var(--surface2)
         ">
           <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px">🆓 Standard</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:12px">$0<span style="font-size:12px;color:var(--text3)">/мес</span></div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:12px">$0<span style="font-size:12px;color:var(--text3)">${pm}</span></div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div>✅ До <b style="color:var(--text)">${FREE_LIMITS.residents}</b> жильцов</div>
-            <div>✅ До <b style="color:var(--text)">${FREE_LIMITS.properties}</b> объектов</div>
-            <div>✅ Отчёты и экспорт</div>
-            <div style="color:var(--text4)">❌ Без лимитов</div>
+            <div>✅ ${t('residents')}: <b style="color:var(--text)">${FREE_LIMITS.residents}</b></div>
+            <div>✅ ${t('properties')}: <b style="color:var(--text)">${FREE_LIMITS.properties}</b></div>
+            <div>✅ ${t('report')}</div>
+            <div style="color:var(--text4)">❌ ${t('unlimited')}</div>
           </div>
           <div style="
             margin-top:14px;padding:8px;border-radius:8px;
             background:var(--surface);text-align:center;
             font-size:12px;font-weight:600;color:var(--text3)
-          ">Текущий план</div>
+          ">${t('currentPlan')}</div>
         </div>
 
         <!-- Pro card -->
@@ -104,13 +105,13 @@ export function showUpgradeModal(reason) {
           ">HOT</div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">⭐ Pro</div>
           <div style="font-size:22px;font-weight:800;margin-bottom:12px;color:var(--accent)">
-            $19.99<span style="font-size:12px;color:var(--text3)">/мес</span>
+            $19.99<span style="font-size:12px;color:var(--text3)">${pm}</span>
           </div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div>✅ <b style="color:var(--text)">Неограниченно</b> жильцов</div>
-            <div>✅ <b style="color:var(--text)">Неограниченно</b> объектов</div>
-            <div>✅ Отчёты и экспорт</div>
-            <div>✅ Приоритетная поддержка</div>
+            <div>✅ <b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
+            <div>✅ <b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
+            <div>✅ ${t('report')}</div>
+            <div>✅ ${t('prioritySupport')}</div>
           </div>
           <button id="btn-subscribe" onclick="openSubscription()" style="
             margin-top:14px;width:100%;padding:10px;border-radius:8px;
@@ -119,7 +120,7 @@ export function showUpgradeModal(reason) {
             background:linear-gradient(135deg,#e8a838,#d4883a);
             color:#0d0d14;transition:opacity .2s
           " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            ⭐ Подписаться — $19.99
+            ⭐ ${t('subscribe')} — $19.99
           </button>
         </div>
       </div>
@@ -130,27 +131,29 @@ export function showUpgradeModal(reason) {
           background:transparent;border:none;cursor:pointer;
           font-family:inherit;font-size:13px;color:var(--text3);
           text-decoration:underline;padding:4px 8px
-        ">Остаться на бесплатном</button>
+        ">${t('stayFree')}</button>
       </div>
     </div>
   `;
 
-    document.body.appendChild(el);
-    el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
+  document.body.appendChild(el);
+  el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
 }
 
-export function openSubscription() {
-    // ===== STRIPE PLACEHOLDER =====
-    // Заменить URL ниже на ваш Stripe Payment Link после настройки:
-    // const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/XXXXXXXXXXXXXXXX';
-    // const email = window._currentUser?.email || '';
-    // window.location.href = STRIPE_PAYMENT_LINK + '?prefilled_email=' + encodeURIComponent(email);
 
-    // Пока показываем заглушку
-    const el = document.createElement('div');
-    el.className = 'confirm-overlay';
-    el.style.zIndex = '400';
-    el.innerHTML = `
+
+export function openSubscription() {
+  // ===== STRIPE PLACEHOLDER =====
+  // Заменить URL ниже на ваш Stripe Payment Link после настройки:
+  // const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/XXXXXXXXXXXXXXXX';
+  // const email = window._currentUser?.email || '';
+  // window.location.href = STRIPE_PAYMENT_LINK + '?prefilled_email=' + encodeURIComponent(email);
+
+  // Пока показываем заглушку
+  const el = document.createElement('div');
+  el.className = 'confirm-overlay';
+  el.style.zIndex = '400';
+  el.innerHTML = `
     <div class="confirm-box" style="text-align:center">
       <div class="confirm-icon">🔧</div>
       <div class="confirm-title">Stripe не настроен</div>
@@ -167,17 +170,17 @@ export function openSubscription() {
       </div>
     </div>
   `;
-    document.body.appendChild(el);
-    el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
+  document.body.appendChild(el);
+  el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
 }
 
 // Plan badge text
 export function getPlanLabel() {
-    return isPro() ? '⭐ Pro' : '🆓 Free';
+  return isPro() ? '⭐ Pro' : '🆓 Free';
 }
 
 export function getPlanStyle() {
-    return isPro()
-        ? 'background:rgba(232,168,56,.12);color:var(--accent);border:1px solid rgba(232,168,56,.3)'
-        : 'background:var(--surface);color:var(--text3);border:1px solid var(--border3)';
+  return isPro()
+    ? 'background:rgba(232,168,56,.12);color:var(--accent);border:1px solid rgba(232,168,56,.3)'
+    : 'background:var(--surface);color:var(--text3);border:1px solid var(--border3)';
 }
