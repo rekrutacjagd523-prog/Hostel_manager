@@ -375,6 +375,8 @@ async function processCSVFile(file) {
     for (const [key, val] of propMap) {
         const exists = existingProps.some(p => p.city === val.city && p.address === val.address && p.housingType === val.housingType);
         if (!exists) {
+            // Check property subscription limit
+            if (!canAddProperty()) break;
             try {
                 await fb.setDoc(fb.doc(fb.db, 'users', uid, 'properties', (await import('./utils.js')).genId()), {
                     city: val.city, address: val.address, housingType: val.housingType,
