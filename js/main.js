@@ -164,7 +164,16 @@ initTheme();
 initMouseTrack();
 initAuthEvents();
 
+// Patch onUserLoggedIn to also update plan badge after login
+const _origLoggedIn = onUserLoggedIn;
+window.onUserLoggedIn = function (user) {
+    _origLoggedIn(user);
+    // Give Firebase a moment to load subscription snapshot then update badge
+    setTimeout(() => { if (window.updatePlanBadge) window.updatePlanBadge(); }, 1500);
+};
+
 // Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => { });
 }
+
