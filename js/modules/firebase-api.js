@@ -56,8 +56,10 @@ function startListening(uid) {
 
 function stopListening() {
     window._unsubs.forEach(u => u()); window._unsubs = [];
-    window._residents = []; window._settings = { currency: 'PLN', lang: 'RU' }; window._members = [];
+    window._residents = []; window._settings = { currency: 'PLN', lang: 'RU' };
+    window._members = []; window._subscription = { plan: 'free' };
 }
+
 
 // Auth helpers
 window._authLogin = async function (email, pass) {

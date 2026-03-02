@@ -2,6 +2,8 @@
 import { t } from './constants.js';
 import { properties, residents, esc, genId, todayStr, showConfirm, propDoc } from './utils.js';
 import { getFreeSpots } from './residents.js';
+import { canAddProperty, showUpgradeModal } from './subscription.js';
+
 
 export let propSelectMode = false;
 export let selectedPropIds = new Set();
@@ -138,7 +140,13 @@ export async function saveProp() {
     const spots = parseInt(document.getElementById('p-spots').value) || 1;
     if (!city || !address) return alert(t('city') + '!');
     const editId = document.getElementById('prop-edit-id').value;
+    // Subscription limit check for new properties
+    if (!editId && !canAddProperty()) {
+        return showUpgradeModal('properties');
+    }
     const data = { city, address, housingType: type, spots };
+
+
     try {
         if (editId) {
             const existing = properties().find(p => p.id === editId);

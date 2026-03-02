@@ -48,6 +48,7 @@ import {
     doGoogle, doForgotPass, toggleUserMenu, doLogout, doSwitchAccount,
     onUserLoggedIn, onUserLoggedOut, initAuthEvents
 } from './modules/auth.js';
+import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle } from './modules/subscription.js';
 
 // ===== EXPOSE EVERYTHING TO WINDOW (for inline HTML handlers) =====
 window._CURRENCIES = CURRENCIES;
@@ -61,6 +62,7 @@ window.resName = resName;
 window._residents = window._residents || [];
 window._settings = window._settings || { currency: 'PLN', lang: 'RU' };
 window._properties = window._properties || [];
+window._subscription = window._subscription || { plan: 'free' };
 window._currentFilter = 'active';
 
 // UI
@@ -128,6 +130,20 @@ window.selectExportOpt = selectExportOpt;
 window.doExport = doExport;
 window.importCSV = importCSV;
 window.downloadCSVTemplate = downloadCSVTemplate;
+
+// Subscription
+window.isPro = isPro;
+window.openSubscription = openSubscription;
+window.showUpgradeModal = showUpgradeModal;
+window.updatePlanBadge = function () {
+    const badge = document.getElementById('plan-badge');
+    if (!badge) return;
+    const pro = isPro();
+    badge.textContent = getPlanLabel();
+    badge.style.cssText = 'display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;' + getPlanStyle();
+    if (pro) badge.onclick = null;
+    else badge.onclick = () => openSubscription();
+};
 
 // Auth
 window.switchAuthLang = switchAuthLang;

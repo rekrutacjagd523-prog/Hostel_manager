@@ -2,6 +2,8 @@
 import { t } from './constants.js';
 import { residents, properties, fmtUi, todayStr, showConfirm, cleanForFirebase, resDoc, propDoc, genId, esc, resName } from './utils.js';
 import { buildRateHistory, calcPaymentWithHistory, calcCurrentPayment } from './rate-history.js';
+import { canAddResident, showUpgradeModal } from './subscription.js';
+
 
 export let selectMode = false;
 export let selectedIds = new Set();
@@ -152,8 +154,11 @@ export async function saveResident() {
     const address = document.getElementById('f-address').value.trim();
     const housingType = document.getElementById('f-type').value;
 
-    // Check free spots for new residents
+    // Subscription limit check for new residents
     if (!editId) {
+        if (!canAddResident()) {
+            return showUpgradeModal('residents');
+        }
         const prop = properties().find(p => p.city === city && p.address === address && p.housingType === housingType);
         if (prop && getFreeSpots(prop) <= 0) {
             return showConfirm('⚠️', t('propFull'), city + ' · ' + address, t('confirmNo'), 'c-cancel', () => { });
