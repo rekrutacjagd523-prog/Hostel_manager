@@ -329,9 +329,15 @@ async function processCSVFile(file) {
     let count = 0;
     const fb = window._fb;
     const { genId } = await import('./utils.js');
+    const { canAddResident, showUpgradeModal } = await import('./subscription.js');
     for (let i = 1; i < lines.length; i++) {
         const cols = parseLine(lines[i]);
         if (cols.length < 2) continue;
+        // Check subscription limit before each import row
+        if (!canAddResident()) {
+            showUpgradeModal('residents');
+            break;
+        }
         let firstName = '', lastName = '';
         if (iFirst >= 0) { firstName = cols[iFirst] || ''; } else { firstName = cols[0] || ''; }
         if (iLast >= 0) { lastName = cols[iLast] || ''; } else if (iFirst < 0 && cols.length > 1) { lastName = cols[1] || ''; }
