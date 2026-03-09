@@ -132,6 +132,8 @@ onAuthStateChanged(auth, async (user) => {
                     name: user.displayName || user.email?.split('@')[0] || '',
                     joinedAt: new Date().toISOString()
                 }, { merge: true });
+                // Small delay so Firestore propagates the member doc before listeners start
+                await new Promise(r => setTimeout(r, 500));
             } catch (e) { console.warn('Member register:', e.message); }
         }
         startListening(workspaceUid);

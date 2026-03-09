@@ -48,7 +48,7 @@ import {
     doGoogle, doForgotPass, toggleUserMenu, doLogout, doSwitchAccount,
     onUserLoggedIn, onUserLoggedOut, initAuthEvents
 } from './modules/auth.js';
-import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle } from './modules/subscription.js';
+import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode } from './modules/subscription.js';
 
 // ===== EXPOSE EVERYTHING TO WINDOW (for inline HTML handlers) =====
 window._CURRENCIES = CURRENCIES;
@@ -135,6 +135,7 @@ window.downloadCSVTemplate = downloadCSVTemplate;
 window.isPro = isPro;
 window.openSubscription = openSubscription;
 window.showUpgradeModal = showUpgradeModal;
+window.applyReferralCode = applyReferralCode;
 window.updatePlanBadge = function () {
     const badge = document.getElementById('plan-badge');
     if (!badge) return;

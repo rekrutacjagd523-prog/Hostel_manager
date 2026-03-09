@@ -7,9 +7,10 @@ export const FREE_LIMITS = { residents: 10, properties: 3 };
 
 // Check plan
 export function isPro() {
-  const sub = window._subscription || {};
-  if (sub.plan !== 'pro') return false;
-  if (sub.validUntil && new Date(sub.validUntil) < new Date()) return false;
+  // Plan is stored in _settings (Firestore users/{uid}/settings/main)
+  const s = window._settings || {};
+  if (s.plan !== 'pro') return false;
+  if (s.validUntil && new Date(s.validUntil) < new Date()) return false;
   return true;
 }
 
@@ -125,8 +126,32 @@ export function showUpgradeModal(reason) {
         </div>
       </div>
 
+      <!-- Referral code -->
+      <div style="padding:0 20px 4px">
+        <div style="
+          border-top:1px solid rgba(255,255,255,.06);
+          padding-top:16px;
+          display:flex;gap:8px;align-items:center
+        ">
+          <input id="ref-code-input" type="text" placeholder="🎟 Реферальный код"
+            style="
+              flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border3);
+              background:var(--surface2);color:var(--text);font-family:inherit;
+              font-size:13px;outline:none;letter-spacing:.5px
+            "
+            onkeydown="if(event.key==='Enter') applyReferralCode(this.value)"
+          />
+          <button onclick="applyReferralCode(document.getElementById('ref-code-input').value)" style="
+            padding:9px 16px;border-radius:8px;border:none;cursor:pointer;
+            font-family:inherit;font-size:13px;font-weight:700;
+            background:var(--surface);color:var(--text2);transition:opacity .2s
+          " onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">→</button>
+        </div>
+        <div id="ref-code-status" style="font-size:12px;min-height:16px;margin-top:6px;text-align:center"></div>
+      </div>
+
       <!-- Footer -->
-      <div style="display:flex;justify-content:center;padding:16px 20px 20px">
+      <div style="display:flex;justify-content:center;padding:10px 20px 20px">
         <button onclick="document.getElementById('upgrade-overlay').remove()" style="
           background:transparent;border:none;cursor:pointer;
           font-family:inherit;font-size:13px;color:var(--text3);
@@ -183,4 +208,44 @@ export function getPlanStyle() {
   return isPro()
     ? 'background:rgba(232,168,56,.12);color:var(--accent);border:1px solid rgba(232,168,56,.3)'
     : 'background:var(--surface);color:var(--text3);border:1px solid var(--border3)';
+}
+
+// ---- Referral Code ----
+export async function applyReferralCode(raw) {
+  const code = (raw || '').trim().toLowerCase();
+  const status = document.getElementById('ref-code-status');
+  if (!status) return;
+
+  if (!code) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ Введите код';
+    return;
+  }
+
+  // Expected: hostelmanager + current day of month (zero-padded, e.g. "09")
+  const day = String(new Date().getDate()).padStart(2, '0');
+  const expected = 'hostelmanager' + day;
+
+  if (code !== expected) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ Неверный код';
+    return;
+  }
+
+  try {
+    const fb = window._fb;
+    if (!fb || !fb.settingsDoc) throw new Error('Not ready');
+    await fb.setDoc(fb.settingsDoc, { plan: 'pro', validUntil: null }, { merge: true });
+    window._settings = Object.assign({}, window._settings || {}, { plan: 'pro', validUntil: null });
+    status.style.color = 'var(--green)';
+    status.textContent = '✅ Pro активирован! 🎉';
+    setTimeout(() => {
+      document.getElementById('upgrade-overlay')?.remove();
+      if (window.updatePlanBadge) window.updatePlanBadge();
+      if (window.render) window.render();
+    }, 1500);
+  } catch (e) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ Ошибка: ' + e.message;
+  }
 }
