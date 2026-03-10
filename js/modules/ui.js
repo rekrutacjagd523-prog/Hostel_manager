@@ -143,9 +143,10 @@ function renderGrouped() {
         g.items.forEach(r => {
             const pay = calcCurrentPayment(r);
             const name = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
-            h += `<div style=\"display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2)\">`;
+            h += `<div class=\"longpress-card\" data-id=\"${r.id}\" style=\"display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2);${selectMode ? 'cursor:pointer' : ''}\" ${selectMode ? `onclick="const cb=this.querySelector('.sel-check');if(cb){cb.checked=!cb.checked;toggleSelectItem('${r.id}',cb);event.stopPropagation()}"` : ''}>`;
+            if (selectMode) h += `<input type="checkbox" class="sel-check item-check" data-id="${r.id}" ${selectedIds.has(r.id) ? 'checked' : ''} onchange="toggleSelectItem('${r.id}',this);event.stopPropagation()" style="margin-right:8px;flex-shrink:0">`;
             h += `<div style=\"display:flex;align-items:center;gap:6px;font-size:13px\">${r.isSenior ? '<span style=\"color:#f59e0b\">⭐</span>' : ''}<span>${esc(name)}</span>${r.plannedCheckOut ? '<span style=\"font-size:11px;color:var(--accent)\">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : ''}</div>`;
-            h += `<div style=\"display:flex;align-items:center;gap:10px\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\">↪</button></div>`;
+            h += `<div style=\"display:flex;align-items:center;gap:10px\" onclick=\"event.stopPropagation()\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\">↪</button></div>`;
             h += `</div>`;
         });
         h += `</div></div>`;
@@ -211,7 +212,7 @@ export function render() {
         const history = buildRateHistory(r);
         const hasMulti = history.length > 1;
         const resNameVal = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
-        return '<div class="card' + (isA ? '' : ' inactive') + '" style="display:flex;align-items:flex-start;gap:8px">' + (selectMode ? '<input type="checkbox" class="sel-check item-check" data-id="' + r.id + '" ' + (selectedIds.has(r.id) ? 'checked' : '') + ' onchange="toggleSelectItem(\'' + r.id + '\',this)" style="margin-top:4px;flex-shrink:0">' : '') + '<div style="flex:1"><div class="card-top"><div>' +
+        return '<div class="card longpress-card' + (isA ? '' : ' inactive') + '" data-id="' + r.id + '" style="display:flex;align-items:flex-start;gap:8px;' + (selectMode ? 'cursor:pointer' : '') + '" ' + (selectMode ? 'onclick="const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;toggleSelectItem(\'' + r.id + '\',cb);event.stopPropagation()}"' : '') + '>' + (selectMode ? '<input type="checkbox" class="sel-check item-check" data-id="' + r.id + '" ' + (selectedIds.has(r.id) ? 'checked' : '') + ' onchange="toggleSelectItem(\'' + r.id + '\',this);event.stopPropagation()" onclick="event.stopPropagation()" style="margin-top:4px;flex-shrink:0">' : '') + '<div style="flex:1"><div class="card-top"><div>' +
             '<div class="card-name">' + (r.isSenior ? '<span style="color:#f59e0b;margin-right:4px" title="' + t('seniorRole') + '">⭐</span>' : '') + esc(resNameVal) + '</div>' +
             '<div class="card-meta">' + (r.city ? esc(r.city) : '') + (r.address ? ' · ' + esc(r.address) : '') + '</div>' +
             '</div><div class="card-payment"><div class="card-amount">' + fmtUi(pay) + '</div>' +
@@ -223,13 +224,14 @@ export function render() {
             (hasMulti ? '<span class="tag multi-rate">' + history.length + ' ' + t('rateCount') + '</span>' : '') +
             (r.plannedCheckOut && isA ? '<span class="tag" style="color:var(--accent);border-color:var(--accent)">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : '') +
             '<span class="tag type">' + t(r.housingType || 'hostel') + '</span>' +
-            '</div><div class="card-actions">' +
+            '</div><div class="card-actions" onclick="event.stopPropagation()">' +
             (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '">📋</button>' : '') +
             '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
             (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '↪' + '</button>' : '') +
             '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">🗑</button>' +
             '</div></div></div></div>';
     }).join('');
+
 
     // Render pagination bar
     const pgBar = document.getElementById('pagination-bar');

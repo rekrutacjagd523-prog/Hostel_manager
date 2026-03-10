@@ -50,6 +50,59 @@ import {
 } from './modules/auth.js';
 import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode } from './modules/subscription.js';
 
+// ===== LONG PRESS SELECTION LOGIC =====
+let _pressTimer = null;
+let _pressTarget = null;
+let _isScrolling = false;
+
+function clearPressTimer() {
+    if (_pressTimer) { clearTimeout(_pressTimer); _pressTimer = null; }
+    _pressTarget = null;
+}
+
+function handlePressStart(e) {
+    if (e.touches && e.touches.length > 1) return;
+    if (e.button && e.button !== 0) return;
+    _isScrolling = false;
+
+    const card = e.target.closest('.longpress-card');
+    const propCard = e.target.closest('.prop-card');
+
+    if (card && !selectMode) {
+        _pressTarget = { type: 'res', el: card, id: card.dataset.id };
+    } else if (propCard && !propSelectMode) {
+        const cb = propCard.querySelector('.sel-check');
+        if (cb && cb.dataset.pid) _pressTarget = { type: 'prop', el: propCard, id: cb.dataset.pid };
+    } else {
+        return;
+    }
+
+    _pressTimer = setTimeout(() => {
+        if (!_pressTarget || _isScrolling) return;
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        if (_pressTarget.type === 'res') {
+            toggleSelectMode();
+            const cb = _pressTarget.el.querySelector('.sel-check');
+            if (cb) { cb.checked = true; toggleSelectItem(_pressTarget.id, cb); }
+        } else if (_pressTarget.type === 'prop') {
+            togglePropSelect();
+            const cb = _pressTarget.el.querySelector('.sel-check');
+            if (cb) { cb.checked = true; togglePropItem(_pressTarget.id, cb); }
+        }
+        _pressTarget = null;
+    }, 500);
+}
+
+document.addEventListener('mousedown', handlePressStart);
+document.addEventListener('touchstart', handlePressStart, { passive: true });
+document.addEventListener('mouseup', clearPressTimer);
+document.addEventListener('mouseleave', clearPressTimer);
+document.addEventListener('touchend', clearPressTimer);
+document.addEventListener('touchcancel', clearPressTimer);
+document.addEventListener('scroll', () => { _isScrolling = true; clearPressTimer(); }, true);
+document.addEventListener('touchmove', () => { _isScrolling = true; clearPressTimer(); }, { passive: true });
+
 // ===== EXPOSE EVERYTHING TO WINDOW (for inline HTML handlers) =====
 window._CURRENCIES = CURRENCIES;
 
