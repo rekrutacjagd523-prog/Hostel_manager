@@ -1755,11 +1755,3 @@ select.field option {
 .cal-booking{padding:2px 4px;margin:1px 0;border-radius:3px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;border-left:2px solid var(--accent)}
 .cal-booking:hover{opacity:.8}
 @media(max-width:600px){.cal-day{min-height:50px;padding:2px}.cal-day-num{font-size:10px}.cal-booking{font-size:9px;padding:1px 2px}.cal-header{font-size:10px;padding:4px 2px}}
-input[type="date"].has-value::-webkit-datetime-edit-fields-wrapper {
-  visibility: visible;
-}
-
-/* Hide browser native date placeholder (дд.мм.рррр etc) on empty inputs */
-input[type="date"]:not(.has-value)::-webkit-datetime-edit-fields-wrapper {
-  visibility: hidden;
-}
