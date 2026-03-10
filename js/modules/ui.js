@@ -31,6 +31,34 @@ export function toggleGroupByProp() {
     render();
 }
 
+let activeFilterType = null;
+export function setFilterType(type) {
+    const types = ['name', 'type', 'prop', 'group'];
+    activeFilterType = (activeFilterType === type) ? null : type;
+    // If activating group filter - sync groupByProp state
+    if (activeFilterType === 'group') {
+        // just show the panel
+    } else if (type === 'group' && activeFilterType === null) {
+        // deactivated group - reset groupByProp view
+        groupByProp = false;
+        const cb = document.getElementById('ff-group-prop');
+        if (cb) cb.checked = false;
+        render();
+    }
+    types.forEach(t => {
+        const btn = document.getElementById('ftype-' + t);
+        const panel = document.getElementById('ftype-panel-' + t);
+        const isActive = activeFilterType === t;
+        if (btn) {
+            btn.style.background = isActive ? 'var(--accent)' : '';
+            btn.style.color = isActive ? '#fff' : '';
+            btn.style.borderColor = isActive ? 'var(--accent)' : 'var(--border3)';
+        }
+        if (panel) panel.style.display = isActive ? 'block' : 'none';
+    });
+    if (activeFilterType && activeFilterType !== 'group') render();
+}
+
 function daysBetweenDates(a, b) {
     return Math.round((new Date(b) - new Date(a)) / 86400000);
 }

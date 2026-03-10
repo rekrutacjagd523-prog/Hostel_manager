@@ -172,31 +172,56 @@
       </div>
 
       <div class="filter-panel" id="filter-panel">
-        <div class="fp-row">
-          <div class="fp-group" style="flex:2" title="Фильтр по имени или фамилии жильца"><label id="lbl-search">Поиск
-              по имени</label><input class="field" id="ff-name" type="text" placeholder="🔍" oninput="render()"
-              style="width:100%;padding:6px 8px;font-size:12px" title="Введите имя или фамилию"></div>
-          <div class="fp-group" title="Фильтр по городу"><label id="lbl-city">Город</label><select class="field"
-              id="ff-city" onchange="render()">
-              <option value="">—</option>
-            </select></div>
-          <div class="fp-group"><label id="lbl-addr">Адрес</label><select class="field" id="ff-addr"
-              onchange="render()">
-              <option value="">—</option>
-            </select></div>
+        <!-- Filter type selector pills -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          <button class="fp-type-btn" onclick="setFilterType('name')" id="ftype-name"
+            title="Фильтр по имени или фамилии">🔤 <span id="lbl-ftype-name">По имени</span></button>
+          <button class="fp-type-btn" onclick="setFilterType('type')" id="ftype-type"
+            title="Показать только определённый тип жилья">🏠 <span id="lbl-ftype-type">По типу жилья</span></button>
+          <button class="fp-type-btn" onclick="setFilterType('prop')" id="ftype-prop"
+            title="Фильтр по городу и адресу объекта">🏢 <span id="lbl-ftype-prop">По объекту</span></button>
+          <button class="fp-type-btn" onclick="setFilterType('group')" id="ftype-group"
+            title="Сгруппировать жильцов по объектам с итоговой суммой">📊 <span
+              id="lbl-ftype-group">Группировать</span></button>
         </div>
-        <div class="fp-group"><label id="lbl-htype">Тип жилья</label>
+        <!-- Sub-panels -->
+        <div id="ftype-panel-name" class="ftype-panel" style="display:none">
+          <label id="lbl-search" style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">По
+            имени</label>
+          <input class="field" id="ff-name" type="text" placeholder="🔍 Введите имя или фамилию..." oninput="render()"
+            style="width:100%;padding:7px 10px;font-size:13px">
+        </div>
+        <div id="ftype-panel-type" class="ftype-panel" style="display:none">
+          <label id="lbl-htype" style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px">По типу
+            жилья</label>
           <div class="fp-checks" id="ff-types"></div>
         </div>
-        <div class="fp-group" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border2)">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px"
-              title="Сгруппировать жильцов по адресу объекта — видь с итогом по каждому дому">
-              <input type="checkbox" id="ff-group-prop" onchange="toggleGroupByProp()"
-                style="width:15px;height:15px;cursor:pointer">
-              <span id="lbl-group-prop">🏢 По объектам</span>
-            </label>
+        <div id="ftype-panel-prop" class="ftype-panel" style="display:none">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="flex:1;min-width:100px">
+              <label id="lbl-city"
+                style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Город</label>
+              <select class="field" id="ff-city" onchange="render()" style="width:100%">
+                <option value="">—</option>
+              </select>
+            </div>
+            <div style="flex:2;min-width:140px">
+              <label id="lbl-addr"
+                style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Адрес</label>
+              <select class="field" id="ff-addr" onchange="render()" style="width:100%">
+                <option value="">—</option>
+              </select>
+            </div>
           </div>
+        </div>
+        <div id="ftype-panel-group" class="ftype-panel" style="display:none">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;padding:4px 0">
+            <input type="checkbox" id="ff-group-prop" onchange="toggleGroupByProp()"
+              style="width:16px;height:16px;cursor:pointer">
+            <span id="lbl-group-prop">🏢 Группировать по объектам</span>
+          </label>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Жильцы объединяются по адресам с итоговой суммой
+            к оплате</div>
         </div>
       </div>
 

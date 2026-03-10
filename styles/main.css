@@ -373,6 +373,44 @@ body {
   accent-color: #e8a838
 }
 
+.fp-type-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border3);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .18s;
+  white-space: nowrap
+}
+
+.fp-type-btn:hover {
+  background: var(--surface3);
+  color: var(--text)
+}
+
+.ftype-panel {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border2);
+  animation: fadeIn .15s ease
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+
 .list {
   padding: 0 24px 8px;
   display: flex;
