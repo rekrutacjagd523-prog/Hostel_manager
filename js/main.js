@@ -20,7 +20,7 @@ import {
     genId, resName, showConfirm, cleanForFirebase, resDoc, propDoc
 } from './modules/utils.js';
 import { buildRateHistory, calcPaymentWithHistory, calcCurrentPayment } from './modules/rate-history.js';
-import { render, updateUI, setFilter, goPage, changePageSize, toggleSection, restoreCollapsed, toggleGroupByProp, renderCheckoutForecast, setFilterType } from './modules/ui.js';
+import { render, updateUI, setFilter, goPage, changePageSize, toggleSection, restoreCollapsed, toggleGroupByProp, renderCheckoutForecast, setFilterType, clearFilters } from './modules/ui.js';
 import {
     openForm, closeForm, editResident, saveResident, checkOut, deleteResident,
     showHistory, removeRateSeg, onPropSelect, selectMode, selectedIds,
@@ -76,6 +76,7 @@ window.restoreCollapsed = restoreCollapsed;
 window.toggleGroupByProp = toggleGroupByProp;
 window.renderCheckoutForecast = renderCheckoutForecast;
 window.setFilterType = setFilterType;
+window.clearFilters = clearFilters;
 
 // Residents
 window.openForm = openForm;

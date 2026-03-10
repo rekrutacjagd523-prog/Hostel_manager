@@ -173,7 +173,7 @@
 
       <div class="filter-panel" id="filter-panel">
         <!-- Filter type selector pills -->
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;align-items:center">
           <button class="fp-type-btn" onclick="setFilterType('name')" id="ftype-name"
             title="Фильтр по имени или фамилии">🔤 <span id="lbl-ftype-name">По имени</span></button>
           <button class="fp-type-btn" onclick="setFilterType('type')" id="ftype-type"
@@ -183,6 +183,9 @@
           <button class="fp-type-btn" onclick="setFilterType('group')" id="ftype-group"
             title="Сгруппировать жильцов по объектам с итоговой суммой">📊 <span
               id="lbl-ftype-group">Группировать</span></button>
+          <button class="fp-type-btn" onclick="clearFilters()" id="btn-clear-filters"
+            style="margin-left:auto;color:var(--red);border-color:rgba(212,85,85,.3)"><span id="lbl-clear-filters">✕
+              Сброс</span></button>
         </div>
         <!-- Sub-panels -->
         <div id="ftype-panel-name" class="ftype-panel" style="display:none">

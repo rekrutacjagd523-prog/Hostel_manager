@@ -59,6 +59,28 @@ export function setFilterType(type) {
     if (activeFilterType && activeFilterType !== 'group') render();
 }
 
+export function clearFilters() {
+    // Reset active filter
+    activeFilterType = null;
+    const types = ['name', 'type', 'prop', 'group'];
+    types.forEach(t => {
+        const btn = document.getElementById('ftype-' + t);
+        const panel = document.getElementById('ftype-panel-' + t);
+        if (btn) { btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = 'var(--border3)'; }
+        if (panel) panel.style.display = 'none';
+    });
+    // Reset field values
+    const nm = document.getElementById('ff-name'); if (nm) nm.value = '';
+    const ct = document.getElementById('ff-city'); if (ct) ct.value = '';
+    const ad = document.getElementById('ff-addr'); if (ad) ad.value = '';
+    // Reset type checkboxes
+    document.querySelectorAll('#ff-types input[type=checkbox]').forEach(cb => cb.checked = true);
+    // Reset group
+    groupByProp = false;
+    const gb = document.getElementById('ff-group-prop'); if (gb) gb.checked = false;
+    render();
+}
+
 function daysBetweenDates(a, b) {
     return Math.round((new Date(b) - new Date(a)) / 86400000);
 }
@@ -248,8 +270,13 @@ export function updateUI() {
     document.getElementById('lbl-fcheckin').textContent = t('checkin');
     document.getElementById('lbl-frate').textContent = t('rate');
     const poEl = document.getElementById('lbl-planned-out'); if (poEl) poEl.textContent = t('plannedOut');
-    const srEl = document.getElementById('lbl-senior'); if (srEl) srEl.textContent = t('seniorRole');
-    const gpEl = document.getElementById('lbl-group-prop'); if (gpEl) gpEl.textContent = t('groupByProp');
+    const srEl = document.getElementById('lbl-senior'); if (srEl) srEl.textContent = '⭐ ' + t('seniorRole').replace('⭐ ', '');
+    const gpEl = document.getElementById('lbl-group-prop'); if (gpEl) gpEl.textContent = '🏢 ' + t('groupByProp');
+    const fn = document.getElementById('lbl-ftype-name'); if (fn) fn.textContent = t('ftypeName');
+    const ft = document.getElementById('lbl-ftype-type'); if (ft) ft.textContent = t('ftypeType');
+    const fp = document.getElementById('lbl-ftype-prop'); if (fp) fp.textContent = t('ftypeProp');
+    const fg = document.getElementById('lbl-ftype-group'); if (fg) fg.textContent = t('ftypeGroup');
+    const fc = document.getElementById('lbl-clear-filters'); if (fc) fc.textContent = t('clearFilters');
     document.getElementById('lbl-rate-change').textContent = t('rateChange');
     document.getElementById('f-rate-new').placeholder = t('newRate');
     document.getElementById('btn-fcancel').textContent = t('cancel');
