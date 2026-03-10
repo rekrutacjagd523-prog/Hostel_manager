@@ -231,7 +231,8 @@ export function openRoomForm(propId, roomId) {
         document.getElementById('room-edit-id').value = '';
         document.getElementById('r-name').value = '';
         document.getElementById('r-floor').value = 1;
-        document.getElementById('r-beds').value = 2;
+        const prop = properties().find(x => x.id === propId);
+        document.getElementById('r-beds').value = (prop && prop.spots) ? prop.spots : 2;
     }
 }
 
