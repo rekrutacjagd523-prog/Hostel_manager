@@ -261,7 +261,6 @@ export function toggleSelectMode() {
     selectMode = !selectMode;
     selectedIds.clear();
     document.getElementById('select-bar').classList.toggle('active', selectMode);
-    document.getElementById('tab-select').classList.toggle('active', selectMode);
     document.getElementById('sel-all').checked = false;
     updateSelCount();
     if (window.render) window.render();
@@ -270,7 +269,6 @@ export function toggleSelectMode() {
 export function cancelSelect() {
     selectMode = false; selectedIds.clear();
     document.getElementById('select-bar').classList.remove('active');
-    document.getElementById('tab-select').classList.remove('active');
     document.getElementById('sel-all').checked = false;
     if (window.render) window.render();
 }
