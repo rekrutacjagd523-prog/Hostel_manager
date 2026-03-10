@@ -154,6 +154,11 @@ export function renderExpenses() {
 
 export function openExpenseForm(id) {
     document.getElementById('fin-overlay').classList.remove('hidden');
+    // Apply correct locale to date inputs
+    const _hl = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
+    const _dl = _hl[(window._settings || {}).lang || 'PL'] || 'pl';
+    document.querySelectorAll('input[type="date"]').forEach(el => el.setAttribute('lang', _dl));
+
     if (id) {
         const e = expenses().find(x => x.id === id); if (!e) return;
         document.getElementById('fin-form-title').textContent = '💰 ' + t('editExpense');

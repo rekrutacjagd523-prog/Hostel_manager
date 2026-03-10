@@ -77,6 +77,13 @@ export function onPropSelect() {
 
 export function openForm(id) {
     document.getElementById('form-overlay').classList.remove('hidden');
+    // Apply correct lang to date inputs inside the form
+    const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
+    const lang = (window._settings || {}).lang || 'PL';
+    const htmlLang = htmlLangMap[lang] || 'pl';
+    document.querySelectorAll('#form-overlay input[type="date"]').forEach(el => {
+        el.setAttribute('lang', htmlLang);
+    });
     const rcs = document.getElementById('rate-change-section');
     if (id) {
         const r = residents().find(x => x.id === id); if (!r) return;

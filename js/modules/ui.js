@@ -299,18 +299,22 @@ export function render() {
 }
 
 export function updateUI() {
-    // Sync lang attribute on all date inputs for correct browser placeholder
+    // Sync lang on all date inputs - must replace node for Chrome to re-render placeholder
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
     const lang = (window._settings || {}).lang || 'PL';
     const htmlLang = htmlLangMap[lang] || 'pl';
     document.documentElement.lang = htmlLang;
     document.querySelectorAll('input[type="date"]').forEach(el => {
-        if (el.getAttribute('lang') !== htmlLang) {
-            el.setAttribute('lang', htmlLang);
-            const val = el.value;
-            el.type = 'text';
-            el.type = 'date';
-            el.value = val;
+        if (el.getAttribute('lang') === htmlLang) return;
+        const val = el.value;
+        const clone = el.cloneNode(true);
+        clone.setAttribute('lang', htmlLang);
+        clone.value = val;
+        el.parentNode.replaceChild(clone, el);
+        // Re-attach onchange if it was inline
+        if (clone.hasAttribute('onchange')) {
+            const fn = clone.getAttribute('onchange');
+            clone.addEventListener('change', () => { (new Function(fn))(); });
         }
     });
     const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };

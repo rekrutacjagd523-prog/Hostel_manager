@@ -185,6 +185,11 @@ function renderCalendar() {
 
 export function openBookingForm(id) {
     document.getElementById('booking-overlay').classList.remove('hidden');
+    // Apply correct locale to date inputs
+    const _hl = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
+    const _dl = _hl[(window._settings || {}).lang || 'PL'] || 'pl';
+    document.querySelectorAll('input[type="date"]').forEach(el => el.setAttribute('lang', _dl));
+
     // Populate property dropdown
     const propSel = document.getElementById('bk-prop');
     const props = properties();

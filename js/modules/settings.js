@@ -57,14 +57,13 @@ export function applyLangImmediate(lang) {
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
     const htmlLang = htmlLangMap[lang] || 'pl';
     document.documentElement.lang = htmlLang;
-    // Update lang attribute on all date inputs so browser placeholder updates
+    // Replace each date input so Chrome re-renders placeholder in new locale
     document.querySelectorAll('input[type="date"]').forEach(el => {
-        el.setAttribute('lang', htmlLang);
-        // Force re-render by toggling type
         const val = el.value;
-        el.type = 'text';
-        el.type = 'date';
-        el.value = val;
+        const clone = el.cloneNode(true);
+        clone.setAttribute('lang', htmlLang);
+        clone.value = val;
+        el.parentNode.replaceChild(clone, el);
     });
     if (window.updateUI) window.updateUI();
 }
