@@ -1,20 +1,20 @@
 // ===== AUTHENTICATION UI =====
-import { at } from './constants.js';
+import { at, t } from './constants.js';
 import { showConfirm } from './utils.js';
 
 function showAuthError(msg) { document.getElementById('auth-error').textContent = msg; }
 
 function authErrorMsg(code) {
     const m = {
-        'auth/invalid-email': 'Неверный email',
-        'auth/user-not-found': 'Пользователь не найден',
-        'auth/wrong-password': 'Неверный пароль',
-        'auth/invalid-credential': 'Неверный email или пароль',
-        'auth/email-already-in-use': 'Email уже зарегистрирован',
-        'auth/weak-password': 'Слишком простой пароль',
-        'auth/too-many-requests': 'Слишком много попыток, попробуйте позже'
+        'auth/invalid-email': t('authBadEmail'),
+        'auth/user-not-found': t('authNotFound'),
+        'auth/wrong-password': t('authWrongPass'),
+        'auth/invalid-credential': t('authInvalidCred'),
+        'auth/email-already-in-use': t('authEmailUsed'),
+        'auth/weak-password': t('authWeakPass'),
+        'auth/too-many-requests': t('authTooMany')
     };
-    return m[code] || 'Ошибка: ' + code;
+    return m[code] || t('authError') + ': ' + code;
 }
 
 export function switchAuthLang() {
@@ -123,7 +123,14 @@ export function doForgotPass() {
 
 export function toggleUserMenu(e) {
     e.stopPropagation();
-    document.getElementById('user-menu').classList.toggle('open');
+    const menu = document.getElementById('user-menu');
+    const badge = document.getElementById('user-badge');
+    menu.classList.toggle('open');
+    if (menu.classList.contains('open') && badge) {
+        const rect = badge.getBoundingClientRect();
+        menu.style.top = (rect.bottom + 6) + 'px';
+        menu.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+    }
 }
 
 export async function doLogout() {
@@ -154,7 +161,7 @@ export function onUserLoggedIn(user) {
     // Show workspace indicator if viewing someone else's data
     if (window._workspaceUid && window._workspaceUid !== user.uid) {
         const badge = document.querySelector('.conn-status');
-        if (badge) badge.innerHTML = '☁ ' + (window._settings ? ((window._settings.lang && window._settings.lang === 'PL') ? 'Współdzielone' : 'Общий доступ') : 'Общий доступ');
+        if (badge) badge.innerHTML = '☁ ' + t('sharedLabel');
     }
     if (window.render) window.render();
     if (window.updateUI) window.updateUI();

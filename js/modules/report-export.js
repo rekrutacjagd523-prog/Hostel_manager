@@ -26,8 +26,10 @@ function getPeriodLabel() {
     if (reportPeriod === 'month') return t('month');
     if (reportPeriod === 'year') return t('year');
     const { from, to } = getPeriodRange();
-    const fd = from ? new Date(from).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '...';
-    const td = to ? new Date(to).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '...';
+    const locMap = { RU: 'ru-RU', PL: 'pl-PL', UA: 'uk-UA', EN: 'en-GB', LT: 'lt-LT' };
+    const loc = locMap[(window._settings && window._settings.lang) || 'RU'] || 'pl-PL';
+    const fd = from ? new Date(from).toLocaleDateString(loc, { day: '2-digit', month: '2-digit', year: 'numeric' }) : '...';
+    const td = to ? new Date(to).toLocaleDateString(loc, { day: '2-digit', month: '2-digit', year: 'numeric' }) : '...';
     return fd + ' — ' + td;
 }
 

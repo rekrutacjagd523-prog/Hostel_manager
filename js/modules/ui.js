@@ -386,6 +386,8 @@ export function updateUI() {
     document.getElementById('btn-generate').textContent = t('generate');
     const opts = document.querySelectorAll('#f-type option');
     HTYPES.forEach((h, i) => { if (opts[i]) opts[i].textContent = t(h); });
+    setText('lbl-date-from', t('dateFrom') + ':');
+    setText('lbl-date-to', t('dateTo') + ':');
     setText('lbl-bookings', t('bookings'));
     setText('btn-add-booking', t('addBooking'));
     setText('book-tab-all', t('allCategories'));

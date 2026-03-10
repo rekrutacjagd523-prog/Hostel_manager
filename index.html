@@ -187,11 +187,11 @@
       <div class="fin-summary" id="fin-summary"></div>
       <div style="display:flex;gap:4px;padding:8px 24px;flex-wrap:wrap" id="fin-cat-tabs">
         <button class="tab fin-cat-tab" data-cat="" onclick="setFinCategoryFilter('')" id="fin-cat-all">Все</button>
-        <button class="tab fin-cat-tab" data-cat="utilities" onclick="setFinCategoryFilter('utilities')" id="fin-cat-utilities">🔌 <span class="fin-cat-label">Комунальні</span></button>
-        <button class="tab fin-cat-tab" data-cat="supplies" onclick="setFinCategoryFilter('supplies')" id="fin-cat-supplies">📦 <span class="fin-cat-label">Матеріали</span></button>
+        <button class="tab fin-cat-tab" data-cat="utilities" onclick="setFinCategoryFilter('utilities')" id="fin-cat-utilities">🔌 <span class="fin-cat-label">Коммуналка</span></button>
+        <button class="tab fin-cat-tab" data-cat="supplies" onclick="setFinCategoryFilter('supplies')" id="fin-cat-supplies">📦 <span class="fin-cat-label">Закупки</span></button>
         <button class="tab fin-cat-tab" data-cat="repairs" onclick="setFinCategoryFilter('repairs')" id="fin-cat-repairs">🔧 <span class="fin-cat-label">Ремонт</span></button>
         <button class="tab fin-cat-tab" data-cat="salary" onclick="setFinCategoryFilter('salary')" id="fin-cat-salary">👤 <span class="fin-cat-label">Зарплата</span></button>
-        <button class="tab fin-cat-tab" data-cat="other" onclick="setFinCategoryFilter('other')" id="fin-cat-other">📎 <span class="fin-cat-label">Інше</span></button>
+        <button class="tab fin-cat-tab" data-cat="other" onclick="setFinCategoryFilter('other')" id="fin-cat-other">📎 <span class="fin-cat-label">Прочее</span></button>
       </div>
       <div class="prop-list" id="expenses-list"></div>
       <div class="pagination" id="fin-pagination"></div>
@@ -473,8 +473,8 @@
           <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
         </div>
         <div class="period-dates" id="custom-dates">
-          <span>От:</span><input type="date" id="period-from" onchange="refreshReport()">
-          <span>До:</span><input type="date" id="period-to" onchange="refreshReport()">
+          <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
+          <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
         </div>
         <div class="period-info" id="period-info"></div>
         <div id="report-content"></div>
