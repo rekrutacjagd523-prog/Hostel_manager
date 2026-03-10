@@ -1795,3 +1795,11 @@ select.field option {
 [data-theme="light"] .date-wrap input[type="date"] {
   color-scheme: light;
 }
+
+/* Hide native browser date placeholder (дд.мм.рррр etc) */
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  visibility: hidden;
+}
+input[type="date"].has-value::-webkit-datetime-edit-fields-wrapper {
+  visibility: visible;
+}

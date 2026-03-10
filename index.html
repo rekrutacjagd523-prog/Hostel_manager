@@ -699,6 +699,8 @@
           parent.appendChild(span);
         }
         span.textContent = hint;
+        // Mark as has-value if already filled
+        if (el.value) el.classList.add('has-value');
         span.style.display = el.value ? 'none' : 'block';
         // Watch for value changes
         el._datePlaceholderApplied = true;
