@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="pl">
 
 <head>
   <meta charset="UTF-8">
@@ -8,52 +8,66 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Hostel Manager">
+  <meta name="description" content="Hostel Manager — system zarządzania kwaterami pracowniczymi.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <title>Hostel Manager</title>
   <link rel="stylesheet" href="styles/main.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Load Roboto font for PDF Cyrillic/Polish support
+    (function () {
+      fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf')
+        .then(r => r.arrayBuffer())
+        .then(buf => {
+          let binary = ''; const bytes = new Uint8Array(buf);
+          for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+          window._robotoFont = btoa(binary);
+        }).catch(() => { console.warn('Could not load Roboto font for PDF'); });
+    })();
+  </script>
 </head>
 
 <body>
   <div class="loading-screen" id="loading-screen">
     <div class="spinner"></div>
-    <div>Загрузка...</div>
+    <div>Ładowanie...</div>
   </div>
 
   <!-- Auth Screen -->
   <div id="auth-screen" style="display:none">
     <div class="auth-screen">
       <div class="auth-box">
-        <div class="auth-logo">🏠</div>
+        <div class="auth-logo"><i data-lucide="building-2" style="width:36px;height:36px;color:var(--accent)"></i></div>
         <div class="auth-title">Hostel Manager</div>
-        <div class="auth-subtitle">Управление жильцами</div>
+        <div class="auth-subtitle" id="auth-subtitle-txt">Zarządzanie lokatorami</div>
         <div class="auth-tabs">
-          <button class="auth-tab active" onclick="switchAuthTab('login',this)">Войти</button>
-          <button class="auth-tab" onclick="switchAuthTab('register',this)">Регистрация</button>
+          <button class="auth-tab active" onclick="switchAuthTab('login',this)" id="auth-tab-login">Zaloguj się</button>
+          <button class="auth-tab" onclick="switchAuthTab('register',this)" id="auth-tab-reg">Rejestracja</button>
         </div>
         <div id="auth-error" class="auth-error"></div>
         <div id="auth-login-form">
           <input class="auth-field" type="email" id="auth-email" placeholder="Email" autocomplete="email">
           <div class="pass-wrap">
-            <input class="auth-field" type="password" id="auth-pass" placeholder="Пароль"
+            <input class="auth-field" type="password" id="auth-pass" placeholder="Hasło"
               autocomplete="current-password">
-            <button type="button" class="pass-eye" onclick="togglePassVis('auth-pass',this)">👁</button>
+            <button type="button" class="pass-eye" onclick="togglePassVis('auth-pass',this)"><i data-lucide="eye" style="width:16px;height:16px"></i></button>
           </div>
-          <div class="auth-forgot" onclick="doForgotPass()" id="auth-forgot">Забыли пароль?</div>
-          <button class="auth-btn primary" onclick="doLogin()">Войти</button>
+          <div class="auth-forgot" onclick="doForgotPass()" id="auth-forgot">Nie pamiętasz hasła?</div>
+          <button class="auth-btn primary" onclick="doLogin()" id="auth-btn-login">Zaloguj się</button>
         </div>
         <div id="auth-register-form" style="display:none">
-          <input class="auth-field" type="text" id="auth-name" placeholder="Ваше имя" autocomplete="name">
+          <input class="auth-field" type="text" id="auth-name" placeholder="Twoje imię" autocomplete="name">
           <input class="auth-field" type="email" id="auth-reg-email" placeholder="Email" autocomplete="email">
           <div class="pass-wrap">
-            <input class="auth-field" type="password" id="auth-reg-pass" placeholder="Пароль (мин. 6 символов)"
+            <input class="auth-field" type="password" id="auth-reg-pass" placeholder="Hasło (min. 6 znaków)"
               autocomplete="new-password">
-            <button type="button" class="pass-eye" onclick="togglePassVis('auth-reg-pass',this)">👁</button>
+            <button type="button" class="pass-eye" onclick="togglePassVis('auth-reg-pass',this)"><i data-lucide="eye" style="width:16px;height:16px"></i></button>
           </div>
-          <button class="auth-btn primary" onclick="doRegister()">Создать аккаунт</button>
+          <button class="auth-btn primary" onclick="doRegister()" id="auth-btn-reg">Utwórz konto</button>
         </div>
-        <div class="auth-divider"><span id="auth-or-text">или</span></div>
+        <div class="auth-divider"><span id="auth-or-text">lub</span></div>
         <div id="auth-google-wrap">
           <button class="auth-btn google" onclick="doGoogle()">
             <svg width="18" height="18" viewBox="0 0 48 48">
@@ -66,20 +80,20 @@
               <path fill="#34A853"
                 d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
             </svg>
-            <span id="auth-google-text">Войти через Google</span>
+            <span id="auth-google-text">Zaloguj przez Google</span>
           </button>
         </div>
         <div style="margin-top:16px">
           <select class="auth-field" id="auth-lang" onchange="switchAuthLang()"
             style="text-align:center;cursor:pointer">
-            <option value="RU">🇷🇺 Русский</option>
             <option value="PL">🇵🇱 Polski</option>
             <option value="UA">🇺🇦 Українська</option>
+            <option value="RU">🇷🇺 Русский</option>
             <option value="EN">🇬🇧 English</option>
             <option value="LT">🇱🇹 Lietuvių</option>
           </select>
         </div>
-        <div class="auth-footer" id="auth-footer">Данные хранятся в облаке Firebase</div>
+        <div class="auth-footer" id="auth-footer">Dane przechowywane w chmurze Firebase</div>
       </div>
     </div>
   </div>
@@ -88,84 +102,82 @@
 
     <header class="header">
       <div class="header-left">
-        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Обновить">🏠</div>
+        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Odśwież"><i data-lucide="building-2" style="width:22px;height:22px;color:#0d0d14"></i></div>
         <div>
           <h1>Hostel Manager</h1>
           <div class="header-sub">
-            <p id="hdr-sub">Управление жильцами</p>
-            <span class="conn-status">☁ Облако</span>
+            <p id="hdr-sub">Zarządzanie lokatorami</p>
+            <span class="conn-status"><i data-lucide="cloud" style="width:10px;height:10px"></i> Chmura</span>
           </div>
         </div>
       </div>
       <div class="header-right" id="hdr-right">
         <button id="plan-badge" onclick="openSubscription()"
-          style="display:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border3);background:var(--surface);color:var(--text3);font-family:inherit;transition:all .2s">🆓
-          Free</button>
+          style="display:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border3);background:var(--surface);color:var(--text3);font-family:inherit;transition:all .2s">Free</button>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu(event)">
           <span class="user-avatar" id="user-avatar">?</span>
           <span id="user-name">User</span>
-          <span style="font-size:10px;opacity:.5">▼</span>
+          <span style="font-size:10px;opacity:.5"><i data-lucide="chevron-down" style="width:10px;height:10px"></i></span>
           <div class="user-menu" id="user-menu">
             <div class="user-menu-header">
               <div class="user-menu-name" id="um-name">User</div>
               <div class="user-menu-email" id="um-email">email</div>
             </div>
-            <button class="user-menu-item" onclick="doSwitchAccount()">🔄 <span id="um-switch">Сменить
-                аккаунт</span></button>
-            <button class="user-menu-item danger" onclick="doLogout()">⏻ <span id="um-logout">Выйти</span></button>
+            <button class="user-menu-item" onclick="doSwitchAccount()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> <span id="um-switch">Zmień konto</span></button>
+            <button class="user-menu-item danger" onclick="doLogout()"><i data-lucide="power" style="width:14px;height:14px"></i> <span id="um-logout">Wyloguj</span></button>
           </div>
         </div>
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme">🌙</button>
-        <button class="btn btn-secondary" onclick="openSettings()">⚙</button>
-        <button class="btn btn-secondary" onclick="openReport()" id="btn-report">📄 Отчёт</button>
-        <button class="btn btn-primary" onclick="openForm()" id="btn-add">🏠 Заселить</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme"><i data-lucide="moon" style="width:16px;height:16px"></i></button>
+        <button class="btn btn-secondary" onclick="openSettings()"><i data-lucide="settings" style="width:14px;height:14px"></i></button>
+        <button class="btn btn-secondary" onclick="openReport()" id="btn-report"><i data-lucide="file-text" style="width:14px;height:14px"></i> <span id="btn-report-lbl">Raport</span></button>
+        <button class="btn btn-primary" onclick="openForm()" id="btn-add"><i data-lucide="user-plus" style="width:14px;height:14px"></i> <span id="btn-add-lbl">Zamelduj</span></button>
       </div>
     </header>
 
     <div class="stats">
       <div class="stat-card">
-        <div class="stat-icon">👥</div>
+        <div class="stat-icon"><i data-lucide="users" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-active">0</div>
-          <div class="stat-label" id="lbl-residents">Жильцов</div>
+          <div class="stat-label" id="lbl-residents">Lokatorzy</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon" id="stat-currency-icon">zł</div>
         <div>
           <div class="stat-value" id="stat-owed">0.00 zł</div>
-          <div class="stat-label" id="lbl-owed">К оплате (текущие)</div>
+          <div class="stat-label" id="lbl-owed">Do zapłaty</div>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">Σ</div>
+        <div class="stat-icon"><i data-lucide="database" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label" id="lbl-total">Всего записей</div>
+          <div class="stat-label" id="lbl-total">Łącznie</div>
         </div>
       </div>
     </div>
 
-    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span>🏢 <span
-          id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
+    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span><i data-lucide="building-2" style="width:14px;height:14px;display:inline"></i> <span
+          id="lbl-properties">Obiekty</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
         onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-secondary"
-          onclick="togglePropSelect()" style="padding:6px 10px;font-size:12px" id="btn-sel-prop">☑ <span
-            id="lbl-sel-prop">Выбрать</span></button><button class="btn btn-primary" onclick="openPropForm()"
-          style="padding:6px 14px;font-size:12px" id="btn-add-prop">＋ Добавить объект</button></span></div>
+          onclick="togglePropSelect()" style="padding:6px 10px;font-size:12px" id="btn-sel-prop"><i data-lucide="check-square" style="width:12px;height:12px"></i> <span
+            id="lbl-sel-prop">Wybierz</span></button><button class="btn btn-primary" onclick="openPropForm()"
+          style="padding:6px 14px;font-size:12px" id="btn-add-prop"><i data-lucide="plus" style="width:12px;height:12px"></i> Dodaj obiekt</button></span></div>
     <div class="prop-list section-content" id="prop-list"></div>
 
-    <div class="section-title" onclick="toggleSection('residents')"><span>👥 <span
-          id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
+    <div class="section-title" onclick="toggleSection('residents')"><span><i data-lucide="users" style="width:14px;height:14px;display:inline"></i> <span
+          id="lbl-residents-section">Lokatorzy</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
     </div>
     <div class="section-content" id="residents-section">
       <div class="tabs" id="tabs-bar">
-        <button class="tab active" onclick="setFilter('active',this)" id="tab-active">Проживают</button>
-        <button class="tab" onclick="setFilter('checkedOut',this)" id="tab-out">Выселены</button>
-        <button class="tab" onclick="setFilter('all',this)" id="tab-all">Все</button>
+        <button class="tab active" onclick="setFilter('active',this)" id="tab-active">Zamieszkują</button>
+        <button class="tab" onclick="setFilter('checkedOut',this)" id="tab-out">Wymeldowani</button>
+        <button class="tab" onclick="setFilter('all',this)" id="tab-all">Wszyscy</button>
         <button class="tab" onclick="document.getElementById('filter-panel').classList.toggle('open')"
-          id="tab-filter">🔍 Фильтр</button>
-        <button class="tab" onclick="toggleSelectMode()" id="tab-select">☑ <span
-            id="lbl-sel-res">Выбрать</span></button>
+          id="tab-filter"><i data-lucide="search" style="width:12px;height:12px"></i> Filtr</button>
+        <button class="tab" onclick="toggleSelectMode()" id="tab-select"><i data-lucide="check-square" style="width:12px;height:12px"></i> <span
+            id="lbl-sel-res">Wybierz</span></button>
       </div>
 
       <div class="filter-panel" id="filter-panel">
@@ -189,14 +201,14 @@
 
       <div class="select-bar" id="select-bar">
         <label><input type="checkbox" class="sel-check" id="sel-all" onchange="toggleSelectAll()"> <span
-            id="lbl-sel-all">Выбрать все</span></label>
+            id="lbl-sel-all">Zaznacz wszystko</span></label>
         <span class="sel-count" id="sel-count"></span>
         <button class="btn btn-secondary" onclick="deleteSelected()" id="btn-del-sel"
-          style="font-size:11px;padding:4px 10px;color:var(--red)">🗑 Удалить</button>
+          style="font-size:11px;padding:4px 10px;color:var(--red)"><i data-lucide="trash-2" style="width:12px;height:12px"></i> Usuń</button>
         <button class="btn btn-secondary" onclick="checkoutSelected()" id="btn-co-sel"
-          style="font-size:11px;padding:4px 10px">↪ Выселить</button>
+          style="font-size:11px;padding:4px 10px"><i data-lucide="log-out" style="width:12px;height:12px"></i> Wymelduj</button>
         <button class="btn btn-secondary" onclick="cancelSelect()" style="font-size:11px;padding:4px 10px"
-          id="btn-cancel-sel">✕</button>
+          id="btn-cancel-sel"><i data-lucide="x" style="width:12px;height:12px"></i></button>
       </div>
       <div class="list" id="residents-list"></div>
       <div class="pagination" id="pagination-bar"></div>
@@ -266,9 +278,9 @@
         <h3 id="lbl-settings">⚙ Настройки</h3>
         <label class="field-label">Язык / Language</label>
         <select class="field" id="s-lang" onchange="applyLangImmediate(this.value)">
-          <option value="RU">🇷🇺 Русский</option>
           <option value="PL">🇵🇱 Polski</option>
           <option value="UA">🇺🇦 Українська</option>
+          <option value="RU">🇷🇺 Русский</option>
           <option value="EN">🇬🇧 English</option>
           <option value="LT">🇱🇹 Lietuvių</option>
         </select>
@@ -328,7 +340,7 @@
     <div class="overlay hidden" id="report-overlay"
       onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('report')">
       <div class="modal wide" onclick="event.stopPropagation()">
-        <h3 id="lbl-report">📄 Отчёт</h3>
+        <h3 id="lbl-report"><i data-lucide="file-text" style="width:18px;height:18px;display:inline;vertical-align:middle"></i> Raport</h3>
         <div class="period-bar">
           <button class="period-btn active" onclick="setPeriod('all',this)" id="pb-all">Всё время</button>
           <button class="period-btn" onclick="setPeriod('week',this)" id="pb-week">За неделю</button>
@@ -366,7 +378,7 @@
     <div class="overlay hidden" id="prop-overlay"
       onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('props')">
       <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="prop-form-title">🏢 Новый объект</h3>
+        <h3 id="prop-form-title"><i data-lucide="building-2" style="width:16px;height:16px;display:inline;vertical-align:middle"></i> Nowy obiekt</h3>
         <input type="hidden" id="prop-edit-id">
         <div class="form-row">
           <div><label class="field-label" id="lbl-prop-city">Город</label><input class="field" id="p-city"
@@ -394,8 +406,44 @@
       </div>
     </div>
 
-  </div>
+    <!-- Onboarding Overlay -->
+    <div class="overlay hidden" id="onboarding-overlay">
+      <div class="modal" style="max-width:440px; text-align:center; padding: 40px 30px">
+        <div style="margin-bottom:20px;display:flex;justify-content:center"><i data-lucide="rocket"
+            style="width:56px;height:56px;color:var(--accent)"></i></div>
+        <h2 style="margin-bottom:12px;font-size:24px">Witaj w Hostel Manager!</h2>
+        <p style="color:var(--text2);font-size:15px;margin-bottom:32px;line-height:1.6">Rozpocznij korzystanie z systemu
+          w dwóch prostych krokach.</p>
 
+        <div
+          style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px">
+          <div style="display:flex;align-items:center;margin-bottom:12px;gap:12px">
+            <div
+              style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d0d14;display:flex;align-items:center;justify-content:center;font-weight:bold">
+              1</div>
+            <div style="font-weight:600;font-size:15px">Stwórz obiekt</div>
+          </div>
+          <p style="color:var(--text3);font-size:13px;margin-bottom:16px;line-height:1.4">Dodaj pierwszy hostel, dom lub
+            mieszkanie do systemu.</p>
+          <button class="btn btn-primary" onclick="window.closeOnboarding(); openPropForm();"
+            style="width:100%;justify-content:center;padding:10px"><i data-lucide="plus"
+              style="width:16px;height:16px"></i> Dodaj obiekt</button>
+        </div>
+
+        <button class="btn btn-cancel" onclick="window.closeOnboarding()"
+          style="background:transparent;border:none;color:var(--text3);font-size:13px">Pomiń konfigurację</button>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    window.closeOnboarding = function () {
+      document.getElementById('onboarding-overlay').classList.add('hidden');
+    };
+    window._lucideRefresh = function() {
+      if (window.lucide) window.lucide.createIcons();
+    };
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 
