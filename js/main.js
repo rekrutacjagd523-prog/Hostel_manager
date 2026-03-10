@@ -82,12 +82,16 @@ function handlePressStart(e) {
 
         if (_pressTarget.type === 'res') {
             toggleSelectMode();
-            const cb = document.querySelector(`.sel-check[data-id="${_pressTarget.id}"]`);
-            if (cb) { cb.checked = true; toggleSelectItem(_pressTarget.id, cb); }
+            setTimeout(() => {
+                const cb = document.querySelector(`.sel-check[data-id="${_pressTarget.id}"]`);
+                if (cb) { cb.checked = true; toggleSelectItem(_pressTarget.id, cb); }
+            }, 50);
         } else if (_pressTarget.type === 'prop') {
             togglePropSelect();
-            const cb = document.querySelector(`.sel-check[data-pid="${_pressTarget.id}"]`);
-            if (cb) { cb.checked = true; togglePropItem(_pressTarget.id, cb); }
+            setTimeout(() => {
+                const cb = document.querySelector(`.sel-check[data-pid="${_pressTarget.id}"]`);
+                if (cb) { cb.checked = true; togglePropItem(_pressTarget.id, cb); }
+            }, 50);
         }
         _pressTarget = null;
     }, 500);

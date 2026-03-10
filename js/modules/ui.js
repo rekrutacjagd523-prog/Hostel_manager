@@ -256,6 +256,9 @@ export function render() {
 
 export function updateUI() {
     document.getElementById('hdr-sub').textContent = t('sub');
+    document.getElementById('lbl-properties').textContent = t('properties');
+    const resSecEl = document.getElementById('lbl-residents-section');
+    if (resSecEl) resSecEl.textContent = t('residents');
     document.getElementById('lbl-residents').textContent = t('residents');
     document.getElementById('lbl-owed').textContent = t('owed');
     document.getElementById('lbl-total').textContent = t('total');
