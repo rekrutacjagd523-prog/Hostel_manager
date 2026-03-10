@@ -25,8 +25,8 @@ export function renderProperties() {
     if (propSelectMode) {
         h += '<div style="display:flex;align-items:center;gap:10px;padding:4px 0;margin-bottom:4px">' +
             '<label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;color:var(--text2)"><input type="checkbox" class="sel-check" id="sel-all-props" onchange="toggleSelectAllProps()" ' + (selectedPropIds.size === props.length ? 'checked' : '') + '> ' + t('selectAll') + '</label>' +
-            '<span style="font-size:12px;color:var(--accent);font-weight:700">' + (selectedPropIds.size > 0 ? selectedPropIds.size + ' ' + t('selected') : '') + '</span>' +
-            (selectedPropIds.size > 0 ? '<button class="btn btn-secondary" onclick="deleteSelectedProps()" style="font-size:11px;padding:4px 10px;color:var(--red)">' + t('deleteSelected') + '</button>' : '') +
+            '<span style="font-size:12px;color:var(--accent);font-weight:700" id="prop-sel-count">' + (selectedPropIds.size > 0 ? selectedPropIds.size + ' ' + t('selected') : '') + '</span>' +
+            '<button class="btn btn-secondary" onclick="deleteSelectedProps()" id="btn-del-sel-props" style="display:' + (selectedPropIds.size > 0 ? 'inline-block' : 'none') + ';font-size:11px;padding:4px 10px;color:var(--red)">' + t('deleteSelected') + '</button>' +
             '<button class="btn btn-secondary" onclick="cancelPropSelect()" style="font-size:11px;padding:4px 10px">✕</button>' +
             '</div>';
     }
@@ -42,8 +42,8 @@ export function renderProperties() {
         const occ = getResidentsOnProp(p).length;
         const free = Math.max(0, (p.spots || 0) - occ);
         const isFull = free === 0 && occ > 0;
-        return '<div class="prop-card longpress-prop" data-id="' + p.id + '" style="display:flex;align-items:center;gap:8px;' + (propSelectMode ? 'cursor:pointer' : '') + '" ' + (propSelectMode ? 'onclick="const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;togglePropItem(\'' + p.id + '\',cb);event.stopPropagation()}"' : '') + '>' +
-            (propSelectMode ? '<input type="checkbox" class="sel-check" data-pid="' + p.id + '" ' + (selectedPropIds.has(p.id) ? 'checked' : '') + ' onchange="togglePropItem(\'' + p.id + '\',this);event.stopPropagation()" onclick="event.stopPropagation()" style="flex-shrink:0">' : '') +
+        return '<div class="prop-card longpress-prop" data-id="' + p.id + '" style="display:flex;align-items:center;gap:8px;' + (propSelectMode ? 'cursor:pointer' : '') + '" ' + (propSelectMode ? 'onclick="if(event.target.type!==\'checkbox\'){const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;togglePropItem(\'' + p.id + '\',cb);}}"' : '') + '>' +
+            (propSelectMode ? '<input type="checkbox" class="sel-check" data-pid="' + p.id + '" ' + (selectedPropIds.has(p.id) ? 'checked' : '') + ' onchange="togglePropItem(\'' + p.id + '\',this)" style="flex-shrink:0">' : '') +
             '<div style="flex:1"><div class="prop-name">' + esc(p.city) + ' · ' + esc(p.address) + '</div>' +
             '<div class="prop-meta">' + t(p.housingType || 'hostel') + '</div></div>' +
             '<div class="prop-spots">' +
@@ -83,13 +83,24 @@ export function cancelPropSelect() { propSelectMode = false; selectedPropIds.cle
 
 export function togglePropItem(id, cb) {
     if (cb.checked) selectedPropIds.add(id); else selectedPropIds.delete(id);
-    renderProperties();
+    updatePropSelCount();
 }
 
 export function toggleSelectAllProps() {
     const all = document.getElementById('sel-all-props').checked;
     properties().forEach(p => { if (all) selectedPropIds.add(p.id); else selectedPropIds.delete(p.id); });
-    renderProperties();
+    document.querySelectorAll('.prop-card .sel-check').forEach(cb => {
+        if (cb.id !== 'sel-all-props') cb.checked = all;
+    });
+    updatePropSelCount();
+}
+
+function updatePropSelCount() {
+    const n = selectedPropIds.size;
+    const countEl = document.getElementById('prop-sel-count');
+    if (countEl) countEl.textContent = n > 0 ? n + ' ' + t('selected') : '';
+    const delBtn = document.getElementById('btn-del-sel-props');
+    if (delBtn) delBtn.style.display = n > 0 ? 'inline-block' : 'none';
 }
 
 export function deleteSelectedProps() {
