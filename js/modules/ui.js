@@ -299,6 +299,20 @@ export function render() {
 }
 
 export function updateUI() {
+    // Sync lang attribute on all date inputs for correct browser placeholder
+    const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
+    const lang = (window._settings || {}).lang || 'PL';
+    const htmlLang = htmlLangMap[lang] || 'pl';
+    document.documentElement.lang = htmlLang;
+    document.querySelectorAll('input[type="date"]').forEach(el => {
+        if (el.getAttribute('lang') !== htmlLang) {
+            el.setAttribute('lang', htmlLang);
+            const val = el.value;
+            el.type = 'text';
+            el.type = 'date';
+            el.value = val;
+        }
+    });
     const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
     setText('hdr-sub', t('sub'));
     setText('lbl-properties', t('properties'));

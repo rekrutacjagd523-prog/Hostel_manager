@@ -55,7 +55,17 @@ export function previewCurrency() {
 export function applyLangImmediate(lang) {
     window._settings = Object.assign({}, window._settings || {}, { lang: lang });
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
-    document.documentElement.lang = htmlLangMap[lang] || 'ru';
+    const htmlLang = htmlLangMap[lang] || 'pl';
+    document.documentElement.lang = htmlLang;
+    // Update lang attribute on all date inputs so browser placeholder updates
+    document.querySelectorAll('input[type="date"]').forEach(el => {
+        el.setAttribute('lang', htmlLang);
+        // Force re-render by toggling type
+        const val = el.value;
+        el.type = 'text';
+        el.type = 'date';
+        el.value = val;
+    });
     if (window.updateUI) window.updateUI();
 }
 
