@@ -77,7 +77,6 @@ export function onPropSelect() {
 
 export function openForm(id) {
     document.getElementById('form-overlay').classList.remove('hidden');
-    if (window._applyDatePH) setTimeout(window._applyDatePH, 50);
     // Apply correct lang to date inputs inside the form
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
     const lang = (window._settings || {}).lang || 'PL';

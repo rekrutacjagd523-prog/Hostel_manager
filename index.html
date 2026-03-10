@@ -2,21 +2,6 @@
 <html lang="pl">
 
 <head>
-<script>
-  (function(){
-    try {
-      // Pre-set html lang from cached settings before any input renders
-      var saved = null;
-      // Try to find saved settings in localStorage (Firebase caches aren't here, but we can check)
-      var keys = Object.keys(localStorage);
-      for(var k of keys) { if(k.startsWith('hostel-') || k.includes('firebase')) continue; }
-      // Check if we have a last-known lang
-      var lastLang = localStorage.getItem('hostel-last-lang') || 'pl';
-      var langMap = {RU:'ru',PL:'pl',UA:'uk',EN:'en',LT:'lt'};
-      document.documentElement.lang = langMap[lastLang] || lastLang;
-    } catch(e){}
-  })();
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0d0d14">
@@ -407,7 +392,7 @@
             <label id="lbl-rate-change">📅 Изменить ставку с даты:</label>
             <div class="form-row" style="margin-top:6px">
               <div><input class="field" id="f-rate-new" type="number" min="0" step="50" placeholder=""></div>
-              <div><input class="field date-input" id="f-rate-from" type="date" onchange="this.classList.toggle('has-value',!!this.value)"></div>
+              <div><input class="field date-input" id="f-rate-from" type="date"></div>
             </div>
           </div>
           <div id="rate-history-box"></div>
@@ -498,8 +483,8 @@
           <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
         </div>
         <div class="period-dates" id="custom-dates">
-          <span id="lbl-date-from">От:</span><input type="date" class="date-input" id="period-from" onchange="refreshReport();this.classList.toggle('has-value',!!this.value)">
-          <span id="lbl-date-to">До:</span><input type="date" class="date-input" id="period-to" onchange="refreshReport();this.classList.toggle('has-value',!!this.value)">
+          <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
+          <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
         </div>
         <div class="period-info" id="period-info"></div>
         <div id="report-content"></div>
@@ -610,11 +595,11 @@
         <div class="form-row">
           <div>
             <label id="lbl-bk-start">Дата заезда</label>
-            <input class="field date-input" id="bk-start" type="date" onchange="this.classList.toggle('has-value',!!this.value)">
+            <input class="field date-input" id="bk-start" type="date">
           </div>
           <div>
             <label id="lbl-bk-end">Дата выезда</label>
-            <input class="field date-input" id="bk-end" type="date" onchange="this.classList.toggle('has-value',!!this.value)">
+            <input class="field date-input" id="bk-end" type="date">
           </div>
         </div>
         <div class="form-row">
@@ -677,71 +662,6 @@
     window._lucideRefresh = function() {
       if (window.lucide) window.lucide.createIcons();
     };
-  </script>
-
-  <script>
-    // ===== DATE INPUT CUSTOM PLACEHOLDER =====
-    // Locale-aware date format strings
-    function applyDatePlaceholders() {
-      const hint = 'dd.mm.yyyy';
-      document.querySelectorAll('input[type="date"]').forEach(el => {
-        // Find or create sibling placeholder span
-        let span = el.parentNode.querySelector('.date-ph');
-        if (!span) {
-          span = document.createElement('span');
-          span.className = 'date-ph';
-          span.style.cssText = 'position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text4);pointer-events:none;font-family:inherit;';
-          // Make parent relative if not already
-          const parent = el.parentNode;
-          if (getComputedStyle(parent).position === 'static') {
-            parent.style.position = 'relative';
-          }
-          parent.appendChild(span);
-        }
-        span.textContent = hint;
-        // Mark as has-value if already filled
-        if (el.value) el.classList.add('has-value');
-        span.style.display = el.value ? 'none' : 'block';
-        // Watch for value changes
-        el._datePlaceholderApplied = true;
-        el.addEventListener('change', function() {
-          span.style.display = this.value ? 'none' : 'block';
-        }, { once: false });
-        el.addEventListener('input', function() {
-          span.style.display = this.value ? 'none' : 'block';
-        }, { once: false });
-      });
-    }
-
-    // Hide browser placeholder text via CSS injection
-    if (!document.getElementById('date-ph-style')) {
-      const s = document.createElement('style');
-      s.id = 'date-ph-style';
-      s.textContent = `
-        input[type="date"]::-webkit-datetime-edit-fields-wrapper { color: var(--text); }
-        input[type="date"]::-webkit-datetime-edit-text { color: var(--text3); }
-        input[type="date"]::-webkit-datetime-edit-month-field,
-        input[type="date"]::-webkit-datetime-edit-day-field,
-        input[type="date"]::-webkit-datetime-edit-year-field {
-          color: var(--text3);
-        }
-        input[type="date"].has-value::-webkit-datetime-edit-month-field,
-        input[type="date"].has-value::-webkit-datetime-edit-day-field,
-        input[type="date"].has-value::-webkit-datetime-edit-year-field {
-          color: var(--text);
-        }
-      `;
-      document.head.appendChild(s);
-    }
-
-    // Hook into settings changes
-    const _origUpdateUI = window.updateUI;
-    window._applyDatePH = applyDatePlaceholders;
-
-    // Run on DOMContentLoaded and after each render/updateUI
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(applyDatePlaceholders, 300);
-    });
   </script>
   <script type="module" src="js/main.js"></script>
 </body>

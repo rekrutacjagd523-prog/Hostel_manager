@@ -154,7 +154,6 @@ export function renderExpenses() {
 
 export function openExpenseForm(id) {
     document.getElementById('fin-overlay').classList.remove('hidden');
-    if (window._applyDatePH) setTimeout(window._applyDatePH, 50);
     // Apply correct locale to date inputs
     const _hl = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
     const _dl = _hl[(window._settings || {}).lang || 'PL'] || 'pl';

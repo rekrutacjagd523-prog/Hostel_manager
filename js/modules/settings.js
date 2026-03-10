@@ -67,7 +67,6 @@ export function applyLangImmediate(lang) {
         el.parentNode.replaceChild(clone, el);
     });
     if (window.updateUI) window.updateUI();
-    if (window._applyDatePH) setTimeout(window._applyDatePH, 50);
 }
 
 export function confirmExitOverlay(type) {
