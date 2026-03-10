@@ -133,7 +133,7 @@ export function showUpgradeModal(reason) {
           padding-top:16px;
           display:flex;gap:8px;align-items:center
         ">
-          <input id="ref-code-input" type="text" placeholder="🎟 Реферальный код"
+          <input id="ref-code-input" type="text" placeholder="${t('refCode')}"
             style="
               flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border3);
               background:var(--surface2);color:var(--text);font-family:inherit;
@@ -218,7 +218,7 @@ export async function applyReferralCode(raw) {
 
   if (!code) {
     status.style.color = 'var(--red)';
-    status.textContent = '❌ Введите код';
+    status.textContent = t('refCodeEmpty');
     return;
   }
 
@@ -228,7 +228,7 @@ export async function applyReferralCode(raw) {
 
   if (code !== expected) {
     status.style.color = 'var(--red)';
-    status.textContent = '❌ Неверный код';
+    status.textContent = t('refCodeInvalid');
     return;
   }
 
@@ -238,7 +238,7 @@ export async function applyReferralCode(raw) {
     await fb.setDoc(fb.settingsDoc, { plan: 'pro', validUntil: null }, { merge: true });
     window._settings = Object.assign({}, window._settings || {}, { plan: 'pro', validUntil: null });
     status.style.color = 'var(--green)';
-    status.textContent = '✅ Pro активирован! 🎉';
+    status.textContent = t('refCodeSuccess');
     setTimeout(() => {
       document.getElementById('upgrade-overlay')?.remove();
       if (window.updatePlanBadge) window.updatePlanBadge();
@@ -246,6 +246,6 @@ export async function applyReferralCode(raw) {
     }, 1500);
   } catch (e) {
     status.style.color = 'var(--red)';
-    status.textContent = '❌ Ошибка: ' + e.message;
+    status.textContent = t('refCodeError') + e.message;
   }
 }
