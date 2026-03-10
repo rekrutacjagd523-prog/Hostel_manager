@@ -26,9 +26,8 @@ export function changePageSize(v) { pageSize = parseInt(v); currentPage = 1; ren
 
 export function toggleGroupByProp() {
     groupByProp = !groupByProp;
-    const btn = document.getElementById('btn-group-prop');
-    if (btn) btn.style.background = groupByProp ? 'var(--accent)' : '';
-    if (btn) btn.style.color = groupByProp ? '#fff' : '';
+    const cb = document.getElementById('ff-group-prop');
+    if (cb) cb.checked = groupByProp;
     render();
 }
 

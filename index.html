@@ -159,10 +159,6 @@
 
     <div class="section-title" onclick="toggleSection('residents')"><span>👥 <span
           id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
-      <span onclick="event.stopPropagation()" style="display:flex;gap:6px">
-        <button class="btn btn-secondary" onclick="toggleGroupByProp()" id="btn-group-prop"
-          style="padding:6px 10px;font-size:12px">🏢 <span id="lbl-group-prop">По объектам</span></button>
-      </span>
     </div>
     <div class="section-content" id="residents-section">
       <div class="tabs" id="tabs-bar">
@@ -177,11 +173,11 @@
 
       <div class="filter-panel" id="filter-panel">
         <div class="fp-row">
-          <div class="fp-group" style="flex:2"><label id="lbl-search">Поиск по имени</label><input class="field"
-              id="ff-name" type="text" placeholder="🔍" oninput="render()"
-              style="width:100%;padding:6px 8px;font-size:12px"></div>
-          <div class="fp-group"><label id="lbl-city">Город</label><select class="field" id="ff-city"
-              onchange="render()">
+          <div class="fp-group" style="flex:2" title="Фильтр по имени или фамилии жильца"><label id="lbl-search">Поиск
+              по имени</label><input class="field" id="ff-name" type="text" placeholder="🔍" oninput="render()"
+              style="width:100%;padding:6px 8px;font-size:12px" title="Введите имя или фамилию"></div>
+          <div class="fp-group" title="Фильтр по городу"><label id="lbl-city">Город</label><select class="field"
+              id="ff-city" onchange="render()">
               <option value="">—</option>
             </select></div>
           <div class="fp-group"><label id="lbl-addr">Адрес</label><select class="field" id="ff-addr"
@@ -191,6 +187,16 @@
         </div>
         <div class="fp-group"><label id="lbl-htype">Тип жилья</label>
           <div class="fp-checks" id="ff-types"></div>
+        </div>
+        <div class="fp-group" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border2)">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px"
+              title="Сгруппировать жильцов по адресу объекта — видь с итогом по каждому дому">
+              <input type="checkbox" id="ff-group-prop" onchange="toggleGroupByProp()"
+                style="width:15px;height:15px;cursor:pointer">
+              <span id="lbl-group-prop">🏢 По объектам</span>
+            </label>
+          </div>
         </div>
       </div>
 
