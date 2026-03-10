@@ -1659,3 +1659,8 @@ select.field option {
     max-height: calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))
   }
 }
+
+/* Room Structure */
+.room-list{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
+.room-chip{transition:opacity .15s}
+.room-chip:hover{opacity:.85}

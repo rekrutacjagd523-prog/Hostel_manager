@@ -322,6 +322,13 @@
           </select>
           <div id="prop-spots-info" style="font-size:11px;color:var(--green);margin-top:4px"></div>
         </div>
+        <div id="room-select-row" style="display:none;margin-top:6px">
+          <label id="lbl-assign-room">Комната</label>
+          <select class="field" id="f-room" onchange="onRoomSelect()">
+            <option value="">— Без комнаты —</option>
+          </select>
+          <div id="room-spots-info" style="font-size:11px;margin-top:2px"></div>
+        </div>
         <input type="hidden" id="f-address"><input type="hidden" id="f-city">
         <datalist id="dl-addr"></datalist><datalist id="dl-city"></datalist>
         <div class="form-row">
@@ -498,6 +505,33 @@
           <button class="btn btn-cancel" onclick="closePropForm()" id="btn-prop-cancel">Отмена</button>
           <button class="btn btn-cancel" onclick="saveProp()" id="btn-prop-save"
             style="color:var(--accent);border-color:var(--accent)">Принять</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Form -->
+    <div class="overlay hidden" id="room-overlay">
+      <div class="modal" style="max-width:360px">
+        <h3 id="room-form-title">🚪 Комната</h3>
+        <input type="hidden" id="room-prop-id">
+        <input type="hidden" id="room-edit-id">
+        <div class="form-row">
+          <div>
+            <label id="lbl-room-name">Номер/Название</label>
+            <input class="field" id="r-name" placeholder="101">
+          </div>
+          <div>
+            <label id="lbl-room-floor">Этаж</label>
+            <input class="field" id="r-floor" type="number" min="0" value="1">
+          </div>
+        </div>
+        <div>
+          <label id="lbl-room-beds">Кол-во мест</label>
+          <input class="field" id="r-beds" type="number" min="1" value="2">
+        </div>
+        <div class="form-btns" style="margin-top:12px">
+          <button class="btn btn-secondary" onclick="closeRoomForm()" id="btn-room-cancel">Отмена</button>
+          <button class="btn btn-primary" onclick="saveRoom()" id="btn-room-save">Сохранить</button>
         </div>
       </div>
     </div>

@@ -42,7 +42,7 @@ export function renderProperties() {
         const occ = getResidentsOnProp(p).length;
         const free = Math.max(0, (p.spots || 0) - occ);
         const isFull = free === 0 && occ > 0;
-        return '<div class="prop-card longpress-prop" data-id="' + p.id + '" style="display:flex;align-items:center;gap:8px;' + (propSelectMode ? 'cursor:pointer' : '') + '" ' + (propSelectMode ? 'onclick="if(event.target.type!==\'checkbox\'){const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;togglePropItem(\'' + p.id + '\',cb);}}"' : '') + '>' +
+        return '<div class="prop-card longpress-prop" data-id="' + p.id + '" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;' + (propSelectMode ? 'cursor:pointer' : '') + '" ' + (propSelectMode ? 'onclick="if(event.target.type!==\'checkbox\'){const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;togglePropItem(\'' + p.id + '\',cb);}}"' : '') + '>' +
             (propSelectMode ? '<input type="checkbox" class="sel-check" data-pid="' + p.id + '" ' + (selectedPropIds.has(p.id) ? 'checked' : '') + ' onchange="togglePropItem(\'' + p.id + '\',this)" style="flex-shrink:0">' : '') +
             '<div style="flex:1"><div class="prop-name">' + esc(p.city) + ' · ' + esc(p.address) + '</div>' +
             '<div class="prop-meta">' + t(p.housingType || 'hostel') + '</div></div>' +
@@ -52,7 +52,24 @@ export function renderProperties() {
             '</div><div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openPropForm(\'' + p.id + '\')">✏️</button>' +
             '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')">🗑</button>' +
-            '</div></div>';
+            '</div>' + // close prop-actions
+            // Room mini-list
+            (p.rooms && p.rooms.length ?
+                '<div class="room-list" style="width:100%;margin-top:6px;border-top:1px solid var(--border2);padding-top:6px">' +
+                p.rooms.map(rm => {
+                    const roomOcc = getRoomOccupancy(p.id, rm.id);
+                    const roomFree = Math.max(0, (rm.beds || 0) - roomOcc);
+                    return '<div class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\',\'' + rm.id + '\')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--surface2);border-radius:6px;font-size:11px;cursor:pointer;margin:2px">' +
+                        '<span>🚪 ' + esc(rm.name) + '</span>' +
+                        '<span style="color:var(--text4)">F' + rm.floor + '</span>' +
+                        '<span style="color:' + (roomFree > 0 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">' + roomOcc + '/' + rm.beds + '</span>' +
+                        '</div>';
+                }).join('') +
+                '<button class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\')" style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;margin:2px">+ ' + t('addRoom').replace('+ ', '') + '</button>' +
+                '</div>' :
+                '<div style="width:100%;margin-top:4px"><button class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\')" style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:var(--surface2);border:1px dashed var(--border3);border-radius:6px;font-size:11px;cursor:pointer;margin:2px;color:var(--text3)">🚪 ' + t('addRoom') + '</button></div>'
+            ) +
+            '</div>'; // close prop-card
     }).join('');
     // Property pagination
     if (totalPages > 1 || totalItems > 10) {
@@ -187,3 +204,86 @@ export function deleteProp(id) {
         try { await window._fb.deleteDoc(propDoc(id)); } catch (e) { alert('Error: ' + e.message); }
     });
 }
+
+// ===== ROOM MANAGEMENT =====
+
+function getRoomOccupancy(propId, roomId) {
+    const p = properties().find(x => x.id === propId);
+    if (!p) return 0;
+    return residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && (r.housingType || 'hostel') === p.housingType && r.roomId === roomId).length;
+}
+
+export function openRoomForm(propId, roomId) {
+    document.getElementById('room-overlay').classList.remove('hidden');
+    document.getElementById('room-prop-id').value = propId;
+    if (roomId) {
+        const p = properties().find(x => x.id === propId);
+        const room = p && p.rooms ? p.rooms.find(r => r.id === roomId) : null;
+        if (!room) return;
+        document.getElementById('room-form-title').textContent = '🚪 ' + t('editRoom');
+        document.getElementById('room-edit-id').value = roomId;
+        document.getElementById('r-name').value = room.name || '';
+        document.getElementById('r-floor').value = room.floor || 1;
+        document.getElementById('r-beds').value = room.beds || 1;
+    } else {
+        document.getElementById('room-form-title').textContent = '🚪 ' + t('addRoom');
+        document.getElementById('room-edit-id').value = '';
+        document.getElementById('r-name').value = '';
+        document.getElementById('r-floor').value = 1;
+        document.getElementById('r-beds').value = 2;
+    }
+}
+
+export function closeRoomForm() { document.getElementById('room-overlay').classList.add('hidden'); }
+
+export async function saveRoom() {
+    const propId = document.getElementById('room-prop-id').value;
+    const p = properties().find(x => x.id === propId);
+    if (!p) return;
+    const name = document.getElementById('r-name').value.trim();
+    const floor = parseInt(document.getElementById('r-floor').value) || 1;
+    const beds = parseInt(document.getElementById('r-beds').value) || 1;
+    if (!name) return alert(t('roomName') + '!');
+    const editId = document.getElementById('room-edit-id').value;
+    let rooms = p.rooms ? [...p.rooms] : [];
+    if (editId) {
+        const idx = rooms.findIndex(r => r.id === editId);
+        if (idx >= 0) rooms[idx] = { ...rooms[idx], name, floor, beds };
+    } else {
+        rooms.push({ id: genId(), name, floor, beds });
+    }
+    // Auto-update spots to sum of beds
+    const totalBeds = rooms.reduce((s, r) => s + (r.beds || 0), 0);
+    const data = { ...p };
+    delete data.id;
+    data.rooms = rooms;
+    data.spots = totalBeds;
+    try {
+        await window._fb.setDoc(propDoc(propId), data);
+        closeRoomForm();
+    } catch (e) { alert('Error: ' + e.message); }
+}
+
+export function deleteRoom(propId, roomId) {
+    showConfirm('🗑', t('deleteRoom'), t('confirmDeleteRoom'), t('confirmYes'), 'c-danger', async () => {
+        const p = properties().find(x => x.id === propId);
+        if (!p) return;
+        let rooms = p.rooms ? p.rooms.filter(r => r.id !== roomId) : [];
+        const totalBeds = rooms.reduce((s, r) => s + (r.beds || 0), 0);
+        const data = { ...p };
+        delete data.id;
+        data.rooms = rooms;
+        data.spots = totalBeds;
+        try {
+            await window._fb.setDoc(propDoc(propId), data);
+            // Clear roomId for residents in this room
+            const resInRoom = residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && r.roomId === roomId);
+            for (const r of resInRoom) {
+                const rd = { ...r }; delete rd.id; rd.roomId = null;
+                await window._fb.setDoc(window._fb.doc(window._fb.db, 'users', window._workspaceUid || window._currentUser?.uid, 'residents', r.id), rd);
+            }
+        } catch (e) { alert('Error: ' + e.message); }
+    });
+}
+
+export { getRoomOccupancy };

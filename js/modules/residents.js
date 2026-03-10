@@ -50,9 +50,28 @@ export function onPropSelect() {
             const free = getFreeSpots(p);
             info.textContent = free > 0 ? '✅ ' + free + ' ' + t('freeSpots') : '❌ ' + t('propFull');
             info.style.color = free > 0 ? 'var(--green)' : 'var(--red)';
+            // Populate room dropdown
+            const roomRow = document.getElementById('room-select-row');
+            const roomSel = document.getElementById('f-room');
+            if (p.rooms && p.rooms.length) {
+                roomRow.style.display = 'block';
+                const editId = document.getElementById('edit-id').value;
+                const currentResident = editId ? residents().find(r => r.id === editId) : null;
+                roomSel.innerHTML = '<option value="">— ' + t('unassigned') + ' —</option>' +
+                    p.rooms.map(rm => {
+                        const occ = residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && r.roomId === rm.id && r.id !== editId).length;
+                        const free = Math.max(0, (rm.beds || 0) - occ);
+                        const selected = currentResident && currentResident.roomId === rm.id ? ' selected' : '';
+                        return '<option value="' + rm.id + '"' + selected + (free <= 0 ? ' disabled' : '') + '>🚪 ' + esc(rm.name) + ' (F' + rm.floor + ') — ' + free + ' ' + t('freeBedsInRoom') + '</option>';
+                    }).join('');
+            } else {
+                roomRow.style.display = 'none';
+                roomSel.innerHTML = '<option value="">—</option>';
+            }
         }
     } else {
         info.textContent = '';
+        document.getElementById('room-select-row').style.display = 'none';
     }
 }
 
@@ -77,6 +96,11 @@ export function openForm(id) {
         rcs.style.display = 'block';
         renderRateHistoryInForm(r);
         populatePropSelect(r.city, r.address, r.housingType || 'hostel');
+        // Set room after prop select populates
+        setTimeout(() => {
+            const roomSel = document.getElementById('f-room');
+            if (roomSel && r.roomId) roomSel.value = r.roomId;
+        }, 50);
     } else {
         document.getElementById('form-title').textContent = t('newR');
         document.getElementById('edit-id').value = '';
@@ -92,6 +116,8 @@ export function openForm(id) {
         rcs.style.display = 'none';
         document.getElementById('rate-history-box').innerHTML = '';
         populatePropSelect('', '', '');
+        document.getElementById('f-room').value = '';
+        document.getElementById('room-select-row').style.display = 'none';
     }
 }
 
@@ -159,6 +185,7 @@ export async function saveResident() {
     const housingType = document.getElementById('f-type').value;
     const isSenior = document.getElementById('f-senior').checked;
     const plannedCheckOut = document.getElementById('f-planned-out').value || null;
+    const roomId = document.getElementById('f-room').value || null;
 
     // Subscription limit check for new residents
     if (!editId) {
@@ -195,6 +222,7 @@ export async function saveResident() {
         data.address = address; data.city = city; data.housingType = housingType;
         data.checkInDate = date; data.monthlyRate = history[history.length - 1].rate; data.rateHistory = history;
         data.isSenior = isSenior; data.plannedCheckOut = plannedCheckOut;
+        data.roomId = roomId;
         try {
             await fb.setDoc(resDoc(editId), data);
             closeForm();
@@ -210,7 +238,7 @@ export async function saveResident() {
             address, city, housingType,
             checkInDate: date, monthlyRate: rate, rateHistory: history,
             checkOutDate: null, createdAt: new Date().toISOString(),
-            isSenior, plannedCheckOut
+            isSenior, plannedCheckOut, roomId
         };
         try { const id = genId(); await fb.setDoc(resDoc(id), data); closeForm(); }
         catch (e) { alert('Error: ' + e.message); }
@@ -316,4 +344,21 @@ export function checkoutSelected() {
         }
         selectedIds.clear(); updateSelCount();
     });
+}
+
+export function onRoomSelect() {
+    const roomSel = document.getElementById('f-room');
+    const roomId = roomSel.value;
+    const info = document.getElementById('room-spots-info');
+    if (!roomId) { info.textContent = ''; return; }
+    const propId = document.getElementById('f-prop').value;
+    const p = properties().find(x => x.id === propId);
+    if (!p || !p.rooms) return;
+    const room = p.rooms.find(r => r.id === roomId);
+    if (!room) return;
+    const editId = document.getElementById('edit-id').value;
+    const occ = residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && r.roomId === roomId && r.id !== editId).length;
+    const free = Math.max(0, (room.beds || 0) - occ);
+    info.textContent = free > 0 ? '✅ ' + free + ' ' + t('freeBedsInRoom') : '❌ ' + t('roomFull');
+    info.style.color = free > 0 ? 'var(--green)' : 'var(--red)';
 }

@@ -230,6 +230,11 @@ export function render() {
             (hasMulti ? '<span class="tag multi-rate">' + history.length + ' ' + t('rateCount') + '</span>' : '') +
             (r.plannedCheckOut && isA ? '<span class="tag" style="color:var(--accent);border-color:var(--accent)">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : '') +
             '<span class="tag type">' + t(r.housingType || 'hostel') + '</span>' +
+            (r.roomId ? (() => {
+                const prop = properties().find(p => p.city === r.city && p.address === r.address && (p.housingType || 'hostel') === (r.housingType || 'hostel'));
+                const room = prop && prop.rooms ? prop.rooms.find(rm => rm.id === r.roomId) : null;
+                return room ? '<span class="tag" style="color:var(--accent);border-color:var(--accent)">🚪 ' + esc(room.name) + '</span>' : '';
+            })() : '') +
             '</div><div class="card-actions" onclick="event.stopPropagation()">' +
             (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '">📋</button>' : '') +
             '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
@@ -359,6 +364,13 @@ export function updateUI() {
     // Update finance category dropdown options
     const finCatEl = document.getElementById('fin-category');
     if (finCatEl) { finCatEl.options[0].textContent = '🔌 ' + t('utilities'); finCatEl.options[1].textContent = '📦 ' + t('supplies'); finCatEl.options[2].textContent = '🔧 ' + t('repairs'); finCatEl.options[3].textContent = '👤 ' + t('salary'); finCatEl.options[4].textContent = '📎 ' + t('otherCat'); }
+    // Room labels
+    setText('lbl-room-name', t('roomName'));
+    setText('lbl-room-floor', t('roomFloor'));
+    setText('lbl-room-beds', t('roomBeds'));
+    setText('btn-room-cancel', t('cancel'));
+    setText('btn-room-save', t('accept'));
+    setText('lbl-assign-room', t('assignRoom'));
     setText('lbl-prop-city', t('city'));
     setText('lbl-prop-addr', t('addr'));
     setText('lbl-prop-type', t('htype'));

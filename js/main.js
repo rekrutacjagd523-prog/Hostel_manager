@@ -25,12 +25,13 @@ import {
     openForm, closeForm, editResident, saveResident, checkOut, deleteResident,
     showHistory, removeRateSeg, onPropSelect, selectMode, selectedIds,
     toggleSelectMode, cancelSelect, toggleSelectItem, toggleSelectAll,
-    deleteSelected, checkoutSelected, getFreeSpots
+    deleteSelected, checkoutSelected, getFreeSpots, onRoomSelect
 } from './modules/residents.js';
 import {
     renderProperties, openPropForm, closePropForm, saveProp, deleteProp,
-    propSelectMode, togglePropSelect, cancelPropSelect, togglePropItem, toggleSelectAllProps,
-    deleteSelectedProps, goPropPage, changePropPageSize
+    togglePropSelect, cancelPropSelect, togglePropItem, toggleSelectAllProps,
+    deleteSelectedProps, goPropPage, changePropPageSize,
+    openRoomForm, closeRoomForm, saveRoom, deleteRoom
 } from './modules/properties.js';
 import {
     applyTheme, getThemePref, toggleTheme, setThemeOption, initTheme,
@@ -179,6 +180,7 @@ window.deleteResident = deleteResident;
 window.showHistory = showHistory;
 window.removeRateSeg = removeRateSeg;
 window.onPropSelect = onPropSelect;
+window.onRoomSelect = onRoomSelect;
 window.toggleSelectMode = toggleSelectMode;
 window.cancelSelect = cancelSelect;
 window.toggleSelectItem = toggleSelectItem;
@@ -192,6 +194,10 @@ window.openPropForm = openPropForm;
 window.closePropForm = closePropForm;
 window.saveProp = saveProp;
 window.deleteProp = deleteProp;
+window.openRoomForm = openRoomForm;
+window.closeRoomForm = closeRoomForm;
+window.saveRoom = saveRoom;
+window.deleteRoom = deleteRoom;
 window.togglePropSelect = togglePropSelect;
 window.cancelPropSelect = cancelPropSelect;
 window.togglePropItem = togglePropItem;
