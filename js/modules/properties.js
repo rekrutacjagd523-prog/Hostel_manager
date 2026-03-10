@@ -76,10 +76,10 @@ export function renderProperties() {
 export function togglePropSelect() {
     propSelectMode = !propSelectMode;
     selectedPropIds.clear();
-    if (window.render) window.render();
+    renderProperties();
 }
 
-export function cancelPropSelect() { propSelectMode = false; selectedPropIds.clear(); if (window.render) window.render(); }
+export function cancelPropSelect() { propSelectMode = false; selectedPropIds.clear(); renderProperties(); }
 
 export function togglePropItem(id, cb) {
     if (cb.checked) selectedPropIds.add(id); else selectedPropIds.delete(id);
