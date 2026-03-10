@@ -80,17 +80,19 @@ function handlePressStart(e) {
         if (!_pressTarget || _isScrolling) return;
         if (navigator.vibrate) navigator.vibrate(50);
 
+        const targetId = _pressTarget.id;
+
         if (_pressTarget.type === 'res') {
             toggleSelectMode();
             setTimeout(() => {
-                const cb = document.querySelector(`.sel-check[data-id="${_pressTarget.id}"]`);
-                if (cb) { cb.checked = true; toggleSelectItem(_pressTarget.id, cb); }
+                const cb = document.querySelector(`.sel-check[data-id="${targetId}"]`);
+                if (cb) { cb.checked = true; toggleSelectItem(targetId, cb); }
             }, 50);
         } else if (_pressTarget.type === 'prop') {
             togglePropSelect();
             setTimeout(() => {
-                const cb = document.querySelector(`.sel-check[data-pid="${_pressTarget.id}"]`);
-                if (cb) { cb.checked = true; togglePropItem(_pressTarget.id, cb); }
+                const cb = document.querySelector(`.sel-check[data-pid="${targetId}"]`);
+                if (cb) { cb.checked = true; togglePropItem(targetId, cb); }
             }, 50);
         }
         _pressTarget = null;
