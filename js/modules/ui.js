@@ -338,6 +338,13 @@ export function updateUI() {
     setText('lbl-finance', t('finance'));
     setText('btn-add-expense', t('addExpense'));
     setText('fin-cat-all', t('allCategories'));
+    // Update category tab labels
+    const catMap = { utilities: 'utilities', supplies: 'supplies', repairs: 'repairs', salary: 'salary', other: 'otherCat' };
+    const catIcons = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '👤', other: '📎' };
+    Object.keys(catMap).forEach(cat => {
+        const el = document.getElementById('fin-cat-' + cat);
+        if (el) el.innerHTML = catIcons[cat] + ' <span class="fin-cat-label">' + t(catMap[cat]) + '</span>';
+    });
     setText('lbl-fin-type', t('expType'));
     setText('lbl-fin-category', t('expenseCategory'));
     setText('lbl-fin-amount', t('expAmount'));
