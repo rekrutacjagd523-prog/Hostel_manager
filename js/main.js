@@ -56,6 +56,12 @@ import {
     goFinPage, changeFinPageSize, toggleExpSelect, cancelExpSelect,
     toggleExpItem, toggleSelectAllExp, deleteSelectedExp
 } from './modules/finance.js';
+import {
+    renderBookings, openBookingForm, closeBookingForm, saveBooking, deleteBooking,
+    setBookingStatus, checkInBooking, onBookPropSelect, setBookStatusFilter,
+    setBookViewMode, goCalMonth, goBookPage, changeBookPageSize,
+    toggleBookSelect, cancelBookSelect, toggleBookItem, toggleSelectAllBooks, deleteSelectedBooks
+} from './modules/bookings.js';
 
 // ===== LONG PRESS SELECTION LOGIC =====
 let _pressTimer = null;
@@ -139,6 +145,7 @@ window._properties = window._properties || [];
 window._subscription = window._subscription || { plan: 'free' };
 window._currentFilter = 'active';
 window._expenses = window._expenses || [];
+window._bookings = window._bookings || [];
 
 // UI
 window.render = render;
@@ -246,6 +253,26 @@ window.updatePlanBadge = function () {
     if (pro) badge.onclick = null;
     else badge.onclick = () => openSubscription();
 };
+
+// Bookings
+window.renderBookings = renderBookings;
+window.openBookingForm = openBookingForm;
+window.closeBookingForm = closeBookingForm;
+window.saveBooking = saveBooking;
+window.deleteBooking = deleteBooking;
+window.setBookingStatus = setBookingStatus;
+window.checkInBooking = checkInBooking;
+window.onBookPropSelect = onBookPropSelect;
+window.setBookStatusFilter = setBookStatusFilter;
+window.setBookViewMode = setBookViewMode;
+window.goCalMonth = goCalMonth;
+window.goBookPage = goBookPage;
+window.changeBookPageSize = changeBookPageSize;
+window.toggleBookSelect = toggleBookSelect;
+window.cancelBookSelect = cancelBookSelect;
+window.toggleBookItem = toggleBookItem;
+window.toggleSelectAllBooks = toggleSelectAllBooks;
+window.deleteSelectedBooks = deleteSelectedBooks;
 
 // Auth
 window.switchAuthLang = switchAuthLang;

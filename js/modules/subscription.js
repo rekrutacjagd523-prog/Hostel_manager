@@ -1,9 +1,9 @@
 // ===== SUBSCRIPTION MODULE =====
 import { t } from './constants.js';
-import { residents, properties, expenses } from './utils.js';
+import { residents, properties, expenses, bookings } from './utils.js';
 
 // Limits
-export const FREE_LIMITS = { residents: 10, properties: 3, expenses: 50 };
+export const FREE_LIMITS = { residents: 10, properties: 3, expenses: 50, bookings: 30 };
 
 // Check plan
 export function isPro() {
@@ -28,6 +28,11 @@ export function canAddProperty() {
 export function canAddExpense() {
   if (isPro()) return true;
   return expenses().length < FREE_LIMITS.expenses;
+}
+
+export function canAddBooking() {
+  if (isPro()) return true;
+  return bookings().filter(b => b.status !== 'cancelled').length < FREE_LIMITS.bookings;
 }
 
 // ---- Upgrade Modal ----

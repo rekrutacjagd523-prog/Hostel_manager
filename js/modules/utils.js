@@ -72,3 +72,9 @@ export function getRoomsForProp(propId) {
     const p = properties().find(x => x.id === propId);
     return (p && p.rooms) ? p.rooms : [];
 }
+
+export function bookings() { return window._bookings || []; }
+export function bookDoc(id) {
+    const uid = window._workspaceUid || window._currentUser?.uid;
+    return window._fb.doc(window._fb.db, 'users', uid, 'bookings', id);
+}

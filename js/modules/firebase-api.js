@@ -59,14 +59,21 @@ function startListening(uid) {
         if (window.renderExpenses) window.renderExpenses();
     });
     window._fb.expCol = expCol;
-    window._unsubs.push(u1, u2, u3, u4, u5);
+    // Listen for bookings
+    const bookCol = collection(db, "users", uid, "bookings");
+    const u6 = onSnapshot(query(bookCol, orderBy("startDate", "desc")), s => {
+        window._bookings = []; s.forEach(d => window._bookings.push({ id: d.id, ...d.data() }));
+        if (window.renderBookings) window.renderBookings();
+    });
+    window._fb.bookCol = bookCol;
+    window._unsubs.push(u1, u2, u3, u4, u5, u6);
 }
 
 function stopListening() {
     window._unsubs.forEach(u => u()); window._unsubs = [];
     window._residents = []; window._settings = { currency: 'PLN', lang: 'RU' };
     window._members = []; window._subscription = { plan: 'free' };
-    window._expenses = [];
+    window._expenses = []; window._bookings = [];
 }
 
 

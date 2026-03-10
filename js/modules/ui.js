@@ -5,6 +5,7 @@ import { calcCurrentPayment, buildRateHistory } from './rate-history.js';
 import { renderProperties } from './properties.js';
 import { selectMode, selectedIds } from './residents.js';
 import { renderFinSummary, renderExpenses } from './finance.js';
+import { renderBookings } from './bookings.js';
 
 export let currentFilter = 'active';
 window._currentFilter = currentFilter;
@@ -157,12 +158,13 @@ function renderGrouped() {
 }
 
 
-export { renderFinSummary, renderExpenses };
+export { renderFinSummary, renderExpenses, renderBookings };
 
 export function render() {
     const c = cur();
     renderFinSummary();
     renderExpenses();
+    renderBookings();
     document.getElementById('stat-currency-icon').textContent = c.symbolU;
     const all = residents();
     const cities = [...new Set(all.map(r => r.city).filter(Boolean))].sort();
@@ -384,6 +386,29 @@ export function updateUI() {
     document.getElementById('btn-generate').textContent = t('generate');
     const opts = document.querySelectorAll('#f-type option');
     HTYPES.forEach((h, i) => { if (opts[i]) opts[i].textContent = t(h); });
+    setText('lbl-bookings', t('bookings'));
+    setText('btn-add-booking', t('addBooking'));
+    setText('book-tab-all', t('allCategories'));
+    setText('lbl-bk-guest', t('guestName'));
+    setText('lbl-bk-phone', t('guestPhone'));
+    setText('lbl-bk-prop', t('selectProp'));
+    setText('lbl-bk-room', t('assignRoom'));
+    setText('lbl-bk-start', t('startDate'));
+    setText('lbl-bk-end', t('endDate'));
+    setText('lbl-bk-amount', t('bookingAmount'));
+    setText('lbl-bk-status', t('bookingStatus'));
+    setText('lbl-bk-notes', t('bookingNotes'));
+    setText('btn-bk-cancel', t('cancel'));
+    setText('btn-bk-save', t('accept'));
+    const bkStatusEl = document.getElementById('bk-status');
+    if (bkStatusEl) { bkStatusEl.options[0].textContent = '⏳ ' + t('bkPending'); bkStatusEl.options[1].textContent = '✓ ' + t('bkConfirmed'); bkStatusEl.options[2].textContent = '✕ ' + t('bkCancelled'); bkStatusEl.options[3].textContent = '🏠 ' + t('bkCheckedIn'); }
+    // Update booking status tab labels
+    const bkTabPending = document.getElementById('book-tab-pending');
+    const bkTabConfirmed = document.getElementById('book-tab-confirmed');
+    const bkTabCancelled = document.getElementById('book-tab-cancelled');
+    if (bkTabPending) bkTabPending.textContent = '⏳ ' + t('bkPending');
+    if (bkTabConfirmed) bkTabConfirmed.textContent = '✓ ' + t('bkConfirmed');
+    if (bkTabCancelled) bkTabCancelled.textContent = '✕ ' + t('bkCancelled');
     render();
 }
 
@@ -411,6 +436,14 @@ export function toggleSection(section) {
         el.classList.toggle('collapsed');
         toggle.textContent = el.classList.contains('collapsed') ? '▶' : '▼';
         localStorage.setItem(key, el.classList.contains('collapsed') ? '1' : '0');
+    } else if (section === 'bookings') {
+        const el = document.getElementById('bookings-section');
+        const title = document.getElementById('booking-section-title');
+        const toggle = document.getElementById('toggle-bookings');
+        el.classList.toggle('collapsed');
+        title.classList.toggle('collapsed');
+        toggle.textContent = el.classList.contains('collapsed') ? '▶' : '▼';
+        localStorage.setItem(key, el.classList.contains('collapsed') ? '1' : '0');
     }
 }
 
@@ -428,5 +461,10 @@ export function restoreCollapsed() {
     if (localStorage.getItem('hostel-collapsed-residents') === '1') {
         document.getElementById('residents-section').classList.add('collapsed');
         document.getElementById('toggle-residents').textContent = '▶';
+    }
+    if (localStorage.getItem('hostel-collapsed-bookings') === '1') {
+        document.getElementById('bookings-section').classList.add('collapsed');
+        document.getElementById('booking-section-title').classList.add('collapsed');
+        document.getElementById('toggle-bookings').textContent = '▶';
     }
 }

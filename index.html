@@ -156,6 +156,27 @@
           объект</button></span></div>
     <div class="prop-list section-content" id="prop-list"></div>
 
+    <!-- Bookings Section -->
+    <div class="section-title" id="booking-section-title" onclick="toggleSection('bookings')">
+      <span>📅 <span id="lbl-bookings">Бронирования</span> <span class="section-toggle" id="toggle-bookings">▼</span></span>
+      <span onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center">
+        <button class="tab book-view-btn" id="btn-book-list" onclick="setBookViewMode('list')" style="padding:4px 10px;font-size:11px;background:var(--accent);color:#fff">📋</button>
+        <button class="tab book-view-btn" id="btn-book-cal" onclick="setBookViewMode('calendar')" style="padding:4px 10px;font-size:11px">📅</button>
+        <button class="btn btn-primary" onclick="openBookingForm()" style="padding:6px 14px;font-size:12px" id="btn-add-booking">+ Бронь</button>
+      </span>
+    </div>
+    <div class="section-content" id="bookings-section">
+      <div style="display:flex;gap:4px;padding:8px 24px;flex-wrap:wrap" id="book-status-tabs">
+        <button class="tab book-status-tab" data-status="" onclick="setBookStatusFilter('')" id="book-tab-all">Все</button>
+        <button class="tab book-status-tab" data-status="pending" onclick="setBookStatusFilter('pending')" id="book-tab-pending">⏳</button>
+        <button class="tab book-status-tab" data-status="confirmed" onclick="setBookStatusFilter('confirmed')" id="book-tab-confirmed">✓</button>
+        <button class="tab book-status-tab" data-status="cancelled" onclick="setBookStatusFilter('cancelled')" id="book-tab-cancelled">✕</button>
+      </div>
+      <div id="calendar-container" style="display:none;padding:0 24px 12px"></div>
+      <div id="bookings-list" class="list" style="padding:0 24px 12px"></div>
+      <div class="pagination" id="booking-pagination" style="padding:0 24px 12px"></div>
+    </div>
+
     <!-- Finance Section -->
     <div class="section-title" id="fin-section-title" onclick="toggleSection('finance')"><span>💰 <span
           id="lbl-finance">Финансы</span> <span class="section-toggle" id="toggle-finance">▼</span></span> <span
@@ -532,6 +553,67 @@
         <div class="form-btns" style="margin-top:12px">
           <button class="btn btn-secondary" onclick="closeRoomForm()" id="btn-room-cancel">Отмена</button>
           <button class="btn btn-primary" onclick="saveRoom()" id="btn-room-save">Сохранить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="overlay hidden" id="booking-overlay">
+      <div class="modal" style="max-width:460px">
+        <h3 id="booking-form-title">📅 Новая бронь</h3>
+        <input type="hidden" id="bk-edit-id">
+        <div class="form-row">
+          <div>
+            <label id="lbl-bk-guest">Имя гостя</label>
+            <input class="field" id="bk-guest" placeholder="">
+          </div>
+          <div>
+            <label id="lbl-bk-phone">Телефон</label>
+            <input class="field" id="bk-phone" type="tel" placeholder="">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label id="lbl-bk-prop">Объект</label>
+            <select class="field" id="bk-prop" onchange="onBookPropSelect()"></select>
+          </div>
+          <div id="bk-room-row" style="display:none">
+            <label id="lbl-bk-room">Комната</label>
+            <select class="field" id="bk-room"><option value="">—</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label id="lbl-bk-start">Дата заезда</label>
+            <input class="field" id="bk-start" type="date">
+          </div>
+          <div>
+            <label id="lbl-bk-end">Дата выезда</label>
+            <input class="field" id="bk-end" type="date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label id="lbl-bk-amount">Сумма</label>
+            <input class="field" id="bk-amount" type="number" min="0">
+          </div>
+          <div>
+            <label id="lbl-bk-status">Статус</label>
+            <select class="field" id="bk-status">
+              <option value="pending" id="opt-bk-pending">⏳ Ожидает</option>
+              <option value="confirmed" id="opt-bk-confirmed">✓ Подтверждено</option>
+              <option value="cancelled" id="opt-bk-cancelled">✕ Отменено</option>
+              <option value="checkedIn" id="opt-bk-checkedin">🏠 Заселён</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label id="lbl-bk-notes">Заметки</label>
+          <input class="field" id="bk-notes" placeholder="">
+        </div>
+        <div class="form-btns" style="margin-top:12px">
+          <button class="btn btn-secondary" onclick="closeBookingForm()" id="btn-bk-cancel">Отмена</button>
+          <button class="btn btn-primary" onclick="saveBooking()" id="btn-bk-save">Сохранить</button>
         </div>
       </div>
     </div>
