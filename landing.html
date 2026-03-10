@@ -443,6 +443,49 @@
       color: #0d0d14; font-size: 12px;
     }
 
+
+    /* ── MULTILANG ── */
+    .t { display: none; }
+    body[data-lang="pl"] .t-pl,
+    body[data-lang="ua"] .t-ua,
+    body[data-lang="ru"] .t-ru,
+    body[data-lang="en"] .t-en { display: inline; }
+    body[data-lang="pl"] .t-pl-b,
+    body[data-lang="ua"] .t-ua-b,
+    body[data-lang="ru"] .t-ru-b,
+    body[data-lang="en"] .t-en-b { display: block; }
+
+    /* Lang switcher */
+    .lang-switcher {
+      position: relative;
+    }
+    .lang-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
+    .lang-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: #1a1a2e; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0,0,0,.4);
+      min-width: 140px;
+      display: none; z-index: 300;
+    }
+    .lang-dropdown.open { display: block; }
+    .lang-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px; font-size: 13px; font-weight: 500;
+      color: var(--text2); cursor: pointer; transition: background .15s;
+    }
+    .lang-option:hover { background: rgba(255,255,255,.06); color: var(--text); }
+    .lang-option.active { color: var(--accent); font-weight: 700; }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -461,7 +504,7 @@
   </style>
 </head>
 
-<body>
+<body data-lang="pl">
 
   <!-- NAV -->
   <nav id="navbar">
@@ -472,11 +515,24 @@
       <span>Hostel Manager</span>
     </a>
     <div class="nav-links">
-      <a href="#features" class="nav-link hide-mob">Funkcje</a>
-      <a href="#dla-kogo" class="nav-link hide-mob">Dla kogo</a>
+      <a href="#features" class="nav-link hide-mob"><span class="t t-pl">Funkcje</span><span class="t t-ua">Функції</span><span class="t t-ru">Функции</span><span class="t t-en">Features</span></a>
+      <a href="#dla-kogo" class="nav-link hide-mob"><span class="t t-pl">Dla kogo</span><span class="t t-ua">Для кого</span><span class="t t-ru">Для кого</span><span class="t t-en">Who it's for</span></a>
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" onclick="toggleLangDropdown()">
+          <span id="langFlag">🇵🇱</span>
+          <span id="langCode">PL</span>
+          <i data-lucide="chevron-down" style="width:12px;height:12px"></i>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="lang-option" data-lang="pl" onclick="setLang('pl')">🇵🇱 Polski</div>
+          <div class="lang-option" data-lang="ua" onclick="setLang('ua')">🇺🇦 Українська</div>
+          <div class="lang-option" data-lang="ru" onclick="setLang('ru')">🇷🇺 Русский</div>
+          <div class="lang-option" data-lang="en" onclick="setLang('en')">🇬🇧 English</div>
+        </div>
+      </div>
       <a href="index.html" class="nav-cta">
         <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
-        Zaloguj się
+        <span class="t t-pl">Zaloguj się</span><span class="t t-ua">Увійти</span><span class="t t-ru">Войти</span><span class="t t-en">Sign in</span>
       </a>
     </div>
   </nav>
@@ -485,24 +541,23 @@
   <section class="hero">
     <div class="hero-badge">
       <i data-lucide="zap" style="width:12px;height:12px"></i>
-      Bezpłatnie — bez karty kredytowej
+      <span class="t t-pl">Bezpłatnie — bez karty kredytowej</span><span class="t t-ua">Безкоштовно — без карти</span><span class="t t-ru">Бесплатно — без карты</span><span class="t t-en">Free — no credit card needed</span>
     </div>
 
-    <h1>Zarządzaj kwaterami<br>pracowniczymi <em>bez stresu</em></h1>
+    <h1><span class="t t-pl">Zarządzaj kwaterami<br>pracowniczymi <em>bez stresu</em></span><span class="t t-ua">Керуйте квартирами<br>для працівників <em>без стресу</em></span><span class="t t-ru">Управляйте жильём<br>для работников <em>без стресса</em></span><span class="t t-en">Manage worker housing<br><em>without the stress</em></span></h1>
 
     <p class="hero-sub">
-      Lokatorzy, obiekty, płatności, rezerwacje i finanse — wszystko w jednym miejscu.
-      Koniec z Excelem.
+      <span class="t t-pl">Lokatorzy, obiekty, płatności, rezerwacje i finanse — wszystko w jednym miejscu. Koniec z Excelem.</span><span class="t t-ua">Мешканці, об'єкти, платежі, бронювання та фінанси — все в одному місці. Кінець Excel.</span><span class="t t-ru">Жильцы, объекты, платежи, бронирования и финансы — всё в одном месте. Конец Excel.</span><span class="t t-en">Residents, properties, payments, bookings and finances — all in one place. Goodbye Excel.</span>
     </p>
 
     <div class="hero-actions">
       <a href="index.html" class="btn-hero-primary">
         <i data-lucide="rocket" style="width:16px;height:16px"></i>
-        Rozpocznij za darmo
+        <span class="t t-pl">Rozpocznij za darmo</span><span class="t t-ua">Почати безкоштовно</span><span class="t t-ru">Начать бесплатно</span><span class="t t-en">Get started free</span>
       </a>
       <a href="#features" class="btn-hero-sec">
         <i data-lucide="play-circle" style="width:16px;height:16px"></i>
-        Zobacz funkcje
+        <span class="t t-pl">Zobacz funkcje</span><span class="t t-ua">Переглянути функції</span><span class="t t-ru">Посмотреть функции</span><span class="t t-en">See features</span>
       </a>
     </div>
 
@@ -623,73 +678,73 @@
   <div class="stats-banner" id="stats-banner">
     <div class="stat-item">
       <div class="stat-item-val">100%</div>
-      <div class="stat-item-label">Bezpłatne</div>
-      <div class="stat-item-note">bez karty, bez ukrytych opłat</div>
+      <div class="stat-item-label"><span class="t t-pl">Bezpłatne</span><span class="t t-ua">Безкоштовно</span><span class="t t-ru">Бесплатно</span><span class="t t-en">Free</span></div>
+      <div class="stat-item-note"><span class="t t-pl">bez karty, bez ukrytych opłat</span><span class="t t-ua">без карти, без прихованих платежів</span><span class="t t-ru">без карты, без скрытых платежей</span><span class="t t-en">no card, no hidden fees</span></div>
     </div>
     <div class="stat-item">
       <div class="stat-item-val">5</div>
-      <div class="stat-item-label">Języków</div>
+      <div class="stat-item-label"><span class="t t-pl">Języków</span><span class="t t-ua">Мов</span><span class="t t-ru">Языков</span><span class="t t-en">Languages</span></div>
       <div class="stat-item-note">PL, UA, RU, EN, LT</div>
     </div>
     <div class="stat-item">
       <div class="stat-item-val">∞</div>
-      <div class="stat-item-label">Obiektów i lokatorów</div>
-      <div class="stat-item-note">bez limitów w planie Pro</div>
+      <div class="stat-item-label"><span class="t t-pl">Obiektów i lokatorów</span><span class="t t-ua">Об'єктів та мешканців</span><span class="t t-ru">Объектов и жильцов</span><span class="t t-en">Properties & residents</span></div>
+      <div class="stat-item-note"><span class="t t-pl">bez limitów w planie Pro</span><span class="t t-ua">без лімітів у плані Pro</span><span class="t t-ru">без лимитов в плане Pro</span><span class="t t-en">unlimited in Pro plan</span></div>
     </div>
   </div>
 
   <!-- FEATURES -->
   <section class="features" id="features">
-    <h2 class="features-title">Wszystko czego potrzebujesz</h2>
-    <p class="features-sub">Jeden system zamiast dziesiątek arkuszy kalkulacyjnych</p>
+    <h2 class="features-title"><span class="t t-pl">Wszystko czego potrzebujesz</span><span class="t t-ua">Все що вам потрібно</span><span class="t t-ru">Всё что вам нужно</span><span class="t t-en">Everything you need</span></h2>
+    <p class="features-sub"><span class="t t-pl">Jeden system zamiast dziesiątek arkuszy kalkulacyjnych</span><span class="t t-ua">Одна система замість десятків таблиць</span><span class="t t-ru">Одна система вместо десятков таблиц</span><span class="t t-en">One system instead of dozens of spreadsheets</span></p>
 
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon orange">
           <i data-lucide="users" style="width:24px;height:24px"></i>
         </div>
-        <h3>Baza Lokatorów</h3>
-        <p>Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika. Historia stawek, awatary, filtry.</p>
+        <h3><span class="t t-pl">Baza Lokatorów</span><span class="t t-ua">База Мешканців</span><span class="t t-ru">База Жильцов</span><span class="t t-en">Resident Database</span></h3>
+        <p><span class="t t-pl">Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika. Historia stawek, awatary, filtry.</span><span class="t t-ua">Відстежуйте заїзди, виїзди та час перебування кожного мешканця. Історія ставок, аватари, фільтри.</span><span class="t t-ru">Отслеживайте заселения, выселения и время проживания каждого жильца. История ставок, аватары, фильтры.</span><span class="t t-en">Track check-ins, check-outs and exact stay duration for each worker. Rate history, avatars, filters.</span></p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon green">
           <i data-lucide="building-2" style="width:24px;height:24px"></i>
         </div>
-        <h3>Obiekty i Pokoje</h3>
-        <p>Zarządzaj wieloma hostelami, mieszkaniami i domami. Struktura pokoi, zajętość miejsc w czasie rzeczywistym.</p>
+        <h3><span class="t t-pl">Obiekty i Pokoje</span><span class="t t-ua">Об'єкти та Кімнати</span><span class="t t-ru">Объекты и Комнаты</span><span class="t t-en">Properties & Rooms</span></h3>
+        <p><span class="t t-pl">Zarządzaj wieloma hostelami, mieszkaniami i domami. Struktura pokoi, zajętość miejsc w czasie rzeczywistym.</span><span class="t t-ua">Керуйте кількома хостелами, квартирами та будинками. Структура кімнат, заповненість місць у реальному часі.</span><span class="t t-ru">Управляйте несколькими хостелами, квартирами и домами. Структура комнат, занятость мест в реальном времени.</span><span class="t t-en">Manage multiple hostels, apartments and houses. Room structure, occupancy in real time.</span></p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon blue">
           <i data-lucide="calendar" style="width:24px;height:24px"></i>
         </div>
-        <h3>Rezerwacje</h3>
-        <p>Kalendarz rezerwacji z widokiem miesięcznym. Statusy: oczekuje, potwierdzona, zameldowany, anulowana.</p>
+        <h3><span class="t t-pl">Rezerwacje</span><span class="t t-ua">Бронювання</span><span class="t t-ru">Бронирования</span><span class="t t-en">Bookings</span></h3>
+        <p><span class="t t-pl">Kalendarz rezerwacji z widokiem miesięcznym. Statusy: oczekuje, potwierdzona, zameldowany, anulowana.</span><span class="t t-ua">Календар бронювань з місячним виглядом. Статуси: очікує, підтверджено, заселений, скасовано.</span><span class="t t-ru">Календарь бронирований с месячным видом. Статусы: ожидает, подтверждено, заселён, отменено.</span><span class="t t-en">Booking calendar with monthly view. Statuses: pending, confirmed, checked in, cancelled.</span></p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon teal">
           <i data-lucide="trending-up" style="width:24px;height:24px"></i>
         </div>
-        <h3>Moduł Finansowy</h3>
-        <p>Rejestruj przychody i wydatki według kategorii. Prognoza dochodu, zysk netto, powiązanie z obiektami.</p>
+        <h3><span class="t t-pl">Moduł Finansowy</span><span class="t t-ua">Фінансовий Модуль</span><span class="t t-ru">Финансовый Модуль</span><span class="t t-en">Finance Module</span></h3>
+        <p><span class="t t-pl">Rejestruj przychody i wydatki według kategorii. Prognoza dochodu, zysk netto, powiązanie z obiektami.</span><span class="t t-ua">Реєструйте доходи та витрати за категоріями. Прогноз доходу, чистий прибуток, прив'язка до об'єктів.</span><span class="t t-ru">Регистрируйте доходы и расходы по категориям. Прогноз дохода, чистая прибыль, привязка к объектам.</span><span class="t t-en">Log income and expenses by category. Revenue forecast, net profit, link to properties.</span></p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon purple">
           <i data-lucide="file-text" style="width:24px;height:24px"></i>
         </div>
-        <h3>Raporty PDF / Excel</h3>
-        <p>Generuj przejrzyste raporty finansowe, lokatorów i obiektów jednym kliknięciem — za dowolny okres.</p>
+        <h3><span class="t t-pl">Raporty PDF / Excel</span><span class="t t-ua">Звіти PDF / Excel</span><span class="t t-ru">Отчёты PDF / Excel</span><span class="t t-en">PDF / Excel Reports</span></h3>
+        <p><span class="t t-pl">Generuj przejrzyste raporty finansowe, lokatorów i obiektów jednym kliknięciem — za dowolny okres.</span><span class="t t-ua">Генеруйте чіткі фінансові звіти, мешканців та об'єктів одним кліком — за будь-який період.</span><span class="t t-ru">Генерируйте чёткие финансовые отчёты, жильцов и объектов одним кликом — за любой период.</span><span class="t t-en">Generate clear financial, resident and property reports in one click — for any period.</span></p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon red">
           <i data-lucide="share-2" style="width:24px;height:24px"></i>
         </div>
-        <h3>Wspólna Przestrzeń</h3>
-        <p>Zaproś współpracowników linkiem. Dane synchronizowane w chmurze Firebase w czasie rzeczywistym.</p>
+        <h3><span class="t t-pl">Wspólna Przestrzeń</span><span class="t t-ua">Спільний Простір</span><span class="t t-ru">Общее Пространство</span><span class="t t-en">Shared Workspace</span></h3>
+        <p><span class="t t-pl">Zaproś współpracowników linkiem. Dane synchronizowane w chmurze Firebase w czasie rzeczywistym.</span><span class="t t-ua">Запросіть колег посиланням. Дані синхронізуються в хмарі Firebase в реальному часі.</span><span class="t t-ru">Пригласите коллег по ссылке. Данные синхронизируются в облаке Firebase в реальном времени.</span><span class="t t-en">Invite colleagues with a link. Data synced in Firebase cloud in real time.</span></p>
       </div>
     </div>
   </section>
@@ -697,22 +752,22 @@
   <!-- FOR WHOM -->
   <section class="for-whom" id="dla-kogo">
     <div class="for-whom-inner">
-      <h2 class="for-whom-title">Dla kogo jest Hostel Manager?</h2>
+      <h2 class="for-whom-title"><span class="t t-pl">Dla kogo</span><span class="t t-ua">Для кого</span><span class="t t-ru">Для кого</span><span class="t t-en">Who it's for</span> jest Hostel Manager?</h2>
       <div class="for-whom-grid">
         <div class="for-whom-card">
           <div class="for-whom-icon">🏢</div>
-          <h4>Agencje pracy</h4>
-          <p>Zarządzasz dziesiątkami pracowników rozlokowanych w różnych obiektach? Jeden system dla całej floty kwater.</p>
+          <h4><span class="t t-pl">Agencje pracy</span><span class="t t-ua">Агентства праці</span><span class="t t-ru">Кадровые агентства</span><span class="t t-en">Staffing agencies</span></h4>
+          <p><span class="t t-pl">Zarządzasz dziesiątkami pracowników rozlokowanych w różnych obiektach? Jeden system dla całej floty kwater.</span><span class="t t-ua">Керуєте десятками працівників у різних об'єктах? Одна система для всього парку кварир.</span><span class="t t-ru">Управляете десятками работников в разных объектах? Одна система для всего парка жилья.</span><span class="t t-en">Managing dozens of workers across different properties? One system for your entire housing fleet.</span></p>
         </div>
         <div class="for-whom-card">
           <div class="for-whom-icon">🏨</div>
-          <h4>Właściciele hosteli</h4>
-          <p>Wynajmujesz miejsca bezpośrednio pracownikom? Śledź kto, gdzie i ile płaci — bez arkuszy.</p>
+          <h4><span class="t t-pl">Właściciele hosteli</span><span class="t t-ua">Власники хостелів</span><span class="t t-ru">Владельцы хостелов</span><span class="t t-en">Hostel owners</span></h4>
+          <p><span class="t t-pl">Wynajmujesz miejsca bezpośrednio pracownikom? Śledź kto, gdzie i ile płaci — bez arkuszy.</span><span class="t t-ua">Здаєте місця безпосередньо працівникам? Відстежуйте хто, де і скільки платить — без таблиць.</span><span class="t t-ru">Сдаёте места напрямую работникам? Отслеживайте кто, где и сколько платит — без таблиц.</span><span class="t t-en">Renting directly to workers? Track who, where and how much they pay — no spreadsheets.</span></p>
         </div>
         <div class="for-whom-card">
           <div class="for-whom-icon">🏠</div>
-          <h4>Zarządcy nieruchomości</h4>
-          <p>Wiele mieszkań i domów pod wynajem pracowniczy? Kontroluj obłożenie i finanse wszystkich obiektów.</p>
+          <h4><span class="t t-pl">Zarządcy nieruchomości</span><span class="t t-ua">Керуючі нерухомістю</span><span class="t t-ru">Управляющие недвижимостью</span><span class="t t-en">Property managers</span></h4>
+          <p><span class="t t-pl">Wiele mieszkań i domów pod wynajem pracowniczy? Kontroluj obłożenie i finanse wszystkich obiektów.</span><span class="t t-ua">Кілька квартир та будинків для оренди? Контролюйте заповненість та фінанси всіх об'єктів.</span><span class="t t-ru">Несколько квартир и домов под рабочую аренду? Контролируйте занятость и финансы всех объектов.</span><span class="t t-en">Multiple apartments and houses for worker rental? Control occupancy and finances across all properties.</span></p>
         </div>
       </div>
     </div>
@@ -720,11 +775,11 @@
 
   <!-- CTA -->
   <section class="cta">
-    <h2>Gotowy na koniec z Excelem?</h2>
-    <p>Dołącz bezpłatnie. Pierwsze kroki zajmą 5 minut.</p>
+    <h2><span class="t t-pl">Gotowy na koniec z Excelem?</span><span class="t t-ua">Готові покінчити з Excel?</span><span class="t t-ru">Готовы покончить с Excel?</span><span class="t t-en">Ready to ditch Excel?</span></h2>
+    <p><span class="t t-pl">Dołącz bezpłatnie. Pierwsze kroki zajmą 5 minut.</span><span class="t t-ua">Приєднайтесь безкоштовно. Перші кроки займуть 5 хвилин.</span><span class="t t-ru">Присоединяйтесь бесплатно. Первые шаги займут 5 минут.</span><span class="t t-en">Join for free. First steps take 5 minutes.</span></p>
     <a href="index.html" class="btn-hero-primary" style="font-size:17px;padding:16px 36px">
       <i data-lucide="zap" style="width:18px;height:18px"></i>
-      Wypróbuj bezpłatnie
+      <span class="t t-pl">Wypróbuj bezpłatnie</span><span class="t t-ua">Спробувати безкоштовно</span><span class="t t-ru">Попробовать бесплатно</span><span class="t t-en">Try for free</span>
     </a>
   </section>
 
@@ -741,23 +796,49 @@
   </footer>
 
   <script>
+    // ── LANG ──
+    const LANG_FLAGS = { pl: '🇵🇱', ua: '🇺🇦', ru: '🇷🇺', en: '🇬🇧' };
+    const LANG_CODES = { pl: 'PL', ua: 'UA', ru: 'RU', en: 'EN' };
+
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      localStorage.setItem('hm-landing-lang', lang);
+      document.getElementById('langFlag').textContent = LANG_FLAGS[lang] || '🇵🇱';
+      document.getElementById('langCode').textContent = LANG_CODES[lang] || 'PL';
+      document.querySelectorAll('.lang-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.lang === lang);
+      });
+      closeLangDropdown();
+    }
+
+    function toggleLangDropdown() {
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+    function closeLangDropdown() {
+      document.getElementById('langDropdown').classList.remove('open');
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#langSwitcher')) closeLangDropdown();
+    });
+
+    // Init lang
+    const savedLang = localStorage.getItem('hm-landing-lang')
+      || (navigator.language.startsWith('uk') ? 'ua'
+        : navigator.language.startsWith('ru') ? 'ru'
+        : navigator.language.startsWith('en') ? 'en' : 'pl');
+    setLang(savedLang);
+
+    // ── ICONS / NAV / SCROLL ──
     lucide.createIcons();
 
-    // Sticky nav
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 40);
     });
 
-    // Scroll animations
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-        }
-      });
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.2 });
-
     document.querySelectorAll('.stat-item, .feature-card').forEach(el => observer.observe(el));
   </script>
 
