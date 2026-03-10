@@ -8,6 +8,7 @@ import { selectMode, selectedIds } from './residents.js';
 export let currentFilter = 'active';
 export let pageSize = 10;
 export let currentPage = 1;
+export let groupByProp = false;
 
 export function setCurrentFilter(f) { currentFilter = f; }
 export function setCurrentPage(p) { currentPage = p; }
@@ -22,6 +23,87 @@ export function setFilter(f, btn) {
 
 export function goPage(p) { currentPage = p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 export function changePageSize(v) { pageSize = parseInt(v); currentPage = 1; render(); }
+
+export function toggleGroupByProp() {
+    groupByProp = !groupByProp;
+    const btn = document.getElementById('btn-group-prop');
+    if (btn) btn.style.background = groupByProp ? 'var(--accent)' : '';
+    if (btn) btn.style.color = groupByProp ? '#fff' : '';
+    render();
+}
+
+function daysBetweenDates(a, b) {
+    return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+export function renderCheckoutForecast() {
+    const block = document.getElementById('forecast-block');
+    if (!block) return;
+    const today = todayStr();
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() + 30);
+    const cutoffStr = cutoff.toISOString().slice(0, 10);
+    const upcoming = residents()
+        .filter(r => !r.checkOutDate && r.plannedCheckOut && r.plannedCheckOut >= today && r.plannedCheckOut <= cutoffStr)
+        .sort((a, b) => a.plannedCheckOut.localeCompare(b.plannedCheckOut));
+    if (!upcoming.length) { block.style.display = 'none'; return; }
+    block.style.display = 'block';
+    const urgentColor = d => d <= 3 ? 'var(--red)' : d <= 7 ? '#f59e0b' : 'var(--text3)';
+    block.innerHTML = `
+        <div style="background:var(--surface);border:1px solid var(--border3);border-radius:12px;padding:12px 16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">${t('checkoutSoon')} (${upcoming.length})</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+                ${upcoming.map(r => {
+        const days = daysBetweenDates(today, r.plannedCheckOut);
+        const name = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
+        return `<div style="display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:8px;padding:6px 10px;font-size:12px">
+                        <span>${esc(name)}</span>
+                        <span style="font-weight:700;color:${urgentColor(days)}">${days} ${t('forecastDays')}</span>
+                        <button onclick="editResident('${r.id}')" style="background:none;border:none;cursor:pointer;padding:0;font-size:12px;color:var(--text3)">✏️</button>
+                    </div>`;
+    }).join('')}
+            </div>
+        </div>`;
+}
+
+function renderGrouped() {
+    const list = document.getElementById('residents-list');
+    const pgBar = document.getElementById('pagination-bar');
+    pgBar.innerHTML = '';
+    const active = residents().filter(r => !r.checkOutDate);
+    // Group by city+address
+    const groups = {};
+    active.forEach(r => {
+        const key = (r.city || '') + '||' + (r.address || '');
+        if (!groups[key]) groups[key] = { city: r.city, address: r.address, items: [] };
+        groups[key].items.push(r);
+    });
+    const keys = Object.keys(groups);
+    if (!keys.length) { list.innerHTML = '<div class=\"empty\">👥<br><br>' + t('noData') + '</div>'; return; }
+    let h = '';
+    keys.forEach(key => {
+        const g = groups[key];
+        const total = g.items.reduce((s, r) => s + calcCurrentPayment(r), 0);
+        const propLabel = (g.city || '') + (g.address ? ' · ' + g.address : '') || '—';
+        const gid = 'grp-' + key.replace(/[^a-z0-9]/gi, '_');
+        h += `<div style=\"background:var(--surface);border:1px solid var(--border3);border-radius:12px;margin-bottom:10px;overflow:hidden\">`;
+        h += `<div onclick=\"document.getElementById('${gid}').classList.toggle('collapsed')\" style=\"display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none\">`;
+        h += `<div><div style=\"font-size:13px;font-weight:700\">${esc(propLabel)}</div><div style=\"font-size:11px;color:var(--text3)\">${g.items.length} ${t('residents').toLowerCase()}</div></div>`;
+        h += `<div style=\"text-align:right\"><div style=\"font-size:14px;font-weight:700;color:var(--accent)\">${fmtUi(total)}</div><div style=\"font-size:11px;color:var(--text3)\">${t('propTotal')}</div></div>`;
+        h += `</div>`;
+        h += `<div id=\"${gid}\" style=\"border-top:1px solid var(--border3)\">`;
+        g.items.forEach(r => {
+            const pay = calcCurrentPayment(r);
+            const name = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
+            h += `<div style=\"display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2)\">`;
+            h += `<div style=\"display:flex;align-items:center;gap:6px;font-size:13px\">${r.isSenior ? '<span style=\"color:#f59e0b\">⭐</span>' : ''}<span>${esc(name)}</span>${r.plannedCheckOut ? '<span style=\"font-size:11px;color:var(--accent)\">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : ''}</div>`;
+            h += `<div style=\"display:flex;align-items:center;gap:10px\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\">↪</button></div>`;
+            h += `</div>`;
+        });
+        h += `</div></div>`;
+    });
+    list.innerHTML = h;
+}
+
 
 export function render() {
     const c = cur();
@@ -44,6 +126,8 @@ export function render() {
     document.getElementById('stat-total').textContent = all.length;
     const totalOwed = active.reduce((s, r) => s + calcCurrentPayment(r), 0);
     document.getElementById('stat-owed').textContent = fmtUi(totalOwed);
+    renderCheckoutForecast();
+    if (groupByProp) { renderGrouped(); renderProperties(); return; }
     const filtered = all.filter(r => {
         if (currentFilter === 'active') return !r.checkOutDate;
         if (currentFilter === 'checkedOut') return !!r.checkOutDate;
@@ -79,7 +163,7 @@ export function render() {
         const hasMulti = history.length > 1;
         const resNameVal = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
         return '<div class="card' + (isA ? '' : ' inactive') + '" style="display:flex;align-items:flex-start;gap:8px">' + (selectMode ? '<input type="checkbox" class="sel-check item-check" data-id="' + r.id + '" ' + (selectedIds.has(r.id) ? 'checked' : '') + ' onchange="toggleSelectItem(\'' + r.id + '\',this)" style="margin-top:4px;flex-shrink:0">' : '') + '<div style="flex:1"><div class="card-top"><div>' +
-            '<div class="card-name">' + esc(resNameVal) + '</div>' +
+            '<div class="card-name">' + (r.isSenior ? '<span style="color:#f59e0b;margin-right:4px" title="' + t('seniorRole') + '">⭐</span>' : '') + esc(resNameVal) + '</div>' +
             '<div class="card-meta">' + (r.city ? esc(r.city) : '') + (r.address ? ' · ' + esc(r.address) : '') + '</div>' +
             '</div><div class="card-payment"><div class="card-amount">' + fmtUi(pay) + '</div>' +
             '<div class="card-amount-label">' + t('topay') + '</div></div></div>' +
@@ -88,11 +172,12 @@ export function render() {
             '<span class="tag' + (isA ? ' days-active' : '') + '">' + daysLabel(r) + '</span>' +
             '<span class="tag">' + fmtUi(r.monthlyRate) + '/' + t('rate').split('/')[1] + '</span>' +
             (hasMulti ? '<span class="tag multi-rate">' + history.length + ' ' + t('rateCount') + '</span>' : '') +
+            (r.plannedCheckOut && isA ? '<span class="tag" style="color:var(--accent);border-color:var(--accent)">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : '') +
             '<span class="tag type">' + t(r.housingType || 'hostel') + '</span>' +
             '</div><div class="card-actions">' +
             (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '">📋</button>' : '') +
-            '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">✏️</button>' +
-            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">↪</button>' : '') +
+            '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
+            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '↪' + '</button>' : '') +
             '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">🗑</button>' +
             '</div></div></div></div>';
     }).join('');
@@ -135,6 +220,9 @@ export function updateUI() {
     document.getElementById('lbl-ftype').textContent = t('htype');
     document.getElementById('lbl-fcheckin').textContent = t('checkin');
     document.getElementById('lbl-frate').textContent = t('rate');
+    const poEl = document.getElementById('lbl-planned-out'); if (poEl) poEl.textContent = t('plannedOut');
+    const srEl = document.getElementById('lbl-senior'); if (srEl) srEl.textContent = t('seniorRole');
+    const gpEl = document.getElementById('lbl-group-prop'); if (gpEl) gpEl.textContent = t('groupByProp');
     document.getElementById('lbl-rate-change').textContent = t('rateChange');
     document.getElementById('f-rate-new').placeholder = t('newRate');
     document.getElementById('btn-fcancel').textContent = t('cancel');

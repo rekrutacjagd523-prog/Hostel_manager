@@ -72,6 +72,8 @@ export function openForm(id) {
         document.getElementById('f-rate').value = r.monthlyRate;
         document.getElementById('f-rate-new').value = '';
         document.getElementById('f-rate-from').value = todayStr();
+        document.getElementById('f-senior').checked = r.isSenior || false;
+        document.getElementById('f-planned-out').value = r.plannedCheckOut || '';
         rcs.style.display = 'block';
         renderRateHistoryInForm(r);
         populatePropSelect(r.city, r.address, r.housingType || 'hostel');
@@ -85,6 +87,8 @@ export function openForm(id) {
         document.getElementById('f-type').value = 'hostel';
         document.getElementById('f-date').value = todayStr();
         document.getElementById('f-rate').value = '0';
+        document.getElementById('f-senior').checked = false;
+        document.getElementById('f-planned-out').value = '';
         rcs.style.display = 'none';
         document.getElementById('rate-history-box').innerHTML = '';
         populatePropSelect('', '', '');
@@ -153,6 +157,8 @@ export async function saveResident() {
     const city = document.getElementById('f-city').value.trim();
     const address = document.getElementById('f-address').value.trim();
     const housingType = document.getElementById('f-type').value;
+    const isSenior = document.getElementById('f-senior').checked;
+    const plannedCheckOut = document.getElementById('f-planned-out').value || null;
 
     // Subscription limit check for new residents
     if (!editId) {
@@ -188,6 +194,7 @@ export async function saveResident() {
         data.firstName = fn; data.lastName = ln; data.fullName = fn + (ln ? ' ' + ln : '');
         data.address = address; data.city = city; data.housingType = housingType;
         data.checkInDate = date; data.monthlyRate = history[history.length - 1].rate; data.rateHistory = history;
+        data.isSenior = isSenior; data.plannedCheckOut = plannedCheckOut;
         try {
             await fb.setDoc(resDoc(editId), data);
             closeForm();
@@ -202,7 +209,8 @@ export async function saveResident() {
             firstName: fn, lastName: ln, fullName: fn + (ln ? ' ' + ln : ''),
             address, city, housingType,
             checkInDate: date, monthlyRate: rate, rateHistory: history,
-            checkOutDate: null, createdAt: new Date().toISOString()
+            checkOutDate: null, createdAt: new Date().toISOString(),
+            isSenior, plannedCheckOut
         };
         try { const id = genId(); await fb.setDoc(resDoc(id), data); closeForm(); }
         catch (e) { alert('Error: ' + e.message); }
