@@ -1,6 +1,6 @@
 // ===== REPORT & EXPORT MODULE =====
 import { t } from './constants.js';
-import { residents, properties, cur, fmtUi, todayStr, esc } from './utils.js';
+import { residents, properties, expenses, bookings, cur, fmtUi, todayStr, esc } from './utils.js';
 import { calcPaymentWithHistory, buildRateHistory } from './rate-history.js';
 
 let reportPeriod = 'all';
@@ -123,6 +123,88 @@ export function refreshReport() {
         h += '<div class="report-row" style="font-weight:700;border-top:2px solid var(--border)"><span style="flex:2">' + t('totalLabel') + '</span><span style="flex:1"></span><span style="flex:1;text-align:center">' + totalS + '</span><span style="flex:1;text-align:center;color:var(--accent)">' + totalO + '</span><span style="flex:1;text-align:center;color:var(--green)">' + (totalS - totalO) + '</span></div>';
         h += '</div></div>';
     }
+
+    // ===== FINANCE SECTION =====
+    const allExpenses = typeof expenses === 'function' ? expenses() : (window._expenses || []);
+    if (allExpenses.length) {
+        const { from, to } = getPeriodRange();
+        const filteredExp = allExpenses.filter(e => {
+            if (!e.date) return true;
+            const d = new Date(e.date + 'T00:00:00');
+            if (from && d < from) return false;
+            if (to && d > to) return false;
+            return true;
+        });
+        const incomes = filteredExp.filter(e => e.type === 'income');
+        const expenseItems = filteredExp.filter(e => e.type === 'expense');
+        const totalIncome = incomes.reduce((s, e) => s + (e.amount || 0), 0);
+        const totalExpense = expenseItems.reduce((s, e) => s + (e.amount || 0), 0);
+        const netProfit = totalIncome - totalExpense;
+        const CATS = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '👤', other: '📎', income: '💰' };
+        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">💰 ' + t('finance') + ' (' + filteredExp.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
+        // Summary row
+        h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">';
+        h += '<div style="flex:1;min-width:140px;background:rgba(106,184,154,.08);border:1px solid rgba(106,184,154,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('income') + '</div><div style="font-weight:800;color:var(--green)">' + fmtUi(totalIncome) + '</div></div>';
+        h += '<div style="flex:1;min-width:140px;background:rgba(212,85,85,.08);border:1px solid rgba(212,85,85,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('expenses') + '</div><div style="font-weight:800;color:var(--red)">' + fmtUi(totalExpense) + '</div></div>';
+        h += '<div style="flex:1;min-width:140px;background:' + (netProfit >= 0 ? 'rgba(106,184,154,.08);border:1px solid rgba(106,184,154,.2)' : 'rgba(212,85,85,.08);border:1px solid rgba(212,85,85,.2)') + ';border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('netProfit') + '</div><div style="font-weight:800;color:' + (netProfit >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (netProfit >= 0 ? '+' : '') + fmtUi(netProfit) + '</div></div>';
+        h += '</div>';
+        // Expense rows
+        if (filteredExp.length) {
+            h += '<div class="report-table"><div class="report-header"><span style="flex:0 0 30px"></span><span style="flex:2">' + t('expDesc') + '</span><span style="flex:1">' + t('period') + '</span><span style="flex:1;text-align:right">' + t('amount') + '</span></div>';
+            filteredExp.slice(0, 20).forEach(e => {
+                const isIncome = e.type === 'income';
+                const icon = isIncome ? '💰' : (CATS[e.category] || '📎');
+                h += '<div class="report-row"><span style="flex:0 0 30px">' + icon + '</span>' +
+                    '<span style="flex:2;font-weight:600">' + esc(e.description || e.category || '—') + '</span>' +
+                    '<span style="flex:1;color:var(--text3);font-size:11px">' + (e.date || '—') + '</span>' +
+                    '<span style="flex:1;text-align:right;font-weight:700;color:' + (isIncome ? 'var(--green)' : 'var(--red)') + '">' + (isIncome ? '+' : '-') + fmtUi(e.amount || 0) + '</span></div>';
+            });
+            if (filteredExp.length > 20) h += '<div class="report-row" style="color:var(--text3);font-size:12px;justify-content:center">... ' + (filteredExp.length - 20) + ' więcej</div>';
+            h += '</div>';
+        }
+        h += '</div></div>';
+    }
+
+    // ===== BOOKINGS SECTION =====
+    const allBookings = typeof bookings === 'function' ? bookings() : (window._bookings || []);
+    if (allBookings.length) {
+        const { from, to } = getPeriodRange();
+        const filteredBook = allBookings.filter(b => {
+            if (!b.startDate) return true;
+            const d = new Date(b.startDate + 'T00:00:00');
+            if (from && d < from) return false;
+            if (to && d > to) return false;
+            return true;
+        });
+        const STATUS_LABELS = { pending: '⏳ ' + t('bkPending'), confirmed: '✓ ' + t('bkConfirmed'), cancelled: '✕ ' + t('bkCancelled'), checkedIn: '🏠 ' + t('active') };
+        const STATUS_COLORS_MAP = { pending: '#f59e0b', confirmed: 'var(--green)', cancelled: 'var(--text4)', checkedIn: 'var(--accent)' };
+        const confirmed = filteredBook.filter(b => b.status === 'confirmed' || b.status === 'checkedIn').length;
+        const pending = filteredBook.filter(b => b.status === 'pending').length;
+        const cancelled = filteredBook.filter(b => b.status === 'cancelled').length;
+        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">📅 ' + t('bookings') + ' (' + filteredBook.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
+        // Status summary
+        h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">';
+        h += '<div style="flex:1;min-width:120px;background:rgba(106,184,154,.08);border:1px solid rgba(106,184,154,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('bkConfirmed') + '</div><div style="font-weight:800;color:var(--green)">' + confirmed + '</div></div>';
+        h += '<div style="flex:1;min-width:120px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('bkPending') + '</div><div style="font-weight:800;color:#f59e0b">' + pending + '</div></div>';
+        h += '<div style="flex:1;min-width:120px;background:rgba(150,150,150,.08);border:1px solid rgba(150,150,150,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('bkCancelled') + '</div><div style="font-weight:800;color:var(--text4)">' + cancelled + '</div></div>';
+        h += '</div>';
+        // Bookings rows
+        if (filteredBook.length) {
+            h += '<div class="report-table"><div class="report-header"><span style="flex:2">' + t('guestName') + '</span><span style="flex:1">' + t('checkin') + '</span><span style="flex:1">' + t('endDate') + '</span><span style="flex:1;text-align:center">Status</span></div>';
+            filteredBook.slice(0, 20).forEach(b => {
+                const statusColor = STATUS_COLORS_MAP[b.status] || 'var(--text3)';
+                const statusLabel = STATUS_LABELS[b.status] || b.status || '—';
+                h += '<div class="report-row"><span style="flex:2;font-weight:600">' + esc(b.guestName || '—') + '</span>' +
+                    '<span style="flex:1;color:var(--text3);font-size:11px">' + (b.startDate || '—') + '</span>' +
+                    '<span style="flex:1;color:var(--text3);font-size:11px">' + (b.endDate || '—') + '</span>' +
+                    '<span style="flex:1;text-align:center;font-size:11px;font-weight:600;color:' + statusColor + '">' + statusLabel + '</span></div>';
+            });
+            if (filteredBook.length > 20) h += '<div class="report-row" style="color:var(--text3);font-size:12px;justify-content:center">... ' + (filteredBook.length - 20) + ' więcej</div>';
+            h += '</div>';
+        }
+        h += '</div></div>';
+    }
+
     h += '<div class="report-total">' + t('curLabel') + ': <span style="color:#e8a838">' + fmtUi(tA) + '</span> &nbsp;|&nbsp; ' + t('outLabel') + ': <span style="color:#6ab89a">' + fmtUi(tO) + '</span> &nbsp;|&nbsp; ' + t('totalLabel') + ': <span style="color:var(--text);font-size:16px">' + fmtUi(tA + tO) + '</span></div>';
     document.getElementById('report-content').innerHTML = h;
 }

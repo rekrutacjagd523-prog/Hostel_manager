@@ -2,6 +2,21 @@
 <html lang="pl">
 
 <head>
+<script>
+  (function(){
+    try {
+      // Pre-set html lang from cached settings before any input renders
+      var saved = null;
+      // Try to find saved settings in localStorage (Firebase caches aren't here, but we can check)
+      var keys = Object.keys(localStorage);
+      for(var k of keys) { if(k.startsWith('hostel-') || k.includes('firebase')) continue; }
+      // Check if we have a last-known lang
+      var lastLang = localStorage.getItem('hostel-last-lang') || 'pl';
+      var langMap = {RU:'ru',PL:'pl',UA:'uk',EN:'en',LT:'lt'};
+      document.documentElement.lang = langMap[lastLang] || lastLang;
+    } catch(e){}
+  })();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0d0d14">

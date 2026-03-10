@@ -304,6 +304,7 @@ export function updateUI() {
     const lang = (window._settings || {}).lang || 'PL';
     const htmlLang = htmlLangMap[lang] || 'pl';
     document.documentElement.lang = htmlLang;
+    localStorage.setItem('hostel-last-lang', lang);
     document.querySelectorAll('input[type="date"]').forEach(el => {
         if (el.getAttribute('lang') === htmlLang) return;
         const val = el.value;

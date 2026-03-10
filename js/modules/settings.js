@@ -54,6 +54,7 @@ export function previewCurrency() {
 
 export function applyLangImmediate(lang) {
     window._settings = Object.assign({}, window._settings || {}, { lang: lang });
+    localStorage.setItem('hostel-last-lang', lang);
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
     const htmlLang = htmlLangMap[lang] || 'pl';
     document.documentElement.lang = htmlLang;
@@ -76,9 +77,11 @@ export function confirmExitOverlay(type) {
 
 export async function saveSettings() {
     try {
+        const saveLang = document.getElementById('s-lang').value;
+        localStorage.setItem('hostel-last-lang', saveLang);
         await window._fb.setDoc(window._fb.settingsDoc, {
             currency: document.getElementById('s-currency').value,
-            lang: document.getElementById('s-lang').value
+            lang: saveLang
         });
         closeSettings();
         if (window.updateUI) window.updateUI();
