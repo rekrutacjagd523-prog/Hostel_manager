@@ -682,14 +682,8 @@
   <script>
     // ===== DATE INPUT CUSTOM PLACEHOLDER =====
     // Locale-aware date format strings
-    const DATE_FORMAT_HINT = {
-      PL: 'dd.mm.rrrr', UA: 'дд.мм.рррр', RU: 'дд.мм.гггг',
-      EN: 'mm/dd/yyyy', LT: 'yyyy-mm-dd'
-    };
-
     function applyDatePlaceholders() {
-      const lang = (window._settings || {}).lang || localStorage.getItem('hostel-last-lang') || 'PL';
-      const hint = DATE_FORMAT_HINT[lang] || DATE_FORMAT_HINT.PL;
+      const hint = 'dd.mm.yyyy';
       document.querySelectorAll('input[type="date"]').forEach(el => {
         // Find or create sibling placeholder span
         let span = el.parentNode.querySelector('.date-ph');
