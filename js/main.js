@@ -69,10 +69,9 @@ function handlePressStart(e) {
     const propCard = e.target.closest('.prop-card');
 
     if (card && !selectMode) {
-        _pressTarget = { type: 'res', el: card, id: card.dataset.id };
+        _pressTarget = { type: 'res', id: card.dataset.id };
     } else if (propCard && !propSelectMode) {
-        const cb = propCard.querySelector('.sel-check');
-        if (cb && cb.dataset.pid) _pressTarget = { type: 'prop', el: propCard, id: cb.dataset.pid };
+        _pressTarget = { type: 'prop', id: propCard.dataset.id };
     } else {
         return;
     }
@@ -83,11 +82,11 @@ function handlePressStart(e) {
 
         if (_pressTarget.type === 'res') {
             toggleSelectMode();
-            const cb = _pressTarget.el.querySelector('.sel-check');
+            const cb = document.querySelector(`.sel-check[data-id="${_pressTarget.id}"]`);
             if (cb) { cb.checked = true; toggleSelectItem(_pressTarget.id, cb); }
         } else if (_pressTarget.type === 'prop') {
             togglePropSelect();
-            const cb = _pressTarget.el.querySelector('.sel-check');
+            const cb = document.querySelector(`.sel-check[data-pid="${_pressTarget.id}"]`);
             if (cb) { cb.checked = true; togglePropItem(_pressTarget.id, cb); }
         }
         _pressTarget = null;

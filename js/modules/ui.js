@@ -6,6 +6,7 @@ import { renderProperties } from './properties.js';
 import { selectMode, selectedIds } from './residents.js';
 
 export let currentFilter = 'active';
+window._currentFilter = currentFilter;
 export let pageSize = 10;
 export let currentPage = 1;
 export let groupByProp = false;
