@@ -20,7 +20,7 @@ function getResidentsOnProp(p) {
 export function renderProperties() {
     const list = document.getElementById('prop-list');
     const props = properties();
-    if (!props.length) { list.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text4);font-size:13px">' + t('noProps') + '</div>'; return; }
+    if (!props.length) { list.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i data-lucide="building-2" style="width:48px;height:48px;opacity:0.5"></i></div><div class="empty-state-title">' + t('noProps') + '</div><div class="empty-state-desc">Stwórz swój pierwszy obiekt, aby móc przypisywać do niego lokatorów.</div><button class="btn btn-primary" onclick="openPropForm()" style="margin:0 auto"><i data-lucide="plus" style="width:14px;height:14px"></i> ' + t('addProp') + '</button></div>'; if (window.lucide) window.lucide.createIcons(); return; }
     let h = '';
     if (propSelectMode) {
         h += '<div style="display:flex;align-items:center;gap:10px;padding:4px 0;margin-bottom:4px">' +
@@ -88,6 +88,7 @@ export function renderProperties() {
         h += '</select></div>';
     }
     list.innerHTML = h;
+    if (window.lucide) window.lucide.createIcons();
 }
 
 export function togglePropSelect() {

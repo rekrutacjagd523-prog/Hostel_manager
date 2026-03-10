@@ -16,6 +16,15 @@ export let groupByProp = false;
 export function setCurrentFilter(f) { currentFilter = f; }
 export function setCurrentPage(p) { currentPage = p; }
 
+
+// Generate a consistent color from a string (for avatar backgrounds)
+function avatarColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${Math.abs(hash) % 360}, 65%, 45%)`;
+}
+
+
 export function setFilter(f, btn) {
     currentFilter = f; currentPage = 1;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -161,6 +170,20 @@ function renderGrouped() {
 export { renderFinSummary, renderExpenses, renderBookings };
 
 export function render() {
+    // Onboarding: show wizard on first login when workspace is empty
+    if (window._resLoaded && window._propsLoaded && !window._onboardingDone) {
+        window._onboardingDone = true;
+        const seenStr = 'hostel-onboarding-' + (window._workspaceUid || 'local');
+        if (properties().length === 0 && residents().length === 0 && !localStorage.getItem(seenStr)) {
+            const overlay = document.getElementById('onboarding-overlay');
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                localStorage.setItem(seenStr, '1');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+    }
+
     const c = cur();
     renderFinSummary();
     renderExpenses();
@@ -203,7 +226,13 @@ export function render() {
     });
     const list = document.getElementById('residents-list');
     if (!filtered.length) {
-        list.innerHTML = '<div class="empty">👥<br><br>' + t('noData') + '</div>';
+        const isFiltered = fcEl.value || faEl.value || document.getElementById('ff-name').value;
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i data-lucide="users" style="width:48px;height:48px;opacity:0.5"></i></div>' +
+            '<div class="empty-state-title">' + t('noData') + '</div>' +
+            '<div class="empty-state-desc">' + (currentFilter === 'active' && !isFiltered ? 'Dodaj pierwszego lokatora, aby rozpocząć zarządzanie.' : 'Brak danych spełniających kryteria.') + '</div>' +
+            (currentFilter === 'active' && !isFiltered ? '<button class="btn btn-primary" onclick="openForm()" style="margin:0 auto"><i data-lucide="user-plus" style="width:14px;height:14px"></i> ' + t('addBtn') + '</button>' : '') +
+            '</div>';
+        if (window.lucide) window.lucide.createIcons();
         document.getElementById('pagination-bar').innerHTML = '';
         renderProperties(); return;
     }
@@ -220,7 +249,10 @@ export function render() {
         const history = buildRateHistory(r);
         const hasMulti = history.length > 1;
         const resNameVal = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
-        return '<div class="card longpress-card' + (isA ? '' : ' inactive') + '" data-id="' + r.id + '" style="display:flex;align-items:flex-start;gap:8px;' + (selectMode ? 'cursor:pointer' : '') + '" ' + (selectMode ? 'onclick="if(event.target.type!==\'checkbox\'){const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;toggleSelectItem(\'' + r.id + '\',cb);}}" ' : '') + '>' + (selectMode ? '<input type="checkbox" class="sel-check item-check" data-id="' + r.id + '" ' + (selectedIds.has(r.id) ? 'checked' : '') + ' onchange="toggleSelectItem(\'' + r.id + '\',this)" style="margin-top:4px;flex-shrink:0">' : '') + '<div style="flex:1"><div class="card-top"><div>' +
+        const nameStr = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
+        const initial = (r.firstName || r.fullName || r.lastName || '?')[0].toUpperCase();
+        const avatarBg = avatarColor(nameStr || r.id);
+        return '<div class="card longpress-card fade-in' + (isA ? '' : ' inactive') + '" data-id="' + r.id + '" style="display:flex;align-items:flex-start;gap:12px;' + (selectMode ? 'cursor:pointer' : '') + '" ' + (selectMode ? 'onclick="if(event.target.type!==\'checkbox\'){const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;toggleSelectItem(\'' + r.id + '\',cb);}}" ' : '') + '>' + (selectMode ? '<input type="checkbox" class="sel-check item-check" data-id="' + r.id + '" ' + (selectedIds.has(r.id) ? 'checked' : '') + ' onchange="toggleSelectItem(\'' + r.id + '\',this)" style="margin-top:10px;flex-shrink:0">' : '') + '<div class="avatar" style="background:' + avatarBg + ';margin-top:2px">' + esc(initial) + '</div><div style="flex:1;min-width:0"><div class="card-top"><div>' +
             '<div class="card-name">' + (r.isSenior ? '<span style="color:#f59e0b;margin-right:4px" title="' + t('seniorRole') + '">⭐</span>' : '') + esc(resNameVal) + '</div>' +
             '<div class="card-meta">' + (r.city ? esc(r.city) : '') + (r.address ? ' · ' + esc(r.address) : '') + '</div>' +
             '</div><div class="card-payment"><div class="card-amount">' + fmtUi(pay) + '</div>' +
@@ -238,10 +270,10 @@ export function render() {
                 return room ? '<span class="tag" style="color:var(--accent);border-color:var(--accent)">🚪 ' + esc(room.name) + '</span>' : '';
             })() : '') +
             '</div><div class="card-actions" onclick="event.stopPropagation()">' +
-            (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '">📋</button>' : '') +
+            (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '"><i data-lucide="clipboard-list" style="width:14px;height:14px"></i></button>' : '') +
             '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
             (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '↪' + '</button>' : '') +
-            '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">🗑</button>' +
+            '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">' + '<i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div></div></div></div>';
     }).join('');
 
@@ -411,6 +443,7 @@ export function updateUI() {
     if (bkTabPending) bkTabPending.textContent = '⏳ ' + t('bkPending');
     if (bkTabConfirmed) bkTabConfirmed.textContent = '✓ ' + t('bkConfirmed');
     if (bkTabCancelled) bkTabCancelled.textContent = '✕ ' + t('bkCancelled');
+    if (window.lucide) window.lucide.createIcons();
     render();
 }
 

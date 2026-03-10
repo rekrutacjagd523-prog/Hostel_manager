@@ -166,6 +166,7 @@ export function onUserLoggedIn(user) {
     if (window.render) window.render();
     if (window.updateUI) window.updateUI();
     if (window.restoreCollapsed) window.restoreCollapsed();
+    if (window.lucide) window.lucide.createIcons();
 }
 
 export function onUserLoggedOut() {

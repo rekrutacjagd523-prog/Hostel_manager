@@ -13,6 +13,18 @@
   <title>Hostel Manager</title>
   <link rel="stylesheet" href="styles/main.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    (function () {
+      fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf')
+        .then(r => r.arrayBuffer())
+        .then(buf => {
+          let binary = ''; const bytes = new Uint8Array(buf);
+          for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+          window._robotoFont = btoa(binary);
+        }).catch(() => { console.warn('Could not load Roboto font for PDF'); });
+    })();
+  </script>
 </head>
 
 <body>
@@ -25,7 +37,7 @@
   <div id="auth-screen" style="display:none">
     <div class="auth-screen">
       <div class="auth-box">
-        <div class="auth-logo">🏠</div>
+        <div class="auth-logo"><i data-lucide="building-2" style="width:36px;height:36px;color:var(--accent)"></i></div>
         <div class="auth-title">Hostel Manager</div>
         <div class="auth-subtitle">Управление жильцами</div>
         <div class="auth-tabs">
@@ -88,12 +100,12 @@
 
     <header class="header">
       <div class="header-left">
-        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Обновить">🏠</div>
+        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Odśwież"><i data-lucide="building-2" style="width:22px;height:22px;color:#0d0d14"></i></div>
         <div>
           <h1>Hostel Manager</h1>
           <div class="header-sub">
             <p id="hdr-sub">Управление жильцами</p>
-            <span class="conn-status">☁ Облако</span>
+            <span class="conn-status"><i data-lucide="cloud" style="width:10px;height:10px"></i> Chmura</span>
           </div>
         </div>
       </div>
@@ -104,27 +116,27 @@
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu(event)">
           <span class="user-avatar" id="user-avatar">?</span>
           <span id="user-name">User</span>
-          <span style="font-size:10px;opacity:.5">▼</span>
+          <span style="font-size:10px;opacity:.5"><i data-lucide="chevron-down" style="width:10px;height:10px"></i></span>
           <div class="user-menu" id="user-menu">
             <div class="user-menu-header">
               <div class="user-menu-name" id="um-name">User</div>
               <div class="user-menu-email" id="um-email">email</div>
             </div>
-            <button class="user-menu-item" onclick="doSwitchAccount()">🔄 <span id="um-switch">Сменить
+            <button class="user-menu-item" onclick="doSwitchAccount()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> <span id="um-switch">Сменить
                 аккаунт</span></button>
-            <button class="user-menu-item danger" onclick="doLogout()">⏻ <span id="um-logout">Выйти</span></button>
+            <button class="user-menu-item danger" onclick="doLogout()"><i data-lucide="power" style="width:14px;height:14px"></i> <span id="um-logout">Выйти</span></button>
           </div>
         </div>
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme">🌙</button>
-        <button class="btn btn-secondary" onclick="openSettings()">⚙</button>
-        <button class="btn btn-secondary" onclick="openReport()" id="btn-report">📄 Отчёт</button>
-        <button class="btn btn-primary" onclick="openForm()" id="btn-add">🏠 Заселить</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme"><i data-lucide="moon" style="width:16px;height:16px"></i></button>
+        <button class="btn btn-secondary" onclick="openSettings()"><i data-lucide="settings" style="width:14px;height:14px"></i></button>
+        <button class="btn btn-secondary" onclick="openReport()" id="btn-report"><i data-lucide="file-text" style="width:14px;height:14px"></i> <span id="btn-report-lbl">Raport</span></button>
+        <button class="btn btn-primary" onclick="openForm()" id="btn-add"><i data-lucide="user-plus" style="width:14px;height:14px"></i> <span id="btn-add-lbl">Zamelduj</span></button>
       </div>
     </header>
 
     <div class="stats">
       <div class="stat-card">
-        <div class="stat-icon">👥</div>
+        <div class="stat-icon"><i data-lucide="users" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-active">0</div>
           <div class="stat-label" id="lbl-residents">Жильцов</div>
@@ -149,8 +161,7 @@
     <!-- Checkout Forecast Block -->
     <div id="forecast-block" style="display:none;margin:0 0 10px"></div>
 
-    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span>🏢 <span
-          id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
+    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span><i data-lucide="building-2" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
         onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
           onclick="openPropForm()" style="padding:6px 14px;font-size:12px" id="btn-add-prop">＋ Добавить
           объект</button></span></div>
@@ -240,8 +251,7 @@
       </div>
     </div>
 
-    <div class="section-title" onclick="toggleSection('residents')"><span>👥 <span
-          id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
+    <div class="section-title" onclick="toggleSection('residents')"><span><i data-lucide="users" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
     </div>
     <div class="section-content" id="residents-section">
       <div class="tabs" id="tabs-bar">
@@ -249,7 +259,7 @@
         <button class="tab" onclick="setFilter('checkedOut',this)" id="tab-out">Выселены</button>
         <button class="tab" onclick="setFilter('all',this)" id="tab-all">Все</button>
         <button class="tab" onclick="document.getElementById('filter-panel').classList.toggle('open')"
-          id="tab-filter">🔍 Фильтр</button>
+          id="tab-filter"><i data-lucide="search" style="width:12px;height:12px"></i> Filtr</button>
       </div>
 
       <div class="filter-panel" id="filter-panel">
@@ -314,9 +324,9 @@
             id="lbl-sel-all">Выбрать все</span></label>
         <span class="sel-count" id="sel-count"></span>
         <button class="btn btn-secondary" onclick="deleteSelected()" id="btn-del-sel"
-          style="font-size:11px;padding:4px 10px;color:var(--red)">🗑 Удалить</button>
+          style="font-size:11px;padding:4px 10px;color:var(--red)"><i data-lucide="trash-2" style="width:12px;height:12px"></i> Usuń</button>
         <button class="btn btn-secondary" onclick="checkoutSelected()" id="btn-co-sel"
-          style="font-size:11px;padding:4px 10px">↪ Выселить</button>
+          style="font-size:11px;padding:4px 10px"><i data-lucide="log-out" style="width:12px;height:12px"></i> Wymelduj</button>
         <button class="btn btn-secondary" onclick="cancelSelect()" style="font-size:11px;padding:4px 10px"
           id="btn-cancel-sel">✕</button>
       </div>
@@ -620,6 +630,39 @@
 
   </div>
 
+  <script type="module" src="js/main.js"></script>
+
+    <!-- Onboarding Overlay -->
+    <div class="overlay hidden" id="onboarding-overlay">
+      <div class="modal" style="max-width:440px; text-align:center; padding: 40px 30px">
+        <div style="margin-bottom:20px;display:flex;justify-content:center"><i data-lucide="rocket"
+            style="width:56px;height:56px;color:var(--accent)"></i></div>
+        <h2 style="margin-bottom:12px;font-size:24px" id="onb-title">Witaj w Hostel Manager!</h2>
+        <p style="color:var(--text2);font-size:15px;margin-bottom:32px;line-height:1.6">Rozpocznij w dwóch prostych krokach.</p>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px">
+          <div style="display:flex;align-items:center;margin-bottom:12px;gap:12px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d0d14;display:flex;align-items:center;justify-content:center;font-weight:bold">1</div>
+            <div style="font-weight:600;font-size:15px">Stwórz obiekt</div>
+          </div>
+          <p style="color:var(--text3);font-size:13px;margin-bottom:16px;line-height:1.4">Dodaj pierwszy hostel, dom lub mieszkanie.</p>
+          <button class="btn btn-primary" onclick="window.closeOnboarding(); openPropForm();"
+            style="width:100%;justify-content:center;padding:10px"><i data-lucide="plus"
+              style="width:16px;height:16px"></i> Dodaj obiekt</button>
+        </div>
+        <button class="btn btn-cancel" onclick="window.closeOnboarding()"
+          style="background:transparent;border:none;color:var(--text3);font-size:13px">Pomiń konfigurację</button>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    window.closeOnboarding = function () {
+      document.getElementById('onboarding-overlay').classList.add('hidden');
+    };
+    window._lucideRefresh = function() {
+      if (window.lucide) window.lucide.createIcons();
+    };
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 
