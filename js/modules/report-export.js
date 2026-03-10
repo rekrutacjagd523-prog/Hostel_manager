@@ -70,6 +70,7 @@ export function setPeriod(p, btn) {
 
 export function openReport() {
     document.getElementById('report-overlay').classList.remove('hidden');
+    if (window._applyDatePH) setTimeout(window._applyDatePH, 50);
     reportPeriod = 'all';
     document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('.period-btn').classList.add('active');

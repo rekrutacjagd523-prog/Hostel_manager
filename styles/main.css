@@ -1755,3 +1755,43 @@ select.field option {
 .cal-booking{padding:2px 4px;margin:1px 0;border-radius:3px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;border-left:2px solid var(--accent)}
 .cal-booking:hover{opacity:.8}
 @media(max-width:600px){.cal-day{min-height:50px;padding:2px}.cal-day-num{font-size:10px}.cal-booking{font-size:9px;padding:1px 2px}.cal-header{font-size:10px;padding:4px 2px}}
+/* ===== DATE INPUT LOCALE PLACEHOLDER OVERRIDE ===== */
+/* Hide browser's locale-dependent placeholder and show our own via CSS */
+.date-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.date-wrap input[type="date"] {
+  width: 100%;
+  color-scheme: dark;
+}
+
+/* Show custom placeholder when input is empty (no value) */
+.date-wrap input[type="date"]:not([value])::-webkit-datetime-edit,
+.date-wrap input[type="date"][value=""]::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.date-wrap::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text4);
+  pointer-events: none;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+}
+
+/* Hide custom placeholder when input has a value */
+.date-wrap input[type="date"].has-value ~ .date-placeholder,
+.date-wrap:has(input[type="date"].has-value)::after {
+  display: none;
+}
+
+[data-theme="light"] .date-wrap input[type="date"] {
+  color-scheme: light;
+}

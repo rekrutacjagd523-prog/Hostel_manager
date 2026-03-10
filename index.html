@@ -407,7 +407,7 @@
             <label id="lbl-rate-change">📅 Изменить ставку с даты:</label>
             <div class="form-row" style="margin-top:6px">
               <div><input class="field" id="f-rate-new" type="number" min="0" step="50" placeholder=""></div>
-              <div><input class="field" id="f-rate-from" type="date"></div>
+              <div><input class="field date-input" id="f-rate-from" type="date" onchange="this.classList.toggle('has-value',!!this.value)"></div>
             </div>
           </div>
           <div id="rate-history-box"></div>
@@ -498,8 +498,8 @@
           <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
         </div>
         <div class="period-dates" id="custom-dates">
-          <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
-          <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
+          <span id="lbl-date-from">От:</span><input type="date" class="date-input" id="period-from" onchange="refreshReport();this.classList.toggle('has-value',!!this.value)">
+          <span id="lbl-date-to">До:</span><input type="date" class="date-input" id="period-to" onchange="refreshReport();this.classList.toggle('has-value',!!this.value)">
         </div>
         <div class="period-info" id="period-info"></div>
         <div id="report-content"></div>
@@ -610,11 +610,11 @@
         <div class="form-row">
           <div>
             <label id="lbl-bk-start">Дата заезда</label>
-            <input class="field" id="bk-start" type="date">
+            <input class="field date-input" id="bk-start" type="date" onchange="this.classList.toggle('has-value',!!this.value)">
           </div>
           <div>
             <label id="lbl-bk-end">Дата выезда</label>
-            <input class="field" id="bk-end" type="date">
+            <input class="field date-input" id="bk-end" type="date" onchange="this.classList.toggle('has-value',!!this.value)">
           </div>
         </div>
         <div class="form-row">
@@ -677,6 +677,75 @@
     window._lucideRefresh = function() {
       if (window.lucide) window.lucide.createIcons();
     };
+  </script>
+
+  <script>
+    // ===== DATE INPUT CUSTOM PLACEHOLDER =====
+    // Locale-aware date format strings
+    const DATE_FORMAT_HINT = {
+      PL: 'dd.mm.rrrr', UA: 'дд.мм.рррр', RU: 'дд.мм.гггг',
+      EN: 'mm/dd/yyyy', LT: 'yyyy-mm-dd'
+    };
+
+    function applyDatePlaceholders() {
+      const lang = (window._settings || {}).lang || localStorage.getItem('hostel-last-lang') || 'PL';
+      const hint = DATE_FORMAT_HINT[lang] || DATE_FORMAT_HINT.PL;
+      document.querySelectorAll('input[type="date"]').forEach(el => {
+        // Find or create sibling placeholder span
+        let span = el.parentNode.querySelector('.date-ph');
+        if (!span) {
+          span = document.createElement('span');
+          span.className = 'date-ph';
+          span.style.cssText = 'position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text4);pointer-events:none;font-family:inherit;';
+          // Make parent relative if not already
+          const parent = el.parentNode;
+          if (getComputedStyle(parent).position === 'static') {
+            parent.style.position = 'relative';
+          }
+          parent.appendChild(span);
+        }
+        span.textContent = hint;
+        span.style.display = el.value ? 'none' : 'block';
+        // Watch for value changes
+        el._datePlaceholderApplied = true;
+        el.addEventListener('change', function() {
+          span.style.display = this.value ? 'none' : 'block';
+        }, { once: false });
+        el.addEventListener('input', function() {
+          span.style.display = this.value ? 'none' : 'block';
+        }, { once: false });
+      });
+    }
+
+    // Hide browser placeholder text via CSS injection
+    if (!document.getElementById('date-ph-style')) {
+      const s = document.createElement('style');
+      s.id = 'date-ph-style';
+      s.textContent = `
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper { color: var(--text); }
+        input[type="date"]::-webkit-datetime-edit-text { color: var(--text3); }
+        input[type="date"]::-webkit-datetime-edit-month-field,
+        input[type="date"]::-webkit-datetime-edit-day-field,
+        input[type="date"]::-webkit-datetime-edit-year-field {
+          color: var(--text3);
+        }
+        input[type="date"].has-value::-webkit-datetime-edit-month-field,
+        input[type="date"].has-value::-webkit-datetime-edit-day-field,
+        input[type="date"].has-value::-webkit-datetime-edit-year-field {
+          color: var(--text);
+        }
+      `;
+      document.head.appendChild(s);
+    }
+
+    // Hook into settings changes
+    const _origUpdateUI = window.updateUI;
+    window._applyDatePH = applyDatePlaceholders;
+
+    // Run on DOMContentLoaded and after each render/updateUI
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(applyDatePlaceholders, 300);
+    });
   </script>
   <script type="module" src="js/main.js"></script>
 </body>

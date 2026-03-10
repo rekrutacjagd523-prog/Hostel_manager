@@ -463,6 +463,7 @@ export function updateUI() {
     if (bkTabConfirmed) bkTabConfirmed.textContent = '✓ ' + t('bkConfirmed');
     if (bkTabCancelled) bkTabCancelled.textContent = '✕ ' + t('bkCancelled');
     if (window.lucide) window.lucide.createIcons();
+    if (window._applyDatePH) window._applyDatePH();
     render();
 }
 
