@@ -42,14 +42,14 @@ export function renderProperties() {
         const occ = getResidentsOnProp(p).length;
         const free = Math.max(0, (p.spots || 0) - occ);
         const isFull = free === 0 && occ > 0;
-        return '<div class="prop-card" style="display:flex;align-items:center;gap:8px">' +
-            (propSelectMode ? '<input type="checkbox" class="sel-check" data-pid="' + p.id + '" ' + (selectedPropIds.has(p.id) ? 'checked' : '') + ' onchange="togglePropItem(\'' + p.id + '\',this)" style="flex-shrink:0">' : '') +
+        return '<div class="prop-card longpress-prop" data-id="' + p.id + '" style="display:flex;align-items:center;gap:8px;' + (propSelectMode ? 'cursor:pointer' : '') + '" ' + (propSelectMode ? 'onclick="const cb=this.querySelector(\'.sel-check\');if(cb){cb.checked=!cb.checked;togglePropItem(\'' + p.id + '\',cb);event.stopPropagation()}"' : '') + '>' +
+            (propSelectMode ? '<input type="checkbox" class="sel-check" data-pid="' + p.id + '" ' + (selectedPropIds.has(p.id) ? 'checked' : '') + ' onchange="togglePropItem(\'' + p.id + '\',this);event.stopPropagation()" onclick="event.stopPropagation()" style="flex-shrink:0">' : '') +
             '<div style="flex:1"><div class="prop-name">' + esc(p.city) + ' · ' + esc(p.address) + '</div>' +
             '<div class="prop-meta">' + t(p.housingType || 'hostel') + '</div></div>' +
             '<div class="prop-spots">' +
             '<span class="prop-spot-tag total">' + (p.spots || 0) + ' ' + t('spots') + '</span>' +
             '<span class="prop-spot-tag ' + (isFull ? 'full' : 'free') + '">' + free + ' ' + t('freeSpots') + '</span>' +
-            '</div><div class="prop-actions">' +
+            '</div><div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openPropForm(\'' + p.id + '\')">✏️</button>' +
             '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')">🗑</button>' +
             '</div></div>';
