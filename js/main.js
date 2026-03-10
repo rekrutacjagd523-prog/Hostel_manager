@@ -29,7 +29,7 @@ import {
 } from './modules/residents.js';
 import {
     renderProperties, openPropForm, closePropForm, saveProp, deleteProp,
-    togglePropSelect, cancelPropSelect, togglePropItem, toggleSelectAllProps,
+    propSelectMode, togglePropSelect, cancelPropSelect, togglePropItem, toggleSelectAllProps,
     deleteSelectedProps, goPropPage, changePropPageSize,
     openRoomForm, closeRoomForm, saveRoom, deleteRoom
 } from './modules/properties.js';
