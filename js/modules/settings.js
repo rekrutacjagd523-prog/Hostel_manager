@@ -54,6 +54,8 @@ export function previewCurrency() {
 
 export function applyLangImmediate(lang) {
     window._settings = Object.assign({}, window._settings || {}, { lang: lang });
+    const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
+    document.documentElement.lang = htmlLangMap[lang] || 'ru';
     if (window.updateUI) window.updateUI();
 }
 
