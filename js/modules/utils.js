@@ -60,3 +60,10 @@ export function propDoc(id) {
     const uid = window._workspaceUid || window._currentUser?.uid;
     return window._fb.doc(window._fb.db, 'users', uid, 'properties', id);
 }
+
+export function expenses() { return window._expenses || []; }
+
+export function expDoc(id) {
+    const uid = window._workspaceUid || window._currentUser?.uid;
+    return window._fb.doc(window._fb.db, 'users', uid, 'expenses', id);
+}

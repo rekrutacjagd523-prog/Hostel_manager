@@ -4,6 +4,7 @@ import { residents, properties, cur, fmtUi, todayStr, esc, daysBetween, daysLabe
 import { calcCurrentPayment, buildRateHistory } from './rate-history.js';
 import { renderProperties } from './properties.js';
 import { selectMode, selectedIds } from './residents.js';
+import { renderFinSummary, renderExpenses } from './finance.js';
 
 export let currentFilter = 'active';
 window._currentFilter = currentFilter;
@@ -156,8 +157,12 @@ function renderGrouped() {
 }
 
 
+export { renderFinSummary, renderExpenses };
+
 export function render() {
     const c = cur();
+    renderFinSummary();
+    renderExpenses();
     document.getElementById('stat-currency-icon').textContent = c.symbolU;
     const all = residents();
     const cities = [...new Set(all.map(r => r.city).filter(Boolean))].sort();
@@ -330,6 +335,23 @@ export function updateUI() {
     setText('um-switch', t('switchAcc'));
     setText('um-logout', t('logout'));
     setText('btn-add-prop', t('addProp'));
+    setText('lbl-finance', t('finance'));
+    setText('btn-add-expense', t('addExpense'));
+    setText('fin-cat-all', t('allCategories'));
+    setText('lbl-fin-type', t('expType'));
+    setText('lbl-fin-category', t('expenseCategory'));
+    setText('lbl-fin-amount', t('expAmount'));
+    setText('lbl-fin-date', t('expDate'));
+    setText('lbl-fin-desc', t('expDesc'));
+    setText('lbl-fin-prop', t('linkProperty'));
+    setText('btn-fin-cancel', t('cancel'));
+    setText('btn-fin-save', t('accept'));
+    // Update finance type dropdown options
+    const finTypeEl = document.getElementById('fin-type');
+    if (finTypeEl) { finTypeEl.options[0].textContent = '📉 ' + t('expense'); finTypeEl.options[1].textContent = '💰 ' + t('income'); }
+    // Update finance category dropdown options
+    const finCatEl = document.getElementById('fin-category');
+    if (finCatEl) { finCatEl.options[0].textContent = '🔌 ' + t('utilities'); finCatEl.options[1].textContent = '📦 ' + t('supplies'); finCatEl.options[2].textContent = '🔧 ' + t('repairs'); finCatEl.options[3].textContent = '👤 ' + t('salary'); finCatEl.options[4].textContent = '📎 ' + t('otherCat'); }
     setText('lbl-prop-city', t('city'));
     setText('lbl-prop-addr', t('addr'));
     setText('lbl-prop-type', t('htype'));
@@ -356,6 +378,14 @@ export function toggleSection(section) {
         title.classList.toggle('collapsed');
         toggle.textContent = el.classList.contains('collapsed') ? '▶' : '▼';
         localStorage.setItem(key, el.classList.contains('collapsed') ? '1' : '0');
+    } else if (section === 'finance') {
+        const el = document.getElementById('finance-section');
+        const title = document.getElementById('fin-section-title');
+        const toggle = document.getElementById('toggle-finance');
+        el.classList.toggle('collapsed');
+        title.classList.toggle('collapsed');
+        toggle.textContent = el.classList.contains('collapsed') ? '▶' : '▼';
+        localStorage.setItem(key, el.classList.contains('collapsed') ? '1' : '0');
     } else if (section === 'residents') {
         const el = document.getElementById('residents-section');
         const toggle = document.getElementById('toggle-residents');
@@ -370,6 +400,11 @@ export function restoreCollapsed() {
         document.getElementById('prop-list').classList.add('collapsed');
         document.getElementById('prop-section-title').classList.add('collapsed');
         document.getElementById('toggle-props').textContent = '▶';
+    }
+    if (localStorage.getItem('hostel-collapsed-finance') === '1') {
+        document.getElementById('finance-section').classList.add('collapsed');
+        document.getElementById('fin-section-title').classList.add('collapsed');
+        document.getElementById('toggle-finance').textContent = '▶';
     }
     if (localStorage.getItem('hostel-collapsed-residents') === '1') {
         document.getElementById('residents-section').classList.add('collapsed');

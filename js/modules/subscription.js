@@ -1,9 +1,9 @@
 // ===== SUBSCRIPTION MODULE =====
 import { t } from './constants.js';
-import { residents, properties } from './utils.js';
+import { residents, properties, expenses } from './utils.js';
 
 // Limits
-export const FREE_LIMITS = { residents: 10, properties: 3 };
+export const FREE_LIMITS = { residents: 10, properties: 3, expenses: 50 };
 
 // Check plan
 export function isPro() {
@@ -23,6 +23,11 @@ export function canAddResident() {
 export function canAddProperty() {
   if (isPro()) return true;
   return properties().length < FREE_LIMITS.properties;
+}
+
+export function canAddExpense() {
+  if (isPro()) return true;
+  return expenses().length < FREE_LIMITS.expenses;
 }
 
 // ---- Upgrade Modal ----

@@ -51,13 +51,22 @@ function startListening(uid) {
     const u4 = onSnapshot(memCol, s => {
         window._members = []; s.forEach(d => window._members.push({ id: d.id, ...d.data() }));
     });
-    window._unsubs.push(u1, u2, u3, u4);
+    // Listen for expenses
+    const expCol = collection(db, "users", uid, "expenses");
+    const u5 = onSnapshot(query(expCol, orderBy("date", "desc")), s => {
+        window._expenses = []; s.forEach(d => window._expenses.push({ id: d.id, ...d.data() }));
+        if (window.renderFinSummary) window.renderFinSummary();
+        if (window.renderExpenses) window.renderExpenses();
+    });
+    window._fb.expCol = expCol;
+    window._unsubs.push(u1, u2, u3, u4, u5);
 }
 
 function stopListening() {
     window._unsubs.forEach(u => u()); window._unsubs = [];
     window._residents = []; window._settings = { currency: 'PLN', lang: 'RU' };
     window._members = []; window._subscription = { plan: 'free' };
+    window._expenses = [];
 }
 
 

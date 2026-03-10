@@ -49,6 +49,12 @@ import {
     onUserLoggedIn, onUserLoggedOut, initAuthEvents
 } from './modules/auth.js';
 import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode } from './modules/subscription.js';
+import {
+    expSelectMode, renderFinSummary, renderExpenses, openExpenseForm, closeExpenseForm,
+    saveExpense, deleteExpense, setFinCategoryFilter, setFinPropFilter,
+    goFinPage, changeFinPageSize, toggleExpSelect, cancelExpSelect,
+    toggleExpItem, toggleSelectAllExp, deleteSelectedExp
+} from './modules/finance.js';
 
 // ===== LONG PRESS SELECTION LOGIC =====
 let _pressTimer = null;
@@ -66,10 +72,13 @@ function handlePressStart(e) {
     _isScrolling = false;
 
     const card = e.target.closest('.longpress-card');
+    const expCard = e.target.closest('.longpress-exp');
     const propCard = e.target.closest('.prop-card');
 
     if (card && !selectMode) {
         _pressTarget = { type: 'res', id: card.dataset.id };
+    } else if (expCard && !expSelectMode) {
+        _pressTarget = { type: 'exp', id: expCard.dataset.eid };
     } else if (propCard && !propSelectMode) {
         _pressTarget = { type: 'prop', id: propCard.dataset.id };
     } else {
@@ -87,6 +96,12 @@ function handlePressStart(e) {
             setTimeout(() => {
                 const cb = document.querySelector(`.sel-check[data-id="${targetId}"]`);
                 if (cb) { cb.checked = true; toggleSelectItem(targetId, cb); }
+            }, 50);
+        } else if (_pressTarget.type === 'exp') {
+            toggleExpSelect();
+            setTimeout(() => {
+                const cb = document.querySelector(`.sel-check[data-eid="${targetId}"]`);
+                if (cb) { cb.checked = true; toggleExpItem(targetId, cb); }
             }, 50);
         } else if (_pressTarget.type === 'prop') {
             togglePropSelect();
@@ -122,6 +137,7 @@ window._settings = window._settings || { currency: 'PLN', lang: 'RU' };
 window._properties = window._properties || [];
 window._subscription = window._subscription || { plan: 'free' };
 window._currentFilter = 'active';
+window._expenses = window._expenses || [];
 
 // UI
 window.render = render;
@@ -135,6 +151,23 @@ window.toggleGroupByProp = toggleGroupByProp;
 window.renderCheckoutForecast = renderCheckoutForecast;
 window.setFilterType = setFilterType;
 window.clearFilters = clearFilters;
+
+// Finance
+window.renderFinSummary = renderFinSummary;
+window.renderExpenses = renderExpenses;
+window.openExpenseForm = openExpenseForm;
+window.closeExpenseForm = closeExpenseForm;
+window.saveExpense = saveExpense;
+window.deleteExpense = deleteExpense;
+window.setFinCategoryFilter = setFinCategoryFilter;
+window.setFinPropFilter = setFinPropFilter;
+window.goFinPage = goFinPage;
+window.changeFinPageSize = changeFinPageSize;
+window.toggleExpSelect = toggleExpSelect;
+window.cancelExpSelect = cancelExpSelect;
+window.toggleExpItem = toggleExpItem;
+window.toggleSelectAllExp = toggleSelectAllExp;
+window.deleteSelectedExp = deleteSelectedExp;
 
 // Residents
 window.openForm = openForm;

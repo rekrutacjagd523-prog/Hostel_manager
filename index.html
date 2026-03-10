@@ -156,6 +156,69 @@
           объект</button></span></div>
     <div class="prop-list section-content" id="prop-list"></div>
 
+    <!-- Finance Section -->
+    <div class="section-title" id="fin-section-title" onclick="toggleSection('finance')"><span>💰 <span
+          id="lbl-finance">Финансы</span> <span class="section-toggle" id="toggle-finance">▼</span></span> <span
+        onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
+          onclick="openExpenseForm()" style="padding:6px 14px;font-size:12px" id="btn-add-expense">+ Добавить
+          запись</button></span></div>
+    <div class="section-content" id="finance-section">
+      <div class="fin-summary" id="fin-summary"></div>
+      <div style="display:flex;gap:4px;padding:8px 24px;flex-wrap:wrap" id="fin-cat-tabs">
+        <button class="tab fin-cat-tab" data-cat="" onclick="setFinCategoryFilter('')" id="fin-cat-all">Все</button>
+        <button class="tab fin-cat-tab" data-cat="utilities" onclick="setFinCategoryFilter('utilities')">🔌</button>
+        <button class="tab fin-cat-tab" data-cat="supplies" onclick="setFinCategoryFilter('supplies')">📦</button>
+        <button class="tab fin-cat-tab" data-cat="repairs" onclick="setFinCategoryFilter('repairs')">🔧</button>
+        <button class="tab fin-cat-tab" data-cat="salary" onclick="setFinCategoryFilter('salary')">👤</button>
+        <button class="tab fin-cat-tab" data-cat="other" onclick="setFinCategoryFilter('other')">📎</button>
+      </div>
+      <div class="prop-list" id="expenses-list"></div>
+      <div class="pagination" id="fin-pagination"></div>
+    </div>
+
+    <!-- Finance Form Modal -->
+    <div class="overlay hidden" id="fin-overlay"
+      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('finance')">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
+        <h3 id="fin-form-title">💰 Новая запись</h3>
+        <input type="hidden" id="fin-edit-id">
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-fin-type">Тип</label>
+            <select class="field" id="fin-type">
+              <option value="expense">📉 Расход</option>
+              <option value="income">💰 Доход</option>
+            </select>
+          </div>
+          <div><label class="field-label" id="lbl-fin-category">Категория</label>
+            <select class="field" id="fin-category">
+              <option value="utilities">🔌 Коммуналка</option>
+              <option value="supplies">📦 Закупки</option>
+              <option value="repairs">🔧 Ремонт</option>
+              <option value="salary">👤 Зарплата</option>
+              <option value="other">📎 Прочее</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label class="field-label" id="lbl-fin-amount">Сумма</label><input class="field" id="fin-amount"
+              type="number" min="0" step="10" placeholder="0"></div>
+          <div><label class="field-label" id="lbl-fin-date">Дата</label><input class="field" id="fin-date"
+              type="date"></div>
+        </div>
+        <label class="field-label" id="lbl-fin-desc">Описание</label>
+        <input class="field" id="fin-desc" type="text" placeholder="">
+        <label class="field-label" id="lbl-fin-prop">Привязка к объекту</label>
+        <select class="field" id="fin-prop">
+          <option value="">— Выберите объект —</option>
+        </select>
+        <div class="form-actions">
+          <button class="btn btn-cancel" onclick="closeExpenseForm()" id="btn-fin-cancel">Отмена</button>
+          <button class="btn btn-cancel" onclick="saveExpense()" id="btn-fin-save"
+            style="color:var(--accent);border-color:var(--accent)">Принять</button>
+        </div>
+      </div>
+    </div>
+
     <div class="section-title" onclick="toggleSection('residents')"><span>👥 <span
           id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
     </div>
