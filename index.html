@@ -3,667 +3,886 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0d0d14">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Lokum">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <title>Lokum — System zarządzania kwaterami</title>
-  <link rel="stylesheet" href="styles/main.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lokum — System zarządzania kwaterami pracowniczymi</title>
+  <meta name="description" content="Zarządzaj lokatorami, obiektami, finansami i rezerwacjami w jednym miejscu. Bezpłatnie.">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    (function () {
-      fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf')
-        .then(r => r.arrayBuffer())
-        .then(buf => {
-          let binary = ''; const bytes = new Uint8Array(buf);
-          for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-          window._robotoFont = btoa(binary);
-        }).catch(() => { console.warn('Could not load Roboto font for PDF'); });
-    })();
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d14;
+      --bg2: #111120;
+      --bg3: #161625;
+      --text: #e4e4f0;
+      --text2: #8a8a9a;
+      --text3: #5a5a6e;
+      --accent: #e8a838;
+      --accent2: #d4883a;
+      --green: #6ab89a;
+      --red: #d45555;
+      --border: rgba(255,255,255,.07);
+      --border2: rgba(255,255,255,.04);
+      --glow: rgba(232,168,56,.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 18px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(13,13,20,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 200;
+      transition: padding .3s;
+    }
+    nav.scrolled { padding: 12px 48px; }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text);
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      color: #0d0d14;
+    }
+    .nav-logo span { font-size: 18px; font-weight: 800; }
+
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+
+    .nav-link {
+      color: var(--text2); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      padding: 7px 14px; border-radius: 8px;
+      transition: all .2s;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(255,255,255,.05); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #0d0d14 !important;
+      padding: 9px 20px; border-radius: 8px;
+      font-weight: 700; font-size: 14px;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all .25s cubic-bezier(.16,1,.3,1);
+    }
+    .nav-cta:hover {
+      background: #f5b84a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(232,168,56,.3);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 160px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Radial glow background */
+    .hero::before {
+      content: '';
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(232,168,56,.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* Grid pattern overlay */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center top, black 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(232,168,56,.1); border: 1px solid rgba(232,168,56,.25);
+      color: var(--accent); font-size: 12px; font-weight: 600;
+      padding: 5px 14px; border-radius: 100px;
+      margin-bottom: 28px;
+      animation: fadeUp .6s ease both;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 5.5vw, 68px);
+      font-weight: 800; line-height: 1.08;
+      letter-spacing: -.03em;
+      max-width: 820px; margin: 0 auto 24px;
+      animation: fadeUp .6s .1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), #f5c96a);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 18px; color: var(--text2);
+      max-width: 560px; margin: 0 auto 44px;
+      line-height: 1.65;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .6s .3s ease both;
+    }
+
+    .btn-hero-primary {
+      background: var(--accent); color: #0d0d14;
+      padding: 14px 32px; border-radius: 10px;
+      font-size: 16px; font-weight: 700;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all .25s cubic-bezier(.16,1,.3,1);
+      box-shadow: 0 0 0 0 rgba(232,168,56,0);
+    }
+    .btn-hero-primary:hover {
+      background: #f5b84a; transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(232,168,56,.3);
+    }
+
+    .btn-hero-sec {
+      background: rgba(255,255,255,.06); color: var(--text);
+      padding: 14px 28px; border-radius: 10px;
+      font-size: 16px; font-weight: 600;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .btn-hero-sec:hover { background: rgba(255,255,255,.1); }
+
+    /* ── APP PREVIEW ── */
+    .app-preview {
+      max-width: 1050px; margin: 64px auto 0;
+      animation: fadeUp .8s .4s ease both;
+      position: relative; z-index: 1;
+    }
+
+    .app-preview-wrap {
+      background: #0f0f1a;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    /* Fake browser chrome */
+    .preview-bar {
+      background: #161625; border-bottom: 1px solid var(--border2);
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .preview-dots { display: flex; gap: 6px; }
+    .preview-dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,255,255,.12);
+    }
+    .preview-url {
+      flex: 1; background: rgba(255,255,255,.05);
+      border-radius: 6px; padding: 4px 12px;
+      font-size: 11px; color: var(--text3);
+      text-align: center; max-width: 300px; margin: 0 auto;
+    }
+
+    /* App content inside preview */
+    .preview-app {
+      font-size: 13px;
+      background: var(--bg);
+    }
+
+    .preview-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px;
+      background: linear-gradient(180deg, #141420, #0d0d14);
+      border-bottom: 1px solid var(--border2);
+    }
+    .preview-header-left { display: flex; align-items: center; gap: 8px; }
+    .preview-logo-sm {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #0d0d14;
+    }
+    .preview-header-title { font-weight: 700; font-size: 14px; }
+    .preview-header-right { display: flex; gap: 6px; }
+    .preview-btn-sm {
+      padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    }
+    .preview-btn-sm.sec {
+      background: rgba(255,255,255,.05); color: var(--text2); border: 1px solid var(--border);
+    }
+    .preview-btn-sm.pri {
+      background: var(--accent); color: #0d0d14;
+    }
+
+    .preview-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; padding: 12px 18px;
+    }
+    .preview-stat {
+      border-radius: 10px; padding: 12px 14px;
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .preview-stat:nth-child(1) { background: linear-gradient(135deg, #161625, #1a1a2e); }
+    .preview-stat:nth-child(2) { background: linear-gradient(135deg, #1f1a2e, #1a1a2e); }
+    .preview-stat:nth-child(3) { background: linear-gradient(135deg, #1a2e2a, #162620); }
+    .preview-stat-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .preview-stat:nth-child(1) .preview-stat-icon { background: rgba(106,184,154,.12); color: var(--green); }
+    .preview-stat:nth-child(2) .preview-stat-icon { background: rgba(232,168,56,.12); color: var(--accent); }
+    .preview-stat:nth-child(3) .preview-stat-icon { background: rgba(176,154,218,.12); color: #b09ada; }
+    .preview-stat-val { font-size: 20px; font-weight: 800; line-height: 1; }
+    .preview-stat-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: .04em; }
+
+    .preview-residents { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 7px; }
+    .preview-section-title {
+      font-size: 11px; font-weight: 700; color: var(--text2);
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 6px 0 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .preview-card {
+      background: linear-gradient(135deg, #141420, #181828);
+      border: 1px solid var(--border2); border-radius: 10px;
+      padding: 11px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .preview-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .preview-card-name { font-size: 13px; font-weight: 700; }
+    .preview-card-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+    .preview-card-tags { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+    .preview-tag {
+      font-size: 10px; padding: 2px 7px; border-radius: 4px;
+      background: rgba(255,255,255,.05); color: var(--text2);
+    }
+    .preview-tag.accent { background: rgba(232,168,56,.12); color: var(--accent); font-weight: 600; }
+    .preview-tag.green { background: rgba(106,184,154,.12); color: var(--green); }
+    .preview-amount { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .preview-amount-val { font-size: 14px; font-weight: 800; color: var(--accent); }
+    .preview-amount-lbl { font-size: 9px; color: var(--text3); text-transform: uppercase; margin-top: 1px; }
+
+    /* ── STATS BANNER ── */
+    .stats-banner {
+      display: flex; justify-content: center; align-items: center;
+      gap: 80px; flex-wrap: wrap;
+      padding: 64px 24px;
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      background: linear-gradient(180deg, rgba(255,255,255,.015), transparent);
+    }
+    .stat-item { text-align: center; }
+    .stat-item-val {
+      font-size: 48px; font-weight: 800; color: var(--accent);
+      line-height: 1; margin-bottom: 8px;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .stat-item.visible .stat-item-val { opacity: 1; transform: translateY(0); }
+    .stat-item:nth-child(2) .stat-item-val { transition-delay: .15s; }
+    .stat-item:nth-child(3) .stat-item-val { transition-delay: .3s; }
+    .stat-item-label {
+      font-size: 13px; color: var(--text2);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .stat-item-note { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 100px 24px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .features-title {
+      text-align: center; font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; margin-bottom: 16px; letter-spacing: -.02em;
+    }
+    .features-sub {
+      text-align: center; color: var(--text2); font-size: 16px;
+      max-width: 500px; margin: 0 auto 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px;
+      transition: all .3s cubic-bezier(.16,1,.3,1);
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .5s ease, transform .5s ease, border-color .3s, box-shadow .3s;
+    }
+    .feature-card.visible { opacity: 1; transform: translateY(0); }
+    .feature-card:nth-child(2) { transition-delay: .1s; }
+    .feature-card:nth-child(3) { transition-delay: .2s; }
+    .feature-card:nth-child(4) { transition-delay: .3s; }
+    .feature-card:nth-child(5) { transition-delay: .4s; }
+    .feature-card:nth-child(6) { transition-delay: .5s; }
+
+    .feature-card:hover {
+      border-color: rgba(232,168,56,.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,.3), 0 0 0 1px rgba(232,168,56,.1);
+      transform: translateY(-4px) !important;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,168,56,.3), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .feature-icon.orange { background: rgba(232,168,56,.12); color: var(--accent); }
+    .feature-icon.green  { background: rgba(106,184,154,.12); color: var(--green); }
+    .feature-icon.purple { background: rgba(176,154,218,.12); color: #b09ada; }
+    .feature-icon.blue   { background: rgba(96,165,250,.12);  color: #60a5fa; }
+    .feature-icon.red    { background: rgba(212,85,85,.12);   color: var(--red); }
+    .feature-icon.teal   { background: rgba(45,200,180,.12);  color: #2dc8b4; }
+
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p  { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+    /* ── FOR WHOM ── */
+    .for-whom {
+      padding: 80px 24px;
+      background: linear-gradient(180deg, transparent, var(--bg2), transparent);
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+    }
+    .for-whom-inner { max-width: 1000px; margin: 0 auto; }
+    .for-whom-title {
+      text-align: center; font-size: clamp(26px, 3.5vw, 36px);
+      font-weight: 800; margin-bottom: 48px; letter-spacing: -.02em;
+    }
+    .for-whom-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .for-whom-card {
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .for-whom-icon { font-size: 28px; }
+    .for-whom-card h4 { font-size: 16px; font-weight: 700; }
+    .for-whom-card p  { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta {
+      padding: 120px 24px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta::before {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse at center bottom, rgba(232,168,56,.1), transparent 65%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: clamp(30px, 4.5vw, 52px);
+      font-weight: 800; letter-spacing: -.03em;
+      margin-bottom: 20px; line-height: 1.1;
+    }
+    .cta p { color: var(--text2); font-size: 17px; margin-bottom: 40px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 48px;
+      border-top: 1px solid var(--border2);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+      font-size: 13px; color: var(--text3);
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; }
+    .footer-logo-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      color: #0d0d14; font-size: 12px;
+    }
+
+
+    /* ── MULTILANG ── */
+    .t { display: none; }
+    body[data-lang="pl"] .t-pl,
+    body[data-lang="ua"] .t-ua,
+    body[data-lang="ru"] .t-ru,
+    body[data-lang="en"] .t-en { display: inline; }
+    body[data-lang="pl"] .t-pl-b,
+    body[data-lang="ua"] .t-ua-b,
+    body[data-lang="ru"] .t-ru-b,
+    body[data-lang="en"] .t-en-b { display: block; }
+
+    /* Lang switcher */
+    .lang-switcher {
+      position: relative;
+    }
+    .lang-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
+    .lang-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: #1a1a2e; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0,0,0,.4);
+      min-width: 140px;
+      display: none; z-index: 300;
+    }
+    .lang-dropdown.open { display: block; }
+    .lang-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px; font-size: 13px; font-weight: 500;
+      color: var(--text2); cursor: pointer; transition: background .15s;
+    }
+    .lang-option:hover { background: rgba(255,255,255,.06); color: var(--text); }
+    .lang-option.active { color: var(--accent); font-weight: 700; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-link.hide-mob { display: none; }
+      .hero { padding: 120px 16px 60px; }
+      .hero h1 { font-size: 32px; }
+      .hero-sub { font-size: 15px; }
+
+      /* Preview app — hide on very small, simplify */
+      .preview-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px; padding: 8px 10px 0;
+      }
+      .preview-stat { padding: 8px 8px; gap: 6px; }
+      .preview-stat-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; }
+      .preview-stat-icon i { width: 12px !important; height: 12px !important; }
+      .preview-stat-val { font-size: 14px; }
+      .preview-stat-lbl { font-size: 9px; }
+      .preview-residents { padding: 0 10px 12px; }
+      .preview-card { padding: 8px 10px; gap: 8px; }
+      .preview-avatar { width: 28px; height: 28px; font-size: 10px; }
+      .preview-card-name { font-size: 11px; }
+      .preview-card-meta { font-size: 10px; }
+      .preview-amount-val { font-size: 12px; }
+      .preview-header { padding: 10px 12px; }
+      .preview-btn-sm { padding: 4px 7px; font-size: 10px; }
+      .preview-header-right { gap: 4px; }
+
+      /* Stats banner — stack vertically on mobile */
+      .stats-banner {
+        flex-direction: column;
+        gap: 32px; padding: 48px 24px;
+      }
+      .stat-item-val { font-size: 36px; }
+
+      /* Features grid */
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card { padding: 24px; }
+
+      /* For whom */
+      .for-whom-grid { grid-template-columns: 1fr; }
+
+      footer { flex-direction: column; text-align: center; padding: 24px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .preview-tag { display: none; }
+      .preview-tag:first-child { display: inline; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-hero-primary, .btn-hero-sec { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
 
-<body>
-  <div class="loading-screen" id="loading-screen">
-    <div class="spinner"></div>
-    <div>Загрузка...</div>
-  </div>
+<body data-lang="pl">
 
-  <!-- Auth Screen -->
-  <div id="auth-screen" style="display:none">
-    <div class="auth-screen">
-      <div class="auth-box">
-        <div class="auth-logo"><i data-lucide="building-2" style="width:36px;height:36px;color:var(--accent)"></i></div>
-        <div class="auth-title">Lokum</div>
-        <div class="auth-subtitle">Управление жильцами</div>
-        <div class="auth-tabs">
-          <button class="auth-tab active" onclick="switchAuthTab('login',this)">Войти</button>
-          <button class="auth-tab" onclick="switchAuthTab('register',this)">Регистрация</button>
-        </div>
-        <div id="auth-error" class="auth-error"></div>
-        <div id="auth-login-form">
-          <input class="auth-field" type="email" id="auth-email" placeholder="Email" autocomplete="email">
-          <div class="pass-wrap">
-            <input class="auth-field" type="password" id="auth-pass" placeholder="Пароль"
-              autocomplete="current-password">
-            <button type="button" class="pass-eye" onclick="togglePassVis('auth-pass',this)">👁</button>
-          </div>
-          <div class="auth-forgot" onclick="doForgotPass()" id="auth-forgot">Забыли пароль?</div>
-          <button class="auth-btn primary" onclick="doLogin()">Войти</button>
-        </div>
-        <div id="auth-register-form" style="display:none">
-          <input class="auth-field" type="text" id="auth-name" placeholder="Ваше имя" autocomplete="name">
-          <input class="auth-field" type="email" id="auth-reg-email" placeholder="Email" autocomplete="email">
-          <div class="pass-wrap">
-            <input class="auth-field" type="password" id="auth-reg-pass" placeholder="Пароль (мин. 6 символов)"
-              autocomplete="new-password">
-            <button type="button" class="pass-eye" onclick="togglePassVis('auth-reg-pass',this)">👁</button>
-          </div>
-          <button class="auth-btn primary" onclick="doRegister()">Создать аккаунт</button>
-        </div>
-        <div class="auth-divider"><span id="auth-or-text">или</span></div>
-        <div id="auth-google-wrap">
-          <button class="auth-btn google" onclick="doGoogle()">
-            <svg width="18" height="18" viewBox="0 0 48 48">
-              <path fill="#EA4335"
-                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-              <path fill="#4285F4"
-                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-              <path fill="#FBBC05"
-                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-              <path fill="#34A853"
-                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-            </svg>
-            <span id="auth-google-text">Войти через Google</span>
-          </button>
-        </div>
-        <div style="margin-top:16px">
-          <select class="auth-field" id="auth-lang" onchange="switchAuthLang()"
-            style="text-align:center;cursor:pointer">
-            <option value="RU">🇷🇺 Русский</option>
-            <option value="PL">🇵🇱 Polski</option>
-            <option value="UA">🇺🇦 Українська</option>
-            <option value="EN">🇬🇧 English</option>
-            <option value="LT">🇱🇹 Lietuvių</option>
-          </select>
-        </div>
-        <div class="auth-footer" id="auth-footer">Данные хранятся в облаке Firebase</div>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="landing.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <i data-lucide="building-2" style="width:18px;height:18px"></i>
       </div>
+      <span>Lokum</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link hide-mob"><span class="t t-pl">Funkcje</span><span class="t t-ua">Функції</span><span class="t t-ru">Функции</span><span class="t t-en">Features</span></a>
+      <a href="#dla-kogo" class="nav-link hide-mob"><span class="t t-pl">Dla kogo</span><span class="t t-ua">Для кого</span><span class="t t-ru">Для кого</span><span class="t t-en">Who it's for</span></a>
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" onclick="toggleLangDropdown()">
+          <span id="langFlag">🇵🇱</span>
+          <span id="langCode">PL</span>
+          <i data-lucide="chevron-down" style="width:12px;height:12px"></i>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="lang-option" data-lang="pl" onclick="setLang('pl')">🇵🇱 Polski</div>
+          <div class="lang-option" data-lang="ua" onclick="setLang('ua')">🇺🇦 Українська</div>
+          <div class="lang-option" data-lang="ru" onclick="setLang('ru')">🇷🇺 Русский</div>
+          <div class="lang-option" data-lang="en" onclick="setLang('en')">🇬🇧 English</div>
+        </div>
+      </div>
+      <a href="app.html" class="nav-cta">
+        <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+        <span class="t t-pl">Zaloguj się</span><span class="t t-ua">Увійти</span><span class="t t-ru">Войти</span><span class="t t-en">Sign in</span>
+      </a>
     </div>
-  </div>
+  </nav>
 
-  <div id="main-app" style="display:none">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <i data-lucide="zap" style="width:12px;height:12px"></i>
+      <span class="t t-pl">Bezpłatnie — bez karty kredytowej</span><span class="t t-ua">Безкоштовно — без карти</span><span class="t t-ru">Бесплатно — без карты</span><span class="t t-en">Free — no credit card needed</span>
+    </div>
 
-    <header class="header">
-      <div class="header-left">
-        <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Odśwież"><i data-lucide="building-2" style="width:22px;height:22px;color:#0d0d14"></i></div>
-        <div>
-          <h1>Lokum</h1>
-          <div class="header-sub">
-            <p id="hdr-sub">Управление жильцами</p>
-            <span class="conn-status"><i data-lucide="cloud" style="width:10px;height:10px"></i> Chmura</span>
+    <h1><span class="t t-pl">Zarządzaj kwaterami<br>pracowniczymi <em>bez stresu</em></span><span class="t t-ua">Керуйте квартирами<br>для працівників <em>без стресу</em></span><span class="t t-ru">Управляйте жильём<br>для работников <em>без стресса</em></span><span class="t t-en">Manage worker housing<br><em>without the stress</em></span></h1>
+
+    <p class="hero-sub">
+      <span class="t t-pl">Lokatorzy, obiekty, płatności, rezerwacje i finanse — wszystko w jednym miejscu. Koniec z Excelem.</span><span class="t t-ua">Мешканці, об'єкти, платежі, бронювання та фінанси — все в одному місці. Кінець Excel.</span><span class="t t-ru">Жильцы, объекты, платежи, бронирования и финансы — всё в одном месте. Конец Excel.</span><span class="t t-en">Residents, properties, payments, bookings and finances — all in one place. Goodbye Excel.</span>
+    </p>
+
+    <div class="hero-actions">
+      <a href="app.html" class="btn-hero-primary">
+        <i data-lucide="rocket" style="width:16px;height:16px"></i>
+        <span class="t t-pl">Rozpocznij za darmo</span><span class="t t-ua">Почати безкоштовно</span><span class="t t-ru">Начать бесплатно</span><span class="t t-en">Get started free</span>
+      </a>
+      <a href="#features" class="btn-hero-sec">
+        <i data-lucide="play-circle" style="width:16px;height:16px"></i>
+        <span class="t t-pl">Zobacz funkcje</span><span class="t t-ua">Переглянути функції</span><span class="t t-ru">Посмотреть функции</span><span class="t t-en">See features</span>
+      </a>
+    </div>
+
+    <!-- App Preview -->
+    <div class="app-preview">
+      <div class="app-preview-wrap">
+        <div class="preview-bar">
+          <div class="preview-dots">
+            <span></span><span></span><span></span>
           </div>
+          <div class="preview-url">lokum.cloud</div>
         </div>
-      </div>
-      <div class="header-right" id="hdr-right">
-        <button id="plan-badge" onclick="openSubscription()"
-          style="display:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border3);background:var(--surface);color:var(--text3);font-family:inherit;transition:all .2s">🆓
-          Free</button>
-        <div class="user-badge" id="user-badge" onclick="toggleUserMenu(event)">
-          <span class="user-avatar" id="user-avatar">?</span>
-          <span id="user-name">User</span>
-          <span style="font-size:10px;opacity:.5"><i data-lucide="chevron-down" style="width:10px;height:10px"></i></span>
-          <div class="user-menu" id="user-menu">
-            <div class="user-menu-header">
-              <div class="user-menu-name" id="um-name">User</div>
-              <div class="user-menu-email" id="um-email">email</div>
+        <div class="preview-app">
+          <!-- Mini header -->
+          <div class="preview-header">
+            <div class="preview-header-left">
+              <div class="preview-logo-sm">HM</div>
+              <span class="preview-header-title">Lokum</span>
+              <span style="font-size:10px;color:var(--green);background:rgba(106,184,154,.1);padding:2px 8px;border-radius:4px;margin-left:4px">☁ Chmura</span>
             </div>
-            <button class="user-menu-item" onclick="doSwitchAccount()"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> <span id="um-switch">Сменить
-                аккаунт</span></button>
-            <button class="user-menu-item danger" onclick="doLogout()"><i data-lucide="power" style="width:14px;height:14px"></i> <span id="um-logout">Выйти</span></button>
-          </div>
-        </div>
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Theme"><i data-lucide="moon" style="width:16px;height:16px"></i></button>
-        <button class="btn btn-secondary" onclick="openSettings()"><i data-lucide="settings" style="width:14px;height:14px"></i></button>
-        <button class="btn btn-secondary" onclick="openReport()" id="btn-report"><i data-lucide="file-text" style="width:14px;height:14px"></i> <span id="btn-report-lbl">Raport</span></button>
-        <button class="btn btn-primary" onclick="openForm()" id="btn-add"><i data-lucide="user-plus" style="width:14px;height:14px"></i> <span id="btn-add-lbl">Zamelduj</span></button>
-      </div>
-    </header>
-
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-icon"><i data-lucide="users" style="width:22px;height:22px"></i></div>
-        <div>
-          <div class="stat-value" id="stat-active">0</div>
-          <div class="stat-label" id="lbl-residents">Жильцов</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" id="stat-currency-icon">zł</div>
-        <div>
-          <div class="stat-value" id="stat-owed">0.00 zł</div>
-          <div class="stat-label" id="lbl-owed">К оплате (текущие)</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">Σ</div>
-        <div>
-          <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label" id="lbl-total">Всего записей</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Checkout Forecast Block -->
-    <div id="forecast-block" style="display:none;margin:0 0 10px"></div>
-
-    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span><i data-lucide="building-2" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
-        onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
-          onclick="openPropForm()" style="padding:6px 14px;font-size:12px" id="btn-add-prop">＋ Добавить
-          объект</button></span></div>
-    <div class="prop-list section-content" id="prop-list"></div>
-
-    <!-- Bookings Section -->
-    <div class="section-title" id="booking-section-title" onclick="toggleSection('bookings')">
-      <span>📅 <span id="lbl-bookings">Бронирования</span> <span class="section-toggle" id="toggle-bookings">▼</span></span>
-      <span onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center">
-        <button class="tab book-view-btn" id="btn-book-list" onclick="setBookViewMode('list')" style="padding:4px 10px;font-size:11px;background:var(--accent);color:#fff">📋</button>
-        <button class="tab book-view-btn" id="btn-book-cal" onclick="setBookViewMode('calendar')" style="padding:4px 10px;font-size:11px">📅</button>
-        <button class="btn btn-primary" onclick="openBookingForm()" style="padding:6px 14px;font-size:12px" id="btn-add-booking">+ Бронь</button>
-      </span>
-    </div>
-    <div class="section-content" id="bookings-section">
-      <div style="display:flex;gap:4px;padding:8px 24px;flex-wrap:wrap" id="book-status-tabs">
-        <button class="tab book-status-tab" data-status="" onclick="setBookStatusFilter('')" id="book-tab-all">Все</button>
-        <button class="tab book-status-tab" data-status="pending" onclick="setBookStatusFilter('pending')" id="book-tab-pending">⏳</button>
-        <button class="tab book-status-tab" data-status="confirmed" onclick="setBookStatusFilter('confirmed')" id="book-tab-confirmed">✓</button>
-        <button class="tab book-status-tab" data-status="cancelled" onclick="setBookStatusFilter('cancelled')" id="book-tab-cancelled">✕</button>
-      </div>
-      <div id="calendar-container" style="display:none;padding:0 24px 12px"></div>
-      <div id="bookings-list" class="list" style="padding:0 24px 12px"></div>
-      <div class="pagination" id="booking-pagination" style="padding:0 24px 12px"></div>
-    </div>
-
-    <!-- Finance Section -->
-    <div class="section-title" id="fin-section-title" onclick="toggleSection('finance')"><span>💰 <span
-          id="lbl-finance">Финансы</span> <span class="section-toggle" id="toggle-finance">▼</span></span> <span
-        onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
-          onclick="openExpenseForm()" style="padding:6px 14px;font-size:12px" id="btn-add-expense">+ Добавить
-          запись</button></span></div>
-    <div class="section-content" id="finance-section">
-      <div class="fin-summary" id="fin-summary"></div>
-      <div style="display:flex;gap:4px;padding:8px 24px;flex-wrap:wrap" id="fin-cat-tabs">
-        <button class="tab fin-cat-tab" data-cat="" onclick="setFinCategoryFilter('')" id="fin-cat-all">Все</button>
-        <button class="tab fin-cat-tab" data-cat="utilities" onclick="setFinCategoryFilter('utilities')" id="fin-cat-utilities">🔌 <span class="fin-cat-label">Коммуналка</span></button>
-        <button class="tab fin-cat-tab" data-cat="supplies" onclick="setFinCategoryFilter('supplies')" id="fin-cat-supplies">📦 <span class="fin-cat-label">Закупки</span></button>
-        <button class="tab fin-cat-tab" data-cat="repairs" onclick="setFinCategoryFilter('repairs')" id="fin-cat-repairs">🔧 <span class="fin-cat-label">Ремонт</span></button>
-        <button class="tab fin-cat-tab" data-cat="salary" onclick="setFinCategoryFilter('salary')" id="fin-cat-salary">👤 <span class="fin-cat-label">Зарплата</span></button>
-        <button class="tab fin-cat-tab" data-cat="other" onclick="setFinCategoryFilter('other')" id="fin-cat-other">📎 <span class="fin-cat-label">Прочее</span></button>
-      </div>
-      <div class="prop-list" id="expenses-list"></div>
-      <div class="pagination" id="fin-pagination"></div>
-    </div>
-
-    <!-- Finance Form Modal -->
-    <div class="overlay hidden" id="fin-overlay"
-      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('finance')">
-      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="fin-form-title">💰 Новая запись</h3>
-        <input type="hidden" id="fin-edit-id">
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-fin-type">Тип</label>
-            <select class="field" id="fin-type">
-              <option value="expense">📉 Расход</option>
-              <option value="income">💰 Доход</option>
-            </select>
-          </div>
-          <div><label class="field-label" id="lbl-fin-category">Категория</label>
-            <select class="field" id="fin-category">
-              <option value="utilities">🔌 Коммуналка</option>
-              <option value="supplies">📦 Закупки</option>
-              <option value="repairs">🔧 Ремонт</option>
-              <option value="salary">👤 Зарплата</option>
-              <option value="other">📎 Прочее</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-fin-amount">Сумма</label><input class="field" id="fin-amount"
-              type="number" min="0" step="10" placeholder="0"></div>
-          <div><label class="field-label" id="lbl-fin-date">Дата</label><input class="field" id="fin-date"
-              type="date"></div>
-        </div>
-        <label class="field-label" id="lbl-fin-desc">Описание</label>
-        <input class="field" id="fin-desc" type="text" placeholder="">
-        <label class="field-label" id="lbl-fin-prop">Привязка к объекту</label>
-        <select class="field" id="fin-prop">
-          <option value="">— Выберите объект —</option>
-        </select>
-        <div class="form-actions">
-          <button class="btn btn-cancel" onclick="closeExpenseForm()" id="btn-fin-cancel">Отмена</button>
-          <button class="btn btn-cancel" onclick="saveExpense()" id="btn-fin-save"
-            style="color:var(--accent);border-color:var(--accent)">Принять</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-title" onclick="toggleSection('residents')"><span><i data-lucide="users" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
-    </div>
-    <div class="section-content" id="residents-section">
-      <div class="tabs" id="tabs-bar">
-        <button class="tab active" onclick="setFilter('active',this)" id="tab-active">Проживают</button>
-        <button class="tab" onclick="setFilter('checkedOut',this)" id="tab-out">Выселены</button>
-        <button class="tab" onclick="setFilter('all',this)" id="tab-all">Все</button>
-        <button class="tab" onclick="document.getElementById('filter-panel').classList.toggle('open')"
-          id="tab-filter"><i data-lucide="search" style="width:12px;height:12px"></i> Filtr</button>
-      </div>
-
-      <div class="filter-panel" id="filter-panel">
-        <!-- Filter type selector pills -->
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;align-items:center">
-          <button class="fp-type-btn" onclick="setFilterType('name')" id="ftype-name"
-            title="Фильтр по имени или фамилии">🔤 <span id="lbl-ftype-name">По имени</span></button>
-          <button class="fp-type-btn" onclick="setFilterType('type')" id="ftype-type"
-            title="Показать только определённый тип жилья">🏠 <span id="lbl-ftype-type">По типу жилья</span></button>
-          <button class="fp-type-btn" onclick="setFilterType('prop')" id="ftype-prop"
-            title="Фильтр по городу и адресу объекта">🏢 <span id="lbl-ftype-prop">По объекту</span></button>
-          <button class="fp-type-btn" onclick="setFilterType('group')" id="ftype-group"
-            title="Сгруппировать жильцов по объектам с итоговой суммой">📊 <span
-              id="lbl-ftype-group">Группировать</span></button>
-          <button class="fp-type-btn" onclick="clearFilters()" id="btn-clear-filters"
-            style="margin-left:auto;color:var(--red);border-color:rgba(212,85,85,.3)"><span id="lbl-clear-filters">✕
-              Сброс</span></button>
-        </div>
-        <!-- Sub-panels -->
-        <div id="ftype-panel-name" class="ftype-panel" style="display:none">
-          <label id="lbl-search" style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">По
-            имени</label>
-          <input class="field" id="ff-name" type="text" placeholder="🔍 Введите имя или фамилию..." oninput="render()"
-            style="width:100%;padding:7px 10px;font-size:13px">
-        </div>
-        <div id="ftype-panel-type" class="ftype-panel" style="display:none">
-          <label id="lbl-htype" style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px">По типу
-            жилья</label>
-          <div class="fp-checks" id="ff-types"></div>
-        </div>
-        <div id="ftype-panel-prop" class="ftype-panel" style="display:none">
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <div style="flex:1;min-width:100px">
-              <label id="lbl-city"
-                style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Город</label>
-              <select class="field" id="ff-city" onchange="render()" style="width:100%">
-                <option value="">—</option>
-              </select>
+            <div class="preview-header-right">
+              <span class="preview-btn-sm sec">⚙</span>
+              <span class="preview-btn-sm sec">📄 Raport</span>
+              <span class="preview-btn-sm pri">+ Zamelduj</span>
             </div>
-            <div style="flex:2;min-width:140px">
-              <label id="lbl-addr"
-                style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Адрес</label>
-              <select class="field" id="ff-addr" onchange="render()" style="width:100%">
-                <option value="">—</option>
-              </select>
+          </div>
+          <!-- Stats -->
+          <div class="preview-stats">
+            <div class="preview-stat">
+              <div class="preview-stat-icon">
+                <i data-lucide="users" style="width:16px;height:16px"></i>
+              </div>
+              <div>
+                <div class="preview-stat-val">8</div>
+                <div class="preview-stat-lbl">Lokatorzy</div>
+              </div>
+            </div>
+            <div class="preview-stat">
+              <div class="preview-stat-icon">
+                <i data-lucide="wallet" style="width:16px;height:16px"></i>
+              </div>
+              <div>
+                <div class="preview-stat-val" style="color:var(--accent)">119k zł</div>
+                <div class="preview-stat-lbl">Do zapłaty</div>
+              </div>
+            </div>
+            <div class="preview-stat">
+              <div class="preview-stat-icon">
+                <i data-lucide="database" style="width:16px;height:16px"></i>
+              </div>
+              <div>
+                <div class="preview-stat-val">90</div>
+                <div class="preview-stat-lbl">Łącznie</div>
+              </div>
+            </div>
+          </div>
+          <!-- Resident cards -->
+          <div class="preview-residents">
+            <div class="preview-section-title">
+              <i data-lucide="users" style="width:11px;height:11px"></i>
+              Lokatorzy
+            </div>
+            <div class="preview-card">
+              <div class="preview-avatar" style="background:#3b82f6">IK</div>
+              <div style="flex:1;min-width:0">
+                <div class="preview-card-name">Igor Fedorov</div>
+                <div class="preview-card-meta">Gdańsk · Heweliusza 11</div>
+                <div class="preview-card-tags">
+                  <span class="preview-tag">01.06.2024 →</span>
+                  <span class="preview-tag accent">753 dni</span>
+                  <span class="preview-tag">Hostel</span>
+                </div>
+              </div>
+              <div class="preview-amount">
+                <div class="preview-amount-val">11 706 zł</div>
+                <div class="preview-amount-lbl">do zapłaty</div>
+              </div>
+            </div>
+            <div class="preview-card">
+              <div class="preview-avatar" style="background:#10b981">VM</div>
+              <div style="flex:1;min-width:0">
+                <div class="preview-card-name">Viktoria Vasilyev</div>
+                <div class="preview-card-meta">Warszawa · Lucka 12</div>
+                <div class="preview-card-tags">
+                  <span class="preview-tag">15.04.2024 →</span>
+                  <span class="preview-tag accent">703 dni</span>
+                  <span class="preview-tag">Hostel</span>
+                </div>
+              </div>
+              <div class="preview-amount">
+                <div class="preview-amount-val">39 007 zł</div>
+                <div class="preview-amount-lbl">do zapłaty</div>
+              </div>
+            </div>
+            <div class="preview-card" style="opacity:.55">
+              <div class="preview-avatar" style="background:#f59e0b">AS</div>
+              <div style="flex:1;min-width:0">
+                <div class="preview-card-name">Artem Alexeev</div>
+                <div class="preview-card-meta">Gdańsk · Lucka 11</div>
+                <div class="preview-card-tags">
+                  <span class="preview-tag">11.03.2025 →</span>
+                  <span class="preview-tag green">339 dni</span>
+                  <span class="preview-tag">Hostel</span>
+                </div>
+              </div>
+              <div class="preview-amount">
+                <div class="preview-amount-val">18 218 zł</div>
+                <div class="preview-amount-lbl">do zapłaty</div>
+              </div>
             </div>
           </div>
         </div>
-        <div id="ftype-panel-group" class="ftype-panel" style="display:none">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;padding:4px 0">
-            <input type="checkbox" id="ff-group-prop" onchange="toggleGroupByProp()"
-              style="width:16px;height:16px;cursor:pointer">
-            <span id="lbl-group-prop">🏢 Группировать по объектам</span>
-          </label>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">Жильцы объединяются по адресам с итоговой суммой
-            к оплате</div>
-        </div>
-      </div>
-
-      <div class="select-bar" id="select-bar">
-        <label><input type="checkbox" class="sel-check" id="sel-all" onchange="toggleSelectAll()"> <span
-            id="lbl-sel-all">Выбрать все</span></label>
-        <span class="sel-count" id="sel-count"></span>
-        <button class="btn btn-secondary" onclick="deleteSelected()" id="btn-del-sel"
-          style="font-size:11px;padding:4px 10px;color:var(--red)"><i data-lucide="trash-2" style="width:12px;height:12px"></i> Usuń</button>
-        <button class="btn btn-secondary" onclick="checkoutSelected()" id="btn-co-sel"
-          style="font-size:11px;padding:4px 10px"><i data-lucide="log-out" style="width:12px;height:12px"></i> Wymelduj</button>
-        <button class="btn btn-secondary" onclick="cancelSelect()" style="font-size:11px;padding:4px 10px"
-          id="btn-cancel-sel">✕</button>
-      </div>
-      <div class="list" id="residents-list"></div>
-      <div class="pagination" id="pagination-bar"></div>
-    </div>
-
-    <!-- Add/Edit Modal -->
-    <div class="overlay hidden" id="form-overlay"
-      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('resident')">
-      <div class="modal" onclick="event.stopPropagation()">
-        <h3 id="form-title">Новый жилец</h3>
-        <input type="hidden" id="edit-id">
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-fname">Имя</label><input class="field" id="f-firstname"
-              placeholder=""></div>
-          <div><label class="field-label" id="lbl-lname">Фамилия</label><input class="field" id="f-lastname"
-              placeholder=""></div>
-        </div>
-        <div id="prop-select-row">
-          <label class="field-label" id="lbl-select-prop">Объект</label>
-          <select class="field" id="f-prop" onchange="onPropSelect()">
-            <option value="">— Выберите объект —</option>
-          </select>
-          <div id="prop-spots-info" style="font-size:11px;color:var(--green);margin-top:4px"></div>
-        </div>
-        <div id="room-select-row" style="display:none;margin-top:6px">
-          <label id="lbl-assign-room">Комната</label>
-          <select class="field" id="f-room" onchange="onRoomSelect()">
-            <option value="">— Без комнаты —</option>
-          </select>
-          <div id="room-spots-info" style="font-size:11px;margin-top:2px"></div>
-        </div>
-        <input type="hidden" id="f-address"><input type="hidden" id="f-city">
-        <datalist id="dl-addr"></datalist><datalist id="dl-city"></datalist>
-        <div class="form-row">
-          <div id="f-type-wrap"><label class="field-label" id="lbl-ftype">Тип жилья</label>
-            <select class="field" id="f-type">
-              <option value="hostel">Хостел</option>
-              <option value="apartment">Квартира</option>
-              <option value="house">Дом</option>
-              <option value="room">Комната</option>
-            </select>
-          </div>
-          <div><label class="field-label" id="lbl-fcheckin">Дата поселения</label><input class="field" id="f-date"
-              type="date"></div>
-        </div>
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-frate">Оплата / мес.</label><input class="field" id="f-rate"
-              type="number" min="0" step="50" value="0"></div>
-          <div><label class="field-label" id="lbl-planned-out">Выезд (план)</label><input class="field"
-              id="f-planned-out" type="date"></div>
-        </div>
-        <div style="margin:6px 0 2px">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--text2)">
-            <input type="checkbox" id="f-senior" style="width:16px;height:16px;cursor:pointer"> <span id="lbl-senior">⭐
-              Старший</span>
-          </label>
-        </div>
-        <!-- Rate change (edit only) -->
-        <div id="rate-change-section" style="display:none">
-          <div class="rate-change-box">
-            <label id="lbl-rate-change">📅 Изменить ставку с даты:</label>
-            <div class="form-row" style="margin-top:6px">
-              <div><input class="field" id="f-rate-new" type="number" min="0" step="50" placeholder=""></div>
-              <div><input class="field date-input" id="f-rate-from" type="date"></div>
-            </div>
-          </div>
-          <div id="rate-history-box"></div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-cancel" onclick="closeForm()" id="btn-fcancel">Отмена</button>
-          <button class="btn btn-cancel" onclick="saveResident()" id="btn-fsave"
-            style="color:var(--accent);border-color:var(--accent)">Принять</button>
-        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Settings Modal -->
-    <div class="overlay hidden" id="settings-overlay"
-      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('settings')">
-      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="lbl-settings">⚙ Настройки</h3>
-        <label class="field-label">Язык / Language</label>
-        <select class="field" id="s-lang" onchange="applyLangImmediate(this.value)">
-          <option value="RU">🇷🇺 Русский</option>
-          <option value="PL">🇵🇱 Polski</option>
-          <option value="UA">🇺🇦 Українська</option>
-          <option value="EN">🇬🇧 English</option>
-          <option value="LT">🇱🇹 Lietuvių</option>
-        </select>
-        <label class="field-label" id="lbl-theme">Тема</label>
-        <div class="theme-row">
-          <div class="theme-option" onclick="setThemeOption('dark')" id="theme-opt-dark">
-            <div class="theme-icon">🌙</div>Dark
-          </div>
-          <div class="theme-option" onclick="setThemeOption('light')" id="theme-opt-light">
-            <div class="theme-icon">☀️</div>Light
-          </div>
-          <div class="theme-option" onclick="setThemeOption('auto')" id="theme-opt-auto">
-            <div class="theme-icon">💻</div>Auto
-          </div>
-        </div>
-        <label class="field-label" id="lbl-currency">Валюта</label>
-        <select class="field" id="s-currency" onchange="previewCurrency()">
-          <option value="PLN">PLN — Польский злотый (zł)</option>
-          <option value="EUR">EUR — Евро (€)</option>
-          <option value="USD">USD — Доллар США ($)</option>
-        </select>
-        <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px">
-          <span style="font-size:12px;color:#6a6a7a" id="lbl-example">Пример:</span>
-          <div style="font-size:18px;font-weight:700;margin-top:4px" id="currency-preview">600.00 zł</div>
-        </div>
-        <div id="fieldmgr-wrap">
-          <label class="field-label" style="cursor:pointer;user-select:none"
-            onclick="document.getElementById('field-manager').classList.toggle('rpt-hidden');this.querySelector('span').textContent=document.getElementById('field-manager').classList.contains('rpt-hidden')?'▶':'▼'"
-            id="lbl-fieldmgr">Управление полями <span style="font-size:11px;color:var(--text4)">▼</span></label>
-          <div id="field-manager" style="margin-top:4px"></div>
-        </div>
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
-          <label class="field-label" id="lbl-data">Данные</label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-secondary" onclick="importCSV()" id="btn-import" style="font-size:12px">📥 Импорт
-              CSV</button>
-            <button class="btn btn-secondary" onclick="inviteUser()" id="btn-invite" style="font-size:12px">👤+
-              Пригласить</button>
-          </div>
-          <input type="file" id="csv-file" accept=".csv" style="display:none">
-        </div>
-        <div id="members-section" style="margin-top:12px;display:none">
-          <label class="field-label" style="cursor:pointer;user-select:none"
-            onclick="document.getElementById('members-list').classList.toggle('rpt-hidden');this.querySelector('span').textContent=document.getElementById('members-list').classList.contains('rpt-hidden')?'▶':'▼'"
-            id="lbl-members">👥 Пользователи <span style="font-size:11px;color:var(--text4)">▼</span></label>
-          <div id="members-list" style="margin-top:4px"></div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-cancel" onclick="closeSettings()" id="btn-scancel">Отмена</button>
-          <button class="btn btn-cancel" onclick="saveSettings()" id="btn-ssave"
-            style="color:var(--accent);border-color:var(--accent)">Принять</button>
-        </div>
-      </div>
+  <!-- STATS BANNER -->
+  <div class="stats-banner" id="stats-banner">
+    <div class="stat-item">
+      <div class="stat-item-val">100%</div>
+      <div class="stat-item-label"><span class="t t-pl">Bezpłatne</span><span class="t t-ua">Безкоштовно</span><span class="t t-ru">Бесплатно</span><span class="t t-en">Free</span></div>
+      <div class="stat-item-note"><span class="t t-pl">bez karty, bez ukrytych opłat</span><span class="t t-ua">без карти, без прихованих платежів</span><span class="t t-ru">без карты, без скрытых платежей</span><span class="t t-en">no card, no hidden fees</span></div>
     </div>
-
-    <!-- Report Modal -->
-    <div class="overlay hidden" id="report-overlay"
-      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('report')">
-      <div class="modal wide" onclick="event.stopPropagation()">
-        <h3 id="lbl-report">📄 Отчёт</h3>
-        <div class="period-bar">
-          <button class="period-btn active" onclick="setPeriod('all',this)" id="pb-all">Всё время</button>
-          <button class="period-btn" onclick="setPeriod('week',this)" id="pb-week">За неделю</button>
-          <button class="period-btn" onclick="setPeriod('month',this)" id="pb-month">За месяц</button>
-          <button class="period-btn" onclick="setPeriod('year',this)" id="pb-year">За год</button>
-          <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
-        </div>
-        <div class="period-dates" id="custom-dates">
-          <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
-          <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
-        </div>
-        <div class="period-info" id="period-info"></div>
-        <div id="report-content"></div>
-        <div class="form-actions">
-          <button class="btn btn-cancel" onclick="closeReport()" id="btn-rclose">Закрыть</button>
-          <button class="btn btn-primary" onclick="showExportDialog()" id="btn-generate"
-            style="background:var(--green);border-color:var(--green)">📋 Сгенерировать</button>
-        </div>
-      </div>
+    <div class="stat-item">
+      <div class="stat-item-val">5</div>
+      <div class="stat-item-label"><span class="t t-pl">Języków</span><span class="t t-ua">Мов</span><span class="t t-ru">Языков</span><span class="t t-en">Languages</span></div>
+      <div class="stat-item-note">PL, UA, RU, EN, LT</div>
     </div>
-
-    <!-- Rate History Modal -->
-    <div class="overlay hidden" id="hist-overlay">
-      <div class="modal hist-modal">
-        <h3 id="hist-title">📋 История ставок</h3>
-        <div id="hist-content"></div>
-        <div class="form-actions">
-          <button class="btn btn-cancel"
-            onclick="document.getElementById('hist-overlay').classList.add('hidden')">Закрыть</button>
-        </div>
-      </div>
+    <div class="stat-item">
+      <div class="stat-item-val">∞</div>
+      <div class="stat-item-label"><span class="t t-pl">Obiektów i lokatorów</span><span class="t t-ua">Об'єктів та мешканців</span><span class="t t-ru">Объектов и жильцов</span><span class="t t-en">Properties & residents</span></div>
+      <div class="stat-item-note"><span class="t t-pl">bez limitów w planie Pro</span><span class="t t-ua">без лімітів у плані Pro</span><span class="t t-ru">без лимитов в плане Pro</span><span class="t t-en">unlimited in Pro plan</span></div>
     </div>
-
-    <!-- Property Form Modal -->
-    <div class="overlay hidden" id="prop-overlay"
-      onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('props')">
-      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="prop-form-title">🏢 Новый объект</h3>
-        <input type="hidden" id="prop-edit-id">
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-prop-city">Город</label><input class="field" id="p-city"
-              placeholder=""></div>
-          <div><label class="field-label" id="lbl-prop-addr">Адрес</label><input class="field" id="p-address"
-              placeholder=""></div>
-        </div>
-        <div class="form-row">
-          <div><label class="field-label" id="lbl-prop-type">Тип</label>
-            <select class="field" id="p-type">
-              <option value="hostel" id="opt-hostel">Хостел</option>
-              <option value="apartment" id="opt-apartment">Квартира</option>
-              <option value="house" id="opt-house">Дом</option>
-              <option value="room" id="opt-room">Комната</option>
-            </select>
-          </div>
-          <div><label class="field-label" id="lbl-prop-spots">Кол-во мест</label><input class="field" id="p-spots"
-              type="number" min="1" value="10"></div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-cancel" onclick="closePropForm()" id="btn-prop-cancel">Отмена</button>
-          <button class="btn btn-cancel" onclick="saveProp()" id="btn-prop-save"
-            style="color:var(--accent);border-color:var(--accent)">Принять</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Room Form -->
-    <div class="overlay hidden" id="room-overlay">
-      <div class="modal" style="max-width:360px">
-        <h3 id="room-form-title">🚪 Комната</h3>
-        <input type="hidden" id="room-prop-id">
-        <input type="hidden" id="room-edit-id">
-        <div class="form-row">
-          <div>
-            <label id="lbl-room-name">Номер/Название</label>
-            <input class="field" id="r-name" placeholder="101">
-          </div>
-          <div>
-            <label id="lbl-room-floor">Этаж</label>
-            <input class="field" id="r-floor" type="number" min="0" value="1">
-          </div>
-        </div>
-        <div>
-          <label id="lbl-room-beds">Кол-во мест</label>
-          <input class="field" id="r-beds" type="number" min="1" value="2">
-        </div>
-        <div class="form-btns" style="margin-top:12px">
-          <button class="btn btn-secondary" onclick="closeRoomForm()" id="btn-room-cancel">Отмена</button>
-          <button class="btn btn-primary" onclick="saveRoom()" id="btn-room-save">Сохранить</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Booking Form -->
-    <div class="overlay hidden" id="booking-overlay">
-      <div class="modal" style="max-width:460px">
-        <h3 id="booking-form-title">📅 Новая бронь</h3>
-        <input type="hidden" id="bk-edit-id">
-        <div class="form-row">
-          <div>
-            <label id="lbl-bk-guest">Имя гостя</label>
-            <input class="field" id="bk-guest" placeholder="">
-          </div>
-          <div>
-            <label id="lbl-bk-phone">Телефон</label>
-            <input class="field" id="bk-phone" type="tel" placeholder="">
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label id="lbl-bk-prop">Объект</label>
-            <select class="field" id="bk-prop" onchange="onBookPropSelect()"></select>
-          </div>
-          <div id="bk-room-row" style="display:none">
-            <label id="lbl-bk-room">Комната</label>
-            <select class="field" id="bk-room"><option value="">—</option></select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label id="lbl-bk-start">Дата заезда</label>
-            <input class="field date-input" id="bk-start" type="date">
-          </div>
-          <div>
-            <label id="lbl-bk-end">Дата выезда</label>
-            <input class="field date-input" id="bk-end" type="date">
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label id="lbl-bk-amount">Сумма</label>
-            <input class="field" id="bk-amount" type="number" min="0">
-          </div>
-          <div>
-            <label id="lbl-bk-status">Статус</label>
-            <select class="field" id="bk-status">
-              <option value="pending" id="opt-bk-pending">⏳ Ожидает</option>
-              <option value="confirmed" id="opt-bk-confirmed">✓ Подтверждено</option>
-              <option value="cancelled" id="opt-bk-cancelled">✕ Отменено</option>
-              <option value="checkedIn" id="opt-bk-checkedin">🏠 Заселён</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label id="lbl-bk-notes">Заметки</label>
-          <input class="field" id="bk-notes" placeholder="">
-        </div>
-        <div class="form-btns" style="margin-top:12px">
-          <button class="btn btn-secondary" onclick="closeBookingForm()" id="btn-bk-cancel">Отмена</button>
-          <button class="btn btn-primary" onclick="saveBooking()" id="btn-bk-save">Сохранить</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <h2 class="features-title"><span class="t t-pl">Wszystko czego potrzebujesz</span><span class="t t-ua">Все що вам потрібно</span><span class="t t-ru">Всё что вам нужно</span><span class="t t-en">Everything you need</span></h2>
+    <p class="features-sub"><span class="t t-pl">Jeden system zamiast dziesiątek arkuszy kalkulacyjnych</span><span class="t t-ua">Одна система замість десятків таблиць</span><span class="t t-ru">Одна система вместо десятков таблиц</span><span class="t t-en">One system instead of dozens of spreadsheets</span></p>
 
-    <!-- Onboarding Overlay -->
-    <div class="overlay hidden" id="onboarding-overlay">
-      <div class="modal" style="max-width:440px; text-align:center; padding: 40px 30px">
-        <div style="margin-bottom:20px;display:flex;justify-content:center"><i data-lucide="rocket"
-            style="width:56px;height:56px;color:var(--accent)"></i></div>
-        <h2 style="margin-bottom:12px;font-size:24px" id="onb-title">Witaj w Lokum!</h2>
-        <p style="color:var(--text2);font-size:15px;margin-bottom:32px;line-height:1.6">Rozpocznij w dwóch prostych krokach.</p>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px">
-          <div style="display:flex;align-items:center;margin-bottom:12px;gap:12px">
-            <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d0d14;display:flex;align-items:center;justify-content:center;font-weight:bold">1</div>
-            <div style="font-weight:600;font-size:15px">Stwórz obiekt</div>
-          </div>
-          <p style="color:var(--text3);font-size:13px;margin-bottom:16px;line-height:1.4">Dodaj pierwszy hostel, dom lub mieszkanie.</p>
-          <button class="btn btn-primary" onclick="window.closeOnboarding(); openPropForm();"
-            style="width:100%;justify-content:center;padding:10px"><i data-lucide="plus"
-              style="width:16px;height:16px"></i> Dodaj obiekt</button>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon orange">
+          <i data-lucide="users" style="width:24px;height:24px"></i>
         </div>
-        <button class="btn btn-cancel" onclick="window.closeOnboarding()"
-          style="background:transparent;border:none;color:var(--text3);font-size:13px">Pomiń konfigurację</button>
+        <h3><span class="t t-pl">Baza Lokatorów</span><span class="t t-ua">База Мешканців</span><span class="t t-ru">База Жильцов</span><span class="t t-en">Resident Database</span></h3>
+        <p><span class="t t-pl">Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika. Historia stawek, awatary, filtry.</span><span class="t t-ua">Відстежуйте заїзди, виїзди та час перебування кожного мешканця. Історія ставок, аватари, фільтри.</span><span class="t t-ru">Отслеживайте заселения, выселения и время проживания каждого жильца. История ставок, аватары, фильтры.</span><span class="t t-en">Track check-ins, check-outs and exact stay duration for each worker. Rate history, avatars, filters.</span></p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <i data-lucide="building-2" style="width:24px;height:24px"></i>
+        </div>
+        <h3><span class="t t-pl">Obiekty i Pokoje</span><span class="t t-ua">Об'єкти та Кімнати</span><span class="t t-ru">Объекты и Комнаты</span><span class="t t-en">Properties & Rooms</span></h3>
+        <p><span class="t t-pl">Zarządzaj wieloma hostelami, mieszkaniami i domami. Struktura pokoi, zajętość miejsc w czasie rzeczywistym.</span><span class="t t-ua">Керуйте кількома хостелами, квартирами та будинками. Структура кімнат, заповненість місць у реальному часі.</span><span class="t t-ru">Управляйте несколькими хостелами, квартирами и домами. Структура комнат, занятость мест в реальном времени.</span><span class="t t-en">Manage multiple hostels, apartments and houses. Room structure, occupancy in real time.</span></p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <i data-lucide="calendar" style="width:24px;height:24px"></i>
+        </div>
+        <h3><span class="t t-pl">Rezerwacje</span><span class="t t-ua">Бронювання</span><span class="t t-ru">Бронирования</span><span class="t t-en">Bookings</span></h3>
+        <p><span class="t t-pl">Kalendarz rezerwacji z widokiem miesięcznym. Statusy: oczekuje, potwierdzona, zameldowany, anulowana.</span><span class="t t-ua">Календар бронювань з місячним виглядом. Статуси: очікує, підтверджено, заселений, скасовано.</span><span class="t t-ru">Календарь бронирований с месячным видом. Статусы: ожидает, подтверждено, заселён, отменено.</span><span class="t t-en">Booking calendar with monthly view. Statuses: pending, confirmed, checked in, cancelled.</span></p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon teal">
+          <i data-lucide="trending-up" style="width:24px;height:24px"></i>
+        </div>
+        <h3><span class="t t-pl">Moduł Finansowy</span><span class="t t-ua">Фінансовий Модуль</span><span class="t t-ru">Финансовый Модуль</span><span class="t t-en">Finance Module</span></h3>
+        <p><span class="t t-pl">Rejestruj przychody i wydatki według kategorii. Prognoza dochodu, zysk netto, powiązanie z obiektami.</span><span class="t t-ua">Реєструйте доходи та витрати за категоріями. Прогноз доходу, чистий прибуток, прив'язка до об'єктів.</span><span class="t t-ru">Регистрируйте доходы и расходы по категориям. Прогноз дохода, чистая прибыль, привязка к объектам.</span><span class="t t-en">Log income and expenses by category. Revenue forecast, net profit, link to properties.</span></p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <i data-lucide="file-text" style="width:24px;height:24px"></i>
+        </div>
+        <h3><span class="t t-pl">Raporty PDF / Excel</span><span class="t t-ua">Звіти PDF / Excel</span><span class="t t-ru">Отчёты PDF / Excel</span><span class="t t-en">PDF / Excel Reports</span></h3>
+        <p><span class="t t-pl">Generuj przejrzyste raporty finansowe, lokatorów i obiektów jednym kliknięciem — za dowolny okres.</span><span class="t t-ua">Генеруйте чіткі фінансові звіти, мешканців та об'єктів одним кліком — за будь-який період.</span><span class="t t-ru">Генерируйте чёткие финансовые отчёты, жильцов и объектов одним кликом — за любой период.</span><span class="t t-en">Generate clear financial, resident and property reports in one click — for any period.</span></p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon red">
+          <i data-lucide="share-2" style="width:24px;height:24px"></i>
+        </div>
+        <h3><span class="t t-pl">Wspólna Przestrzeń</span><span class="t t-ua">Спільний Простір</span><span class="t t-ru">Общее Пространство</span><span class="t t-en">Shared Workspace</span></h3>
+        <p><span class="t t-pl">Zaproś współpracowników linkiem. Dane synchronizowane w chmurze Firebase w czasie rzeczywistym.</span><span class="t t-ua">Запросіть колег посиланням. Дані синхронізуються в хмарі Firebase в реальному часі.</span><span class="t t-ru">Пригласите коллег по ссылке. Данные синхронизируются в облаке Firebase в реальном времени.</span><span class="t t-en">Invite colleagues with a link. Data synced in Firebase cloud in real time.</span></p>
       </div>
     </div>
+  </section>
 
-  </div>
+  <!-- FOR WHOM -->
+  <section class="for-whom" id="dla-kogo">
+    <div class="for-whom-inner">
+      <h2 class="for-whom-title"><span class="t t-pl">Dla kogo</span><span class="t t-ua">Для кого</span><span class="t t-ru">Для кого</span><span class="t t-en">Who it's for</span> jest Lokum?</h2>
+      <div class="for-whom-grid">
+        <div class="for-whom-card">
+          <div class="for-whom-icon">🏢</div>
+          <h4><span class="t t-pl">Agencje pracy</span><span class="t t-ua">Агентства праці</span><span class="t t-ru">Кадровые агентства</span><span class="t t-en">Staffing agencies</span></h4>
+          <p><span class="t t-pl">Zarządzasz dziesiątkami pracowników rozlokowanych w różnych obiektach? Jeden system dla całej floty kwater.</span><span class="t t-ua">Керуєте десятками працівників у різних об'єктах? Одна система для всього парку кварир.</span><span class="t t-ru">Управляете десятками работников в разных объектах? Одна система для всего парка жилья.</span><span class="t t-en">Managing dozens of workers across different properties? One system for your entire housing fleet.</span></p>
+        </div>
+        <div class="for-whom-card">
+          <div class="for-whom-icon">🏨</div>
+          <h4><span class="t t-pl">Właściciele hosteli</span><span class="t t-ua">Власники хостелів</span><span class="t t-ru">Владельцы хостелов</span><span class="t t-en">Hostel owners</span></h4>
+          <p><span class="t t-pl">Wynajmujesz miejsca bezpośrednio pracownikom? Śledź kto, gdzie i ile płaci — bez arkuszy.</span><span class="t t-ua">Здаєте місця безпосередньо працівникам? Відстежуйте хто, де і скільки платить — без таблиць.</span><span class="t t-ru">Сдаёте места напрямую работникам? Отслеживайте кто, где и сколько платит — без таблиц.</span><span class="t t-en">Renting directly to workers? Track who, where and how much they pay — no spreadsheets.</span></p>
+        </div>
+        <div class="for-whom-card">
+          <div class="for-whom-icon">🏠</div>
+          <h4><span class="t t-pl">Zarządcy nieruchomości</span><span class="t t-ua">Керуючі нерухомістю</span><span class="t t-ru">Управляющие недвижимостью</span><span class="t t-en">Property managers</span></h4>
+          <p><span class="t t-pl">Wiele mieszkań i domów pod wynajem pracowniczy? Kontroluj obłożenie i finanse wszystkich obiektów.</span><span class="t t-ua">Кілька квартир та будинків для оренди? Контролюйте заповненість та фінанси всіх об'єктів.</span><span class="t t-ru">Несколько квартир и домов под рабочую аренду? Контролируйте занятость и финансы всех объектов.</span><span class="t t-en">Multiple apartments and houses for worker rental? Control occupancy and finances across all properties.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2><span class="t t-pl">Gotowy na koniec z Excelem?</span><span class="t t-ua">Готові покінчити з Excel?</span><span class="t t-ru">Готовы покончить с Excel?</span><span class="t t-en">Ready to ditch Excel?</span></h2>
+    <p><span class="t t-pl">Dołącz bezpłatnie. Pierwsze kroki zajmą 5 minut.</span><span class="t t-ua">Приєднайтесь безкоштовно. Перші кроки займуть 5 хвилин.</span><span class="t t-ru">Присоединяйтесь бесплатно. Первые шаги займут 5 минут.</span><span class="t t-en">Join for free. First steps take 5 minutes.</span></p>
+    <a href="app.html" class="btn-hero-primary" style="font-size:17px;padding:16px 36px">
+      <i data-lucide="zap" style="width:18px;height:18px"></i>
+      <span class="t t-pl">Wypróbuj bezpłatnie</span><span class="t t-ua">Спробувати безкоштовно</span><span class="t t-ru">Попробовать бесплатно</span><span class="t t-en">Try for free</span>
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <div class="footer-logo-icon">
+        <i data-lucide="building-2" style="width:14px;height:14px"></i>
+      </div>
+      <span style="color:var(--text2)">Lokum</span>
+    </div>
+    <span>© 2026 Lokum. Wszelkie prawa zastrzeżone.</span>
+    <a href="app.html" style="color:var(--accent);text-decoration:none;font-weight:600">Zaloguj się →</a>
+  </footer>
+
   <script>
-    window.closeOnboarding = function () {
-      document.getElementById('onboarding-overlay').classList.add('hidden');
-    };
-    window._lucideRefresh = function() {
-      if (window.lucide) window.lucide.createIcons();
-    };
-  </script>
-  <script type="module" src="js/main.js"></script>
-</body>
+    // ── LANG ──
+    const LANG_FLAGS = { pl: '🇵🇱', ua: '🇺🇦', ru: '🇷🇺', en: '🇬🇧' };
+    const LANG_CODES = { pl: 'PL', ua: 'UA', ru: 'RU', en: 'EN' };
 
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      localStorage.setItem('hm-landing-lang', lang);
+      document.getElementById('langFlag').textContent = LANG_FLAGS[lang] || '🇵🇱';
+      document.getElementById('langCode').textContent = LANG_CODES[lang] || 'PL';
+      document.querySelectorAll('.lang-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.lang === lang);
+      });
+      closeLangDropdown();
+    }
+
+    function toggleLangDropdown() {
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+    function closeLangDropdown() {
+      document.getElementById('langDropdown').classList.remove('open');
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#langSwitcher')) closeLangDropdown();
+    });
+
+    // Init lang
+    const savedLang = localStorage.getItem('hm-landing-lang')
+      || (navigator.language.startsWith('uk') ? 'ua'
+        : navigator.language.startsWith('ru') ? 'ru'
+        : navigator.language.startsWith('en') ? 'en' : 'pl');
+    setLang(savedLang);
+
+    // ── ICONS / NAV / SCROLL ──
+    lucide.createIcons();
+
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.stat-item, .feature-card').forEach(el => observer.observe(el));
+  </script>
+
+</body>
 </html>
