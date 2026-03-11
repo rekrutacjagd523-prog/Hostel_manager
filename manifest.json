@@ -1,8 +1,8 @@
 {
-  "name": "Hostel Manager",
-  "short_name": "Hostel",
-  "description": "Управление жильцами хостела",
-  "start_url": "/",
+  "name": "Lokum",
+  "short_name": "Lokum",
+  "description": "Lokum — System zarządzania kwaterami pracowniczymi",
+  "start_url": "https://lokum.cloud/",
   "display": "standalone",
   "background_color": "#0d0d14",
   "theme_color": "#e8a838",

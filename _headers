@@ -2,6 +2,10 @@
   Cloudflare Pages _headers file
   Fixes Cross-Origin-Opener-Policy for Firebase Auth Google popup
 */
+https://lokum.cloud/*
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Cross-Origin-Embedder-Policy: unsafe-none
+
 https://hostel-manager.pages.dev/*
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   Cross-Origin-Embedder-Policy: unsafe-none
