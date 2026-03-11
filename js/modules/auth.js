@@ -179,11 +179,18 @@ export function onUserLoggedOut() {
 }
 
 export function initAuthEvents() {
-    // Restore auth lang from localStorage
+    // Restore auth lang from localStorage, default to PL
     const saved = localStorage.getItem('hostel-auth-lang');
-    if (saved) {
-        const el = document.getElementById('auth-lang');
-        if (el) { el.value = saved; switchAuthLang(); }
+    const el = document.getElementById('auth-lang');
+    if (el) {
+        if (saved && saved !== 'RU') {
+            el.value = saved;
+        } else {
+            // Default to PL (first option) — RU was old default before rebrand
+            el.value = 'PL';
+            localStorage.setItem('hostel-auth-lang', 'PL');
+        }
+        switchAuthLang();
     }
 
     // Close user menu on outside click
