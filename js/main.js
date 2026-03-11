@@ -49,7 +49,7 @@ import {
     doGoogle, doForgotPass, toggleUserMenu, doLogout, doSwitchAccount,
     onUserLoggedIn, onUserLoggedOut, initAuthEvents
 } from './modules/auth.js';
-import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode } from './modules/subscription.js';
+import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode, checkStripeReturn } from './modules/subscription.js';
 import {
     expSelectMode, renderFinSummary, renderExpenses, openExpenseForm, closeExpenseForm,
     saveExpense, deleteExpense, setFinCategoryFilter, setFinPropFilter,
@@ -299,6 +299,8 @@ window.onUserLoggedIn = function (user) {
     _origLoggedIn(user);
     // Give Firebase a moment to load subscription snapshot then update badge
     setTimeout(() => { if (window.updatePlanBadge) window.updatePlanBadge(); }, 1500);
+    // Check if user just returned from Stripe payment
+    setTimeout(() => checkStripeReturn(), 2000);
 };
 
 // Service Worker

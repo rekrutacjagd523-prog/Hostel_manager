@@ -177,36 +177,109 @@ export function showUpgradeModal(reason) {
 
 
 
-export function openSubscription() {
-  // ===== STRIPE PLACEHOLDER =====
-  // Заменить URL ниже на ваш Stripe Payment Link после настройки:
-  // const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/XXXXXXXXXXXXXXXX';
-  // const email = window._currentUser?.email || '';
-  // window.location.href = STRIPE_PAYMENT_LINK + '?prefilled_email=' + encodeURIComponent(email);
+// ===== STRIPE PAYMENT LINK =====
+// Вставь свой Payment Link от Stripe сюда:
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/REPLACE_ME';
 
-  // Пока показываем заглушку
+export function openSubscription() {
+  const email = window._currentUser?.email || '';
+  const uid = window._workspaceUid || window._currentUser?.uid || '';
+
+  // Redirect to Stripe with prefilled email and uid in client_reference_id
+  const params = new URLSearchParams({
+    prefilled_email: email,
+    client_reference_id: uid,
+  });
+
+  window.location.href = STRIPE_PAYMENT_LINK + '?' + params.toString();
+}
+
+// ===== HANDLE RETURN FROM STRIPE =====
+// Call this on app load to check if user just paid
+export async function checkStripeReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const payment = params.get('payment');
+  const sessionId = params.get('session_id');
+
+  if (payment !== 'success') return;
+
+  // Clean URL
+  window.history.replaceState({}, '', window.location.pathname);
+
+  // Show "activating" toast
+  showActivatingToast();
+
+  // Activate Pro in Firestore
+  try {
+    const fb = window._fb;
+    if (!fb || !fb.settingsDoc) {
+      // Wait for Firebase to initialize
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    if (!window._fb?.settingsDoc) return;
+
+    const validUntil = new Date();
+    validUntil.setFullYear(validUntil.getFullYear() + 1); // 1 year from now
+
+    await window._fb.setDoc(window._fb.settingsDoc, {
+      plan: 'pro',
+      validUntil: validUntil.toISOString(),
+      stripeSession: sessionId || 'direct',
+      upgradedAt: new Date().toISOString()
+    }, { merge: true });
+
+    window._settings = Object.assign({}, window._settings || {}, {
+      plan: 'pro',
+      validUntil: validUntil.toISOString()
+    });
+
+    showProActivatedModal();
+    if (window.render) window.render();
+    if (window.updatePlanBadge) window.updatePlanBadge();
+  } catch (e) {
+    console.error('Stripe return error:', e);
+  }
+}
+
+function showActivatingToast() {
+  const toast = document.createElement('div');
+  toast.id = 'pro-toast';
+  toast.style.cssText = `
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:#1a1a2e;border:1px solid rgba(232,168,56,.3);
+    color:var(--text);padding:12px 20px;border-radius:10px;
+    font-size:14px;font-weight:600;z-index:500;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    display:flex;align-items:center;gap:8px;
+  `;
+  toast.innerHTML = '<span style="animation:spin .8s linear infinite;display:inline-block">⏳</span> Aktywacja Pro...';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+function showProActivatedModal() {
+  document.getElementById('pro-toast')?.remove();
   const el = document.createElement('div');
   el.className = 'confirm-overlay';
   el.style.zIndex = '400';
   el.innerHTML = `
-    <div class="confirm-box" style="text-align:center">
-      <div class="confirm-icon">🔧</div>
-      <div class="confirm-title">Stripe не настроен</div>
+    <div class="confirm-box" style="text-align:center;max-width:360px">
+      <div style="font-size:52px;margin-bottom:12px">🎉</div>
+      <div class="confirm-title" style="font-size:20px">Pro aktywowany!</div>
       <div class="confirm-msg">
-        Добавьте ваш <b>Stripe Payment Link</b> в файл<br>
-        <code style="font-size:11px;background:var(--surface);padding:2px 6px;border-radius:4px">
-          js/modules/subscription.js
-        </code><br><br>
-        Найдите строку:<br>
-        <code style="font-size:11px;color:var(--accent)">STRIPE_PAYMENT_LINK</code>
+        Dziękujemy za zakup. Twój plan <b style="color:var(--accent)">Pro</b> jest już aktywny.<br>
+        Enjoy unlimited everything! ✨
       </div>
       <div class="confirm-btns">
-        <button class="c-ok" onclick="this.closest('.confirm-overlay').remove()">OK</button>
+        <button class="c-ok" style="width:100%;padding:12px;font-size:15px"
+          onclick="this.closest('.confirm-overlay').remove()">
+          Świetnie! 🚀
+        </button>
       </div>
     </div>
   `;
   document.body.appendChild(el);
-  el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
+  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
 }
 
 // Plan badge text
