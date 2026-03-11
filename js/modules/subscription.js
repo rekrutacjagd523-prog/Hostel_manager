@@ -185,13 +185,44 @@ export function openSubscription() {
   const email = window._currentUser?.email || '';
   const uid = window._workspaceUid || window._currentUser?.uid || '';
 
-  // Redirect to Stripe with prefilled email and uid in client_reference_id
   const params = new URLSearchParams({
     prefilled_email: email,
     client_reference_id: uid,
   });
 
-  window.location.href = STRIPE_PAYMENT_LINK + '?' + params.toString();
+  const url = STRIPE_PAYMENT_LINK + '?' + params.toString();
+
+  // Show a modal with direct link — works on all devices including mobile Safari
+  const el = document.createElement('div');
+  el.className = 'confirm-overlay';
+  el.style.zIndex = '400';
+  el.innerHTML = `
+    <div class="confirm-box" style="text-align:center;max-width:380px">
+      <div style="font-size:40px;margin-bottom:12px">⭐</div>
+      <div class="confirm-title">Upgrade to Pro</div>
+      <div class="confirm-msg" style="margin-bottom:20px">
+        $19.99/month · Unlimited residents & properties<br>
+        <span style="font-size:12px;color:var(--text3)">You'll be redirected to Stripe secure payment</span>
+      </div>
+      <a href="${url}" target="_blank" rel="noopener"
+        onclick="this.closest('.confirm-overlay').remove()"
+        style="
+          display:block;width:100%;padding:14px;border-radius:10px;
+          background:linear-gradient(135deg,#e8a838,#d4883a);
+          color:#0d0d14;font-weight:800;font-size:15px;
+          text-decoration:none;margin-bottom:10px;
+          box-sizing:border-box;
+        ">
+        💳 Pay with Stripe
+      </a>
+      <button onclick="this.closest('.confirm-overlay').remove()"
+        style="background:transparent;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:8px">
+        Cancel
+      </button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
 }
 
 // ===== HANDLE RETURN FROM STRIPE =====
