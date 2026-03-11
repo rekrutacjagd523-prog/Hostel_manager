@@ -30,12 +30,12 @@ export const AUTH_LANG = {
 
 // Translation helper
 export function t(k) {
-  const s = window._settings || { currency: 'PLN', lang: 'PL' };
-  return (LANG[s.lang || 'PL'] || LANG.PL)[k] || k;
+  const s = window._settings || { currency: 'PLN', lang: 'EN' };
+  return (LANG[s.lang || 'EN'] || LANG.EN)[k] || k;
 }
 
 // Auth translation helper
 export function at(k) {
-  const lang = document.getElementById('auth-lang')?.value || 'PL';
+  const lang = document.getElementById('auth-lang')?.value || 'EN';
   return (AUTH_LANG[lang] || AUTH_LANG.PL)[k] || k;
 }

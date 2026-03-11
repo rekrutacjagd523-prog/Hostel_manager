@@ -301,7 +301,7 @@ export function render() {
 export function updateUI() {
     // Sync lang on all date inputs - must replace node for Chrome to re-render placeholder
     const htmlLangMap = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
-    const lang = (window._settings || {}).lang || 'PL';
+    const lang = (window._settings || {}).lang || 'EN';
     const htmlLang = htmlLangMap[lang] || 'pl';
     document.documentElement.lang = htmlLang;
     localStorage.setItem('hostel-last-lang', lang);

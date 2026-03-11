@@ -446,11 +446,11 @@
 
     /* ── MULTILANG ── */
     .t { display: none; }
-    body[data-lang="pl"] .t-pl,
+    body[data-lang="en"] .t-pl,
     body[data-lang="ua"] .t-ua,
     body[data-lang="ru"] .t-ru,
     body[data-lang="en"] .t-en { display: inline; }
-    body[data-lang="pl"] .t-pl-b,
+    body[data-lang="en"] .t-pl-b,
     body[data-lang="ua"] .t-ua-b,
     body[data-lang="ru"] .t-ru-b,
     body[data-lang="en"] .t-en-b { display: block; }
@@ -546,7 +546,7 @@
   </style>
 </head>
 
-<body data-lang="pl">
+<body data-lang="en">
 
   <!-- NAV -->
   <nav id="navbar">
@@ -867,7 +867,7 @@
     const savedLang = localStorage.getItem('hm-landing-lang')
       || (navigator.language.startsWith('uk') ? 'ua'
         : navigator.language.startsWith('ru') ? 'ru'
-        : navigator.language.startsWith('en') ? 'en' : 'pl');
+        : navigator.language.startsWith('pl') ? 'pl' : 'en');
     setLang(savedLang);
 
     // ── ICONS / NAV / SCROLL ──

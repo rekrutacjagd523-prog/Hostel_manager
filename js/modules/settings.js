@@ -39,7 +39,7 @@ export function setThemeOption(th) {
 export function openSettings() {
     document.getElementById('settings-overlay').classList.remove('hidden');
     document.getElementById('s-currency').value = (window._settings || {}).currency || 'PLN';
-    document.getElementById('s-lang').value = (window._settings || {}).lang || 'PL';
+    document.getElementById('s-lang').value = (window._settings || {}).lang || 'EN';
     previewCurrency(); renderFieldManager(); updateThemeOptions(); renderMembers();
 }
 

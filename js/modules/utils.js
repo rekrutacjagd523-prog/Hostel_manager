@@ -2,7 +2,7 @@
 import { t } from './constants.js';
 import { CURRENCIES } from './constants.js';
 
-export function settings() { return window._settings || { currency: 'PLN', lang: 'PL' }; }
+export function settings() { return window._settings || { currency: 'PLN', lang: 'EN' }; }
 export function residents() { return window._residents || []; }
 export function properties() { return window._properties || []; }
 export function cur() { return CURRENCIES[settings().currency] || CURRENCIES.PLN; }
