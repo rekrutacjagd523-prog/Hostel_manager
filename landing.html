@@ -497,9 +497,51 @@
       nav { padding: 14px 20px; }
       .nav-link.hide-mob { display: none; }
       .hero { padding: 120px 16px 60px; }
-      .preview-stats { grid-template-columns: repeat(3, 1fr); }
-      .stats-banner { gap: 40px; }
+      .hero h1 { font-size: 32px; }
+      .hero-sub { font-size: 15px; }
+
+      /* Preview app — hide on very small, simplify */
+      .preview-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px; padding: 8px 10px 0;
+      }
+      .preview-stat { padding: 8px 8px; gap: 6px; }
+      .preview-stat-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; }
+      .preview-stat-icon i { width: 12px !important; height: 12px !important; }
+      .preview-stat-val { font-size: 14px; }
+      .preview-stat-lbl { font-size: 9px; }
+      .preview-residents { padding: 0 10px 12px; }
+      .preview-card { padding: 8px 10px; gap: 8px; }
+      .preview-avatar { width: 28px; height: 28px; font-size: 10px; }
+      .preview-card-name { font-size: 11px; }
+      .preview-card-meta { font-size: 10px; }
+      .preview-amount-val { font-size: 12px; }
+      .preview-header { padding: 10px 12px; }
+      .preview-btn-sm { padding: 4px 7px; font-size: 10px; }
+      .preview-header-right { gap: 4px; }
+
+      /* Stats banner — stack vertically on mobile */
+      .stats-banner {
+        flex-direction: column;
+        gap: 32px; padding: 48px 24px;
+      }
+      .stat-item-val { font-size: 36px; }
+
+      /* Features grid */
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card { padding: 24px; }
+
+      /* For whom */
+      .for-whom-grid { grid-template-columns: 1fr; }
+
       footer { flex-direction: column; text-align: center; padding: 24px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .preview-tag { display: none; }
+      .preview-tag:first-child { display: inline; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-hero-primary, .btn-hero-sec { width: 100%; justify-content: center; }
     }
   </style>
 </head>
