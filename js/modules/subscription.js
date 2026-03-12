@@ -185,15 +185,17 @@ export function openSubscription() {
   const email = window._currentUser?.email || '';
   const uid = window._workspaceUid || window._currentUser?.uid || '';
 
+  const params = new URLSearchParams({ prefilled_email: email, client_reference_id: uid });
+  const stripeUrl = STRIPE_PAYMENT_LINK + '?' + params.toString();
+
   const el = document.createElement('div');
   el.className = 'confirm-overlay';
   el.style.zIndex = '400';
   el.innerHTML = `
     <div style="
       background:var(--modal-bg);border-radius:20px;padding:0;
-      width:100%;max-width:440px;border:1px solid rgba(232,168,56,.2);
+      width:100%;max-width:420px;border:1px solid rgba(232,168,56,.2);
       overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5);
-      max-height:90vh;overflow-y:auto;
     ">
       <!-- Header -->
       <div style="background:linear-gradient(135deg,#1a1535,#0d1a2e);padding:24px 28px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
@@ -203,12 +205,34 @@ export function openSubscription() {
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
       </div>
 
-      <!-- Invoice details (optional) -->
-      <div style="padding:20px 24px 0">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">
-          📄 Invoice details <span style="font-weight:400;opacity:.6">(optional)</span>
+      <!-- Pay button (primary) — direct link works for Apple Pay / Google Pay -->
+      <div style="padding:20px 24px 4px">
+        <a id="inv-pay-link" href="${stripeUrl}" target="_blank" rel="noopener"
+          style="
+            display:block;width:100%;padding:14px;border-radius:10px;
+            background:linear-gradient(135deg,#e8a838,#d4883a);
+            color:#0d0d14;font-weight:800;font-size:15px;
+            text-decoration:none;text-align:center;
+            transition:opacity .2s;box-sizing:border-box;
+          "
+          onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          💳 Pay with Stripe
+        </a>
+        <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px">
+          Apple Pay · Google Pay · Card
         </div>
+      </div>
 
+      <!-- Invoice checkbox -->
+      <div style="padding:12px 24px">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:8px;border:1px solid var(--border3);background:var(--surface2)">
+          <input type="checkbox" id="inv-toggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
+          <span style="font-size:13px;color:var(--text2)">📄 I need an invoice / Potrzebuję fakturę</span>
+        </label>
+      </div>
+
+      <!-- Invoice fields (hidden by default) -->
+      <div id="inv-fields" style="display:none;padding:0 24px 4px">
         <div style="display:flex;flex-direction:column;gap:10px">
           <div>
             <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">Company name</label>
@@ -219,13 +243,13 @@ export function openSubscription() {
           <div style="display:flex;gap:10px">
             <div style="flex:1">
               <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">NIP / VAT</label>
-              <input id="inv-nip" type="text" placeholder="e.g. PL1234567890"
+              <input id="inv-nip" type="text" placeholder="PL1234567890"
                 style="width:100%;padding:9px 12px;background:var(--field-bg);border:1px solid var(--border3);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"
                 onfocus="this.style.borderColor='rgba(232,168,56,.4)'" onblur="this.style.borderColor='var(--border3)'">
             </div>
             <div style="flex:1">
               <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">Country</label>
-              <input id="inv-country" type="text" placeholder="e.g. Poland"
+              <input id="inv-country" type="text" placeholder="Poland"
                 style="width:100%;padding:9px 12px;background:var(--field-bg);border:1px solid var(--border3);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box"
                 onfocus="this.style.borderColor='rgba(232,168,56,.4)'" onblur="this.style.borderColor='var(--border3)'">
             </div>
@@ -237,57 +261,43 @@ export function openSubscription() {
               onfocus="this.style.borderColor='rgba(232,168,56,.4)'" onblur="this.style.borderColor='var(--border3)'">
           </div>
         </div>
-
-        <div style="font-size:11px;color:var(--text3);margin-top:10px;padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid rgba(232,168,56,.3)">
-          💡 Invoice details will be saved to your account and sent to <b style="color:var(--text2)">${email}</b>
+        <div style="font-size:11px;color:var(--text3);margin-top:10px;margin-bottom:4px;padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid rgba(232,168,56,.3)">
+          💡 Saved to your account · sent to <b style="color:var(--text2)">${email}</b>
         </div>
       </div>
 
-      <!-- Pay button -->
-      <div style="padding:16px 24px 20px">
-        <button id="inv-pay-btn" style="
-          display:block;width:100%;padding:14px;border-radius:10px;
-          background:linear-gradient(135deg,#e8a838,#d4883a);
-          color:#0d0d14;font-weight:800;font-size:15px;
-          border:none;cursor:pointer;font-family:inherit;
-          transition:opacity .2s;box-sizing:border-box;
-        " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          💳 Pay with Stripe
-        </button>
+      <!-- Cancel -->
+      <div style="padding:8px 24px 20px;text-align:center">
         <button onclick="this.closest('.confirm-overlay').remove()"
-          style="display:block;width:100%;background:transparent;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px;font-family:inherit;margin-top:4px">
+          style="background:transparent;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:8px;font-family:inherit">
           Cancel
         </button>
       </div>
     </div>
   `;
 
-  // Pay button logic — save invoice data then open Stripe
-  el.querySelector('#inv-pay-btn').addEventListener('click', async () => {
-    const company = el.querySelector('#inv-company').value.trim();
-    const nip = el.querySelector('#inv-nip').value.trim();
-    const country = el.querySelector('#inv-country').value.trim();
-    const address = el.querySelector('#inv-address').value.trim();
+  // Toggle invoice fields
+  el.querySelector('#inv-toggle').addEventListener('change', function () {
+    el.querySelector('#inv-fields').style.display = this.checked ? 'block' : 'none';
+  });
 
-    // Save invoice data to Firestore if filled
-    if ((company || nip || address) && window._fb?.settingsDoc) {
-      try {
-        await window._fb.setDoc(window._fb.settingsDoc, {
-          invoiceData: { company, nip, country, address, email }
-        }, { merge: true });
-      } catch (e) { console.warn('Invoice save:', e); }
+  // When Pay link is clicked — save invoice data if filled, then let <a> navigate
+  el.querySelector('#inv-pay-link').addEventListener('click', async () => {
+    const checked = el.querySelector('#inv-toggle').checked;
+    if (checked && window._fb?.settingsDoc) {
+      const company = el.querySelector('#inv-company').value.trim();
+      const nip = el.querySelector('#inv-nip').value.trim();
+      const country = el.querySelector('#inv-country').value.trim();
+      const address = el.querySelector('#inv-address').value.trim();
+      if (company || nip || address) {
+        try {
+          await window._fb.setDoc(window._fb.settingsDoc, {
+            invoiceData: { company, nip, country, address, email }
+          }, { merge: true });
+        } catch (e) { console.warn('Invoice save:', e); }
+      }
     }
-
-    // Build Stripe URL
-    const params = new URLSearchParams({
-      prefilled_email: email,
-      client_reference_id: uid,
-    });
-    if (company) params.set('prefilled_promo_code', ''); // placeholder
-    const url = STRIPE_PAYMENT_LINK + '?' + params.toString();
-
     el.remove();
-    window.open(url, '_blank') || (window.location.href = url);
   });
 
   document.body.appendChild(el);
