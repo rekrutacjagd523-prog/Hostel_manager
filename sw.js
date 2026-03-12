@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hostel-v3';
+const CACHE_NAME = 'lokum-v1';
 const PRECACHE = [
   '/',
   '/index.html'

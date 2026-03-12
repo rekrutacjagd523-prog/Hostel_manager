@@ -124,7 +124,7 @@ export function showUpgradeModal(reason) {
             <div>✅ ${t('report')}</div>
             <div>✅ ${t('prioritySupport')}</div>
           </div>
-          <button id="btn-subscribe" onclick="openSubscription()" style="
+          <button id="btn-subscribe" onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription();" style="
             margin-top:14px;width:100%;padding:10px;border-radius:8px;
             border:none;cursor:pointer;font-family:inherit;
             font-size:13px;font-weight:700;
