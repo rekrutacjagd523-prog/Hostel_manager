@@ -254,9 +254,36 @@ export async function saveResident() {
 
 export function checkOut(id) {
     const r = residents().find(x => x.id === id); if (!r) return;
-    showConfirm('↪', t('confirmCheckout'), t('confirmCheckoutMsg').replace('{name}', resName(r)), t('confirmYes'), 'c-ok', async () => {
+
+    // Create confirm with date picker
+    const el = document.createElement('div');
+    el.className = 'confirm-overlay';
+    el.style.zIndex = '200';
+    el.innerHTML = `
+        <div class="confirm-box" style="max-width:360px">
+            <div class="confirm-icon">↪</div>
+            <div class="confirm-title">${t('confirmCheckout')}</div>
+            <div class="confirm-msg">${t('confirmCheckoutMsg').replace('{name}', resName(r))}</div>
+            <div style="margin-bottom:16px">
+                <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">${t('checkOutDateLabel') || 'Check-out date'}</label>
+                <input type="date" id="checkout-date-input" value="${todayStr()}"
+                    max="${todayStr()}"
+                    style="width:100%;padding:9px 12px;background:var(--field-bg);border:1px solid var(--border3);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
+            </div>
+            <div class="confirm-btns">
+                <button class="c-cancel" onclick="this.closest('.confirm-overlay').remove()">${t('confirmNo')}</button>
+                <button class="c-ok" id="checkout-confirm-btn">${t('confirmYes')}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('click', e => { if (e.target === el) el.remove(); });
+
+    el.querySelector('#checkout-confirm-btn').addEventListener('click', async () => {
+        const dateVal = el.querySelector('#checkout-date-input').value || todayStr();
+        el.remove();
         try {
-            const data = cleanForFirebase(r); data.checkOutDate = todayStr();
+            const data = cleanForFirebase(r); data.checkOutDate = dateVal;
             await window._fb.setDoc(resDoc(id), data);
         } catch (e) { alert('Error: ' + e.message); }
     });
