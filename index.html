@@ -304,27 +304,16 @@
   const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){stats.forEach(stat=>stat.classList.add("visible"));observer.disconnect();}});},{threshold:0.3});
   observer.observe(banner);
 
-  // ── MOCKUP ANIMATION ON SCROLL ──
+  // ── MOCKUP ANIMATION — fires on load since mockup is in hero ──
   const mockupWrap = document.querySelector('.mockup-wrap');
-  if (mockupWrap) {
-    const mockupObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          mockupWrap.classList.add('glow');
-          // Animate stat vals
-          document.querySelectorAll('.mockup-stat-val').forEach(el => {
-            el.classList.add('animated');
-          });
-          // Animate cards with delay
-          document.querySelectorAll('.mockup-card').forEach(el => {
-            el.classList.add('animated');
-          });
-          mockupObserver.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    mockupObserver.observe(mockupWrap);
+  function triggerMockupAnim() {
+    if (!mockupWrap) return;
+    mockupWrap.classList.add('glow');
+    document.querySelectorAll('.mockup-stat-val').forEach(el => el.classList.add('animated'));
+    document.querySelectorAll('.mockup-card').forEach(el => el.classList.add('animated'));
   }
+  // Fire after page renders
+  setTimeout(triggerMockupAnim, 400);
 </script>
 </body>
 </html>
