@@ -113,6 +113,69 @@
       .footer-links{justify-content:center;flex-wrap:wrap;}
     }
     @media(max-width:480px){.mockup-cards{padding:8px 10px 12px;}.mockup-stats{padding:10px 10px 0;}.mockup-card{padding:10px 12px;gap:8px;}}
+
+    /* ── MOCKUP ANIMATIONS ── */
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .mockup-card {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    .mockup-card.animated {
+      animation: cardSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .mockup-card:nth-child(1).animated { animation-delay: 0.1s; }
+    .mockup-card:nth-child(2).animated { animation-delay: 0.35s; }
+    .mockup-card:nth-child(3).animated { animation-delay: 0.6s; }
+
+    .mockup-stat-val {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .mockup-stat-val.animated {
+      animation: countUp 0.5s ease forwards;
+    }
+    .mockup-stat:nth-child(1) .mockup-stat-val.animated { animation-delay: 0s; }
+    .mockup-stat:nth-child(2) .mockup-stat-val.animated { animation-delay: 0.15s; }
+    .mockup-stat:nth-child(3) .mockup-stat-val.animated { animation-delay: 0.3s; }
+
+    /* Live dot in header */
+    .live-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      margin-right: 4px;
+      animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+
+    /* Mockup wrap glow on animate */
+    .mockup-wrap {
+      position: relative;
+    }
+    .mockup-wrap::after {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(245,158,11,.15), transparent 60%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .mockup-wrap.glow::after {
+      opacity: 1;
+    }
   </style>
 </head>
 <body data-lang="en">
@@ -161,7 +224,7 @@
         <div style="display:flex;align-items:center;gap:9px">
           <div style="width:30px;height:30px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#111"><svg width="16" height="16" viewBox="0 0 22 22" fill="none"><rect x="3" y="1" width="16" height="20" rx="2" fill="currentColor"/><rect x="6" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="6" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="8.5" y="15" width="5" height="6" rx="2" fill="white" opacity="0.9"/></svg></div>
           <span style="font-weight:700;font-size:15px;color:#fff">Lokum</span>
-          <span style="font-size:11px;color:#4a4a5a;padding:2px 8px;background:#1a1d2b;border-radius:5px;border:1px solid #252838">&#9729; Chmura</span>
+          <span style="font-size:11px;color:#4a4a5a;padding:2px 8px;background:#1a1d2b;border-radius:5px;border:1px solid #252838"><span class="live-dot"></span>Chmura</span>
         </div>
         <div style="background:#f59e0b;color:#000;font-size:12px;font-weight:700;padding:6px 14px;border-radius:7px">+ Zamelduj</div>
       </div>
@@ -240,6 +303,28 @@
   const stats=banner.querySelectorAll(".stat");
   const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){stats.forEach(stat=>stat.classList.add("visible"));observer.disconnect();}});},{threshold:0.3});
   observer.observe(banner);
+
+  // ── MOCKUP ANIMATION ON SCROLL ──
+  const mockupWrap = document.querySelector('.mockup-wrap');
+  if (mockupWrap) {
+    const mockupObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          mockupWrap.classList.add('glow');
+          // Animate stat vals
+          document.querySelectorAll('.mockup-stat-val').forEach(el => {
+            el.classList.add('animated');
+          });
+          // Animate cards with delay
+          document.querySelectorAll('.mockup-card').forEach(el => {
+            el.classList.add('animated');
+          });
+          mockupObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    mockupObserver.observe(mockupWrap);
+  }
 </script>
 </body>
 </html>
