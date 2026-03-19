@@ -98,7 +98,7 @@
       content: '';
       position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
       width: 900px; height: 600px;
-      background: radial-gradient(ellipse at center, rgba(232,168,56,.12) 0%, transparent 65%);
+      background: radial-gradient(circle at 50% -20%, rgba(245,158,11,.15), transparent 60%);
       pointer-events: none;
     }
 
@@ -550,9 +550,9 @@
 
   <!-- NAV -->
   <nav id="navbar">
-    <a href="landing.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <div class="nav-logo-icon">
-        <i data-lucide="building-2" style="width:18px;height:18px"></i>
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="3" y="1" width="16" height="20" rx="2" fill="currentColor"/><rect x="6" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="6" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="8.5" y="15" width="5" height="6" rx="2" fill="white" opacity="0.9"/></svg>
       </div>
       <span>Lokum</span>
     </a>
@@ -616,12 +616,13 @@
           <!-- Mini header -->
           <div class="preview-header">
             <div class="preview-header-left">
-              <div class="preview-logo-sm">HM</div>
+              <div class="preview-logo-sm">
+                <svg width="16" height="16" viewBox="0 0 22 22" fill="none"><rect x="3" y="1" width="16" height="20" rx="2" fill="currentColor"/><rect x="6" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="6" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="8.5" y="15" width="5" height="6" rx="2" fill="white" opacity="0.9"/></svg>
+              </div>
               <span class="preview-header-title">Lokum</span>
               <span style="font-size:10px;color:var(--green);background:rgba(106,184,154,.1);padding:2px 8px;border-radius:4px;margin-left:4px">☁ Chmura</span>
             </div>
             <div class="preview-header-right">
-              <span class="preview-btn-sm sec">⚙</span>
               <span class="preview-btn-sm sec">📄 Raport</span>
               <span class="preview-btn-sm pri">+ Zamelduj</span>
             </div>
@@ -642,7 +643,7 @@
                 <i data-lucide="wallet" style="width:16px;height:16px"></i>
               </div>
               <div>
-                <div class="preview-stat-val" style="color:var(--accent)">119k zł</div>
+                <div class="preview-stat-val" style="color:var(--accent)">14 400<span style="font-size:13px"> zł</span></div>
                 <div class="preview-stat-lbl">Do zapłaty</div>
               </div>
             </div>
@@ -656,17 +657,13 @@
               </div>
             </div>
           </div>
-          <!-- Resident cards -->
+          <!-- Resident cards — prototype style -->
           <div class="preview-residents">
-            <div class="preview-section-title">
-              <i data-lucide="users" style="width:11px;height:11px"></i>
-              Lokatorzy
-            </div>
             <div class="preview-card">
-              <div class="preview-avatar" style="background:#3b82f6">IK</div>
+              <div class="preview-avatar" style="background:#3b82f6">PK</div>
               <div style="flex:1;min-width:0">
-                <div class="preview-card-name">Igor Fedorov</div>
-                <div class="preview-card-meta">Gdańsk · Heweliusza 11</div>
+                <div class="preview-card-name">Petro Kovalenko</div>
+                <div class="preview-card-meta">Wrocław · ul. Różana 12</div>
                 <div class="preview-card-tags">
                   <span class="preview-tag">01.06.2024 →</span>
                   <span class="preview-tag accent">753 dni</span>
@@ -679,10 +676,10 @@
               </div>
             </div>
             <div class="preview-card">
-              <div class="preview-avatar" style="background:#10b981">VM</div>
+              <div class="preview-avatar" style="background:#10b981">AM</div>
               <div style="flex:1;min-width:0">
-                <div class="preview-card-name">Viktoria Vasilyev</div>
-                <div class="preview-card-meta">Warszawa · Lucka 12</div>
+                <div class="preview-card-name">Anna Mazur</div>
+                <div class="preview-card-meta">Wrocław · ul. Kwiatowa 5</div>
                 <div class="preview-card-tags">
                   <span class="preview-tag">15.04.2024 →</span>
                   <span class="preview-tag accent">703 dni</span>
@@ -695,10 +692,10 @@
               </div>
             </div>
             <div class="preview-card" style="opacity:.55">
-              <div class="preview-avatar" style="background:#f59e0b">AS</div>
+              <div class="preview-avatar" style="background:#f59e0b">MS</div>
               <div style="flex:1;min-width:0">
-                <div class="preview-card-name">Artem Alexeev</div>
-                <div class="preview-card-meta">Gdańsk · Lucka 11</div>
+                <div class="preview-card-name">Mykola Shevchenko</div>
+                <div class="preview-card-meta">Wrocław · ul. Różana 12</div>
                 <div class="preview-card-tags">
                   <span class="preview-tag">11.03.2025 →</span>
                   <span class="preview-tag green">339 dni</span>
@@ -791,6 +788,94 @@
     </div>
   </section>
 
+  <!-- MOBILE APP PROMO -->
+  <section style="padding:80px 24px;text-align:center;border-top:1px solid var(--border2)">
+    <p style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">LOKUM NA TELEFONIE</p>
+    <h2 style="font-size:clamp(26px,3.5vw,38px);font-weight:800;letter-spacing:-.02em;margin-bottom:16px">
+      <span class="t t-pl">Zarządzaj z każdego miejsca</span>
+      <span class="t t-ua">Керуйте з будь-якого місця</span>
+      <span class="t t-ru">Управляйте с любого места</span>
+      <span class="t t-en">Manage from anywhere</span>
+    </h2>
+    <p style="color:var(--text2);font-size:16px;max-width:480px;margin:0 auto 48px">
+      <span class="t t-pl">Pełna funkcjonalność w kieszeni — dodaj do ekranu głównego jak natywną aplikację.</span>
+      <span class="t t-ua">Повний функціонал у кишені — додайте на головний екран як нативний застосунок.</span>
+      <span class="t t-ru">Полный функционал в кармане — добавьте на главный экран как нативное приложение.</span>
+      <span class="t t-en">Full functionality in your pocket — add to home screen like a native app.</span>
+    </p>
+    <!-- Tab switcher mockup -->
+    <div style="max-width:360px;margin:0 auto;background:#0f0f1a;border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5)">
+      <!-- Tabs -->
+      <div style="display:flex;border-bottom:1px solid var(--border2);background:#13141f">
+        <div id="tab-btn-1" onclick="switchTab(1)" style="flex:1;padding:12px 6px;font-size:11px;font-weight:700;color:var(--accent);border-bottom:2px solid var(--accent);cursor:pointer;text-align:center">📊 Dashboard</div>
+        <div id="tab-btn-2" onclick="switchTab(2)" style="flex:1;padding:12px 6px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;text-align:center">➕ Zamelduję</div>
+        <div id="tab-btn-3" onclick="switchTab(3)" style="flex:1;padding:12px 6px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;text-align:center">📋 Raport</div>
+      </div>
+      <!-- Tab 1: Dashboard -->
+      <div id="tab-1" style="padding:16px">
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <div style="flex:1;background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:12px;text-align:left">
+            <div style="font-size:9px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mieszkańcy</div>
+            <div style="font-size:24px;font-weight:800;color:#fff">24</div>
+          </div>
+          <div style="flex:1;background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:12px;text-align:left">
+            <div style="font-size:9px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Do zapłaty</div>
+            <div style="font-size:18px;font-weight:800;color:#f59e0b">48 200 zł</div>
+          </div>
+        </div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0">PK</div>
+          <div style="flex:1;text-align:left">
+            <div style="font-weight:700;font-size:13px;color:#fff">Piotr Kowalski</div>
+            <div style="font-size:11px;color:#6b7280">ul. Półwiejska 1 · 800 zł/mies</div>
+          </div>
+          <div style="font-weight:700;color:#f59e0b;font-size:13px">800 zł</div>
+        </div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0">AN</div>
+          <div style="flex:1;text-align:left">
+            <div style="font-weight:700;font-size:13px;color:#fff">Anna Nowak</div>
+            <div style="font-size:11px;color:#6b7280">ul. Śniadeckich 3 · 750 zł/mies</div>
+          </div>
+          <div style="font-weight:700;color:#f59e0b;font-size:13px">750 zł</div>
+        </div>
+      </div>
+      <!-- Tab 2: Add resident -->
+      <div id="tab-2" style="padding:16px;display:none">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;text-align:left">Nowy mieszkaniec</div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#6b7280;text-align:left">Imię: <span style="color:#fff">Marek</span></div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#6b7280;text-align:left">Nazwisko: <span style="color:#fff">Wiśniewski</span></div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#6b7280;text-align:left">Data zameldowania: <span style="color:#fff">01.03.2026</span></div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#6b7280;text-align:left">Stawka / mies.: <span style="color:#f59e0b;font-weight:700">850 zł</span></div>
+        <div style="background:#f59e0b;color:#000;font-weight:700;font-size:13px;padding:10px;border-radius:8px;text-align:center">✓ Zamelduj</div>
+      </div>
+      <!-- Tab 3: Report -->
+      <div id="tab-3" style="padding:16px;display:none">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;text-align:left">Raport — Marzec</div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="font-size:11px;color:#6b7280;text-align:left;margin-bottom:4px">Przychód</div>
+          <div style="font-size:22px;font-weight:800;color:#f59e0b;text-align:left">48 200 zł</div>
+        </div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:#9ca3af;text-align:left">Piotr Kowalski</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">800 zł</div>
+        </div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:#9ca3af;text-align:left">Anna Nowak</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">750 zł</div>
+        </div>
+        <div style="background:#1a1d2b;border:1px solid #252838;border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:#9ca3af;text-align:left">Marek Wiśniewski</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">850 zł</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:#c0392b;color:#fff;font-size:12px;font-weight:700;padding:9px;border-radius:8px;text-align:center">📄 PDF</div>
+          <div style="flex:1;background:#27ae60;color:#fff;font-size:12px;font-weight:700;padding:9px;border-radius:8px;text-align:center">📊 Excel</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FOR WHOM -->
   <section class="for-whom" id="dla-kogo">
     <div class="for-whom-inner">
@@ -834,7 +919,7 @@
   <footer>
     <div class="footer-logo">
       <div class="footer-logo-icon">
-        <i data-lucide="building-2" style="width:14px;height:14px"></i>
+        <svg width="14" height="14" viewBox="0 0 22 22" fill="none"><rect x="3" y="1" width="16" height="20" rx="2" fill="currentColor"/><rect x="6" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="4" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="6" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="12.5" y="9.5" width="3.5" height="3" rx="0.6" fill="white" opacity="0.9"/><rect x="8.5" y="15" width="5" height="6" rx="2" fill="white" opacity="0.9"/></svg>
       </div>
       <span style="color:var(--text2)">Lokum</span>
     </div>
@@ -887,6 +972,20 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.2 });
     document.querySelectorAll('.stat-item, .feature-card').forEach(el => observer.observe(el));
+
+    // Tab switcher for mobile app mockup
+    window.switchTab = function(n) {
+      [1,2,3].forEach(i => {
+        const tab = document.getElementById('tab-'+i);
+        const btn = document.getElementById('tab-btn-'+i);
+        if (tab) tab.style.display = i === n ? 'block' : 'none';
+        if (btn) {
+          btn.style.color = i === n ? 'var(--accent)' : 'var(--text3)';
+          btn.style.borderBottom = i === n ? '2px solid var(--accent)' : '2px solid transparent';
+          btn.style.fontWeight = i === n ? '700' : '600';
+        }
+      });
+    };
   </script>
 
 </body>
