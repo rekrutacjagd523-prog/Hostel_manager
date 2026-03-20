@@ -349,10 +349,21 @@ function exportPDFByType(type) {
         h += '<div class="summary">' + t('curLabel') + ': <b>' + fmtUi(tA) + '</b> &nbsp;|&nbsp; ' + t('outLabel') + ': <b>' + fmtUi(tO) + '</b> &nbsp;|&nbsp; ' + t('totalLabel') + ': <b>' + fmtUi(tA + tO) + '</b></div>';
     }
     h += '</body></html>';
-    const win = window.open('', '_blank', 'width=820,height=600');
-    if (!win) { alert('Please allow pop-ups'); return; }
-    win.document.write(h); win.document.close();
-    setTimeout(() => { win.focus(); win.print(); }, 600);
+    // Use hidden iframe instead of window.open to avoid popup blocker
+    let iframe = document.getElementById('_print_iframe');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = '_print_iframe';
+        iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0;pointer-events:none';
+        document.body.appendChild(iframe);
+    }
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(h);
+    iframe.contentDocument.close();
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    }, 500);
 }
 
 // ===== CSV IMPORT =====
