@@ -486,8 +486,10 @@
           <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
           <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
         </div>
+        <div class="report-scroll">
         <div class="period-info" id="period-info"></div>
         <div id="report-content"></div>
+        </div>
         <div class="form-actions">
           <button class="btn btn-cancel" onclick="closeReport()" id="btn-rclose">Закрыть</button>
           <button class="btn btn-primary" onclick="showExportDialog()" id="btn-generate"

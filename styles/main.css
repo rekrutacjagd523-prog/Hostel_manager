@@ -622,7 +622,19 @@ body {
 }
 
 .modal.wide {
-  max-width: 700px
+  max-width: 700px;
+  overflow: visible;
+  max-height: none;
+}
+
+.modal.wide .report-scroll {
+  max-height: calc(90vh - 220px);
+  overflow-y: auto;
+}
+
+.modal.wide .period-dates input[type="date"] {
+  cursor: pointer;
+  min-width: 140px;
 }
 
 .modal.hist-modal {
