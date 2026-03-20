@@ -16,8 +16,17 @@ function getPeriodRange() {
     else if (reportPeriod === 'custom') {
         const fromEl = document.getElementById('period-from');
         const toEl = document.getElementById('period-to');
-        const fv = fromEl._isoValue || fromEl.value;
-        const tv = toEl._isoValue || toEl.value;
+        // _isoValue set by flatpickr (YYYY-MM-DD), fallback to .value for native input
+        const rawFv = fromEl._isoValue || fromEl.value;
+        const rawTv = toEl._isoValue || toEl.value;
+        // Convert dd.mm.yyyy → yyyy-mm-dd if needed
+        function toIso(s) {
+            if (!s) return '';
+            const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+            return m ? m[3] + '-' + m[2] + '-' + m[1] : s;
+        }
+        const fv = toIso(rawFv);
+        const tv = toIso(rawTv);
         if (fv) from = new Date(fv + 'T00:00:00'); if (tv) to = new Date(tv + 'T23:59:59');
     }
     return { from, to };
