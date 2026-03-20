@@ -267,9 +267,8 @@ export function selectExportOpt(label, type) {
 
 export function doExport(format) {
     const el = window._exportDialog;
-    if (!el) return;
-    const type = el.querySelector('input[name="exp-type"]:checked').value;
-    el.remove();
+    const type = el ? ((el.querySelector('input[name="exp-type"]:checked') || {}).value || 'all') : 'all';
+    if (el) { window._exportDialog = null; el.remove(); }
     if (format === 'pdf') exportPDFByType(type);
     else exportExcelByType(type);
 }
@@ -349,17 +348,32 @@ function exportPDFByType(type) {
         h += '<div class="summary">' + t('curLabel') + ': <b>' + fmtUi(tA) + '</b> &nbsp;|&nbsp; ' + t('outLabel') + ': <b>' + fmtUi(tO) + '</b> &nbsp;|&nbsp; ' + t('totalLabel') + ': <b>' + fmtUi(tA + tO) + '</b></div>';
     }
     h += '</body></html>';
-    // Create blob and open in new tab — works without popup blocker since triggered by user click
-    const blob = new Blob([h], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    // Try window.open first, fallback to iframe
+    const win = window.open('', '_blank');
+    if (win) {
+        win.document.open();
+        win.document.write(h);
+        win.document.close();
+        setTimeout(() => { try { win.focus(); win.print(); } catch(e){} }, 500);
+    } else {
+        // Fallback: hidden iframe
+        let ifr = document.getElementById('_rpt_ifr');
+        if (!ifr) {
+            ifr = document.createElement('iframe');
+            ifr.id = '_rpt_ifr';
+            ifr.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;background:#fff';
+            document.body.appendChild(ifr);
+        }
+        ifr.style.display = 'block';
+        ifr.contentDocument.open();
+        ifr.contentDocument.write(h);
+        ifr.contentDocument.close();
+        setTimeout(() => {
+            ifr.contentWindow.focus();
+            ifr.contentWindow.print();
+            setTimeout(() => { ifr.style.display = 'none'; }, 1000);
+        }, 500);
+    }
 }
 
 // ===== CSV IMPORT =====
