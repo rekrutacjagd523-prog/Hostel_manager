@@ -349,21 +349,17 @@ function exportPDFByType(type) {
         h += '<div class="summary">' + t('curLabel') + ': <b>' + fmtUi(tA) + '</b> &nbsp;|&nbsp; ' + t('outLabel') + ': <b>' + fmtUi(tO) + '</b> &nbsp;|&nbsp; ' + t('totalLabel') + ': <b>' + fmtUi(tA + tO) + '</b></div>';
     }
     h += '</body></html>';
-    // Use hidden iframe instead of window.open to avoid popup blocker
-    let iframe = document.getElementById('_print_iframe');
-    if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.id = '_print_iframe';
-        iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0;pointer-events:none';
-        document.body.appendChild(iframe);
-    }
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(h);
-    iframe.contentDocument.close();
-    setTimeout(() => {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-    }, 500);
+    // Create blob and open in new tab — works without popup blocker since triggered by user click
+    const blob = new Blob([h], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
 // ===== CSV IMPORT =====
