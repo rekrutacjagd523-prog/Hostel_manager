@@ -621,6 +621,16 @@ body {
   overflow-y: auto
 }
 
+/* Report modal needs overflow visible so datepicker popup isn't clipped */
+#report-overlay .modal.wide {
+  overflow: visible;
+  max-height: calc(90vh - 20px);
+}
+#report-overlay .modal.wide .report-scroll {
+  overflow-y: auto;
+  max-height: calc(90vh - 260px);
+}
+
 .modal.wide {
   max-width: 700px;
   overflow: visible;
@@ -635,6 +645,18 @@ body {
 .modal.wide .period-dates input[type="date"] {
   cursor: pointer;
   min-width: 140px;
+  position: relative;
+  z-index: 9999;
+}
+
+/* Fix Chrome datepicker clipping inside overflow modal */
+#report-overlay .modal {
+  overflow: visible !important;
+  max-height: none !important;
+}
+#report-overlay .modal .report-scroll {
+  overflow-y: auto;
+  max-height: calc(90vh - 200px);
 }
 
 .modal.hist-modal {
