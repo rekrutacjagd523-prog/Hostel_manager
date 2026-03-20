@@ -14,7 +14,10 @@ function getPeriodRange() {
     else if (reportPeriod === 'month') { from = new Date(now); from.setMonth(from.getMonth() - 1); from.setHours(0, 0, 0, 0); }
     else if (reportPeriod === 'year') { from = new Date(now); from.setFullYear(from.getFullYear() - 1); from.setHours(0, 0, 0, 0); }
     else if (reportPeriod === 'custom') {
-        const fv = document.getElementById('period-from').value; const tv = document.getElementById('period-to').value;
+        const fromEl = document.getElementById('period-from');
+        const toEl = document.getElementById('period-to');
+        const fv = fromEl._isoValue || fromEl.value;
+        const tv = toEl._isoValue || toEl.value;
         if (fv) from = new Date(fv + 'T00:00:00'); if (tv) to = new Date(tv + 'T23:59:59');
     }
     return { from, to };

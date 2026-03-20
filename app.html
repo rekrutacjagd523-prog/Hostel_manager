@@ -14,6 +14,35 @@
   <link rel="stylesheet" href="styles/main.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+  <style>
+    /* Flatpickr dark theme override */
+    .flatpickr-calendar {
+      background: #1e1f23 !important;
+      border: 1px solid rgba(255,255,255,.12) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,.5) !important;
+      border-radius: 10px !important;
+    }
+    .flatpickr-months, .flatpickr-weekdays { background: #1e1f23 !important; }
+    .flatpickr-month, .flatpickr-current-month, .flatpickr-monthDropdown-months { color: #f0f0f2 !important; fill: #f0f0f2 !important; }
+    .flatpickr-weekday { color: #6e6e7a !important; }
+    .flatpickr-day { color: #f0f0f2 !important; border-radius: 6px !important; }
+    .flatpickr-day:hover { background: rgba(255,255,255,.08) !important; border-color: transparent !important; }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+      background: #f59e0b !important; border-color: #f59e0b !important; color: #111 !important;
+    }
+    .flatpickr-day.inRange { background: rgba(245,158,11,.15) !important; border-color: transparent !important; }
+    .flatpickr-day.today { border-color: rgba(245,158,11,.4) !important; }
+    .flatpickr-day.flatpickr-disabled { color: #48484e !important; }
+    .flatpickr-prev-month svg, .flatpickr-next-month svg { fill: #a8a8b4 !important; }
+    .numInputWrapper:hover, .numInputWrapper input:hover { background: rgba(255,255,255,.06) !important; }
+    .numInputWrapper input { color: #f0f0f2 !important; }
+    .flatpickr-time input, .flatpickr-time .flatpickr-am-pm { color: #f0f0f2 !important; background: #1e1f23 !important; }
+  </style>
   <script>
     (function () {
       fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf')
@@ -483,8 +512,8 @@
           <button class="period-btn" onclick="setPeriod('custom',this)" id="pb-custom">Вручную</button>
         </div>
         <div class="period-dates" id="custom-dates">
-          <span id="lbl-date-from">От:</span><input type="date" id="period-from" onchange="refreshReport()">
-          <span id="lbl-date-to">До:</span><input type="date" id="period-to" onchange="refreshReport()">
+          <span id="lbl-date-from">От:</span><input type="text" id="period-from" placeholder="дд.мм.гггг" readonly style="cursor:pointer" onclick="openDatePicker('from')">
+          <span id="lbl-date-to">До:</span><input type="text" id="period-to" placeholder="дд.мм.гггг" readonly style="cursor:pointer" onclick="openDatePicker('to')">
         </div>
         <div class="report-scroll">
         <div class="period-info" id="period-info"></div>
@@ -664,6 +693,65 @@
     window._lucideRefresh = function() {
       if (window.lucide) window.lucide.createIcons();
     };
+
+    // ── FLATPICKR DATE PICKERS ──
+    let _fpFrom = null, _fpTo = null;
+
+    function initFlatpickr() {
+      const lang = (window._settings && window._settings.lang) || 'PL';
+      const locale = { PL: 'pl', UA: 'uk', RU: 'ru', EN: 'en', LT: 'en' }[lang] || 'pl';
+
+      const common = {
+        dateFormat: 'd.m.Y',
+        locale: flatpickr.l10ns[locale] || flatpickr.l10ns.default,
+        disableMobile: true,
+        allowInput: false,
+        appendTo: document.body,
+      };
+
+      if (_fpFrom) _fpFrom.destroy();
+      if (_fpTo) _fpTo.destroy();
+
+      _fpFrom = flatpickr('#period-from', {
+        ...common,
+        onChange(dates) {
+          if (dates[0]) {
+            const d = dates[0];
+            // Write ISO format so report-export.js can parse it
+            document.getElementById('period-from')._isoValue =
+              d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            if (_fpTo) _fpTo.set('minDate', dates[0]);
+          }
+          if (window.refreshReport) window.refreshReport();
+        }
+      });
+
+      _fpTo = flatpickr('#period-to', {
+        ...common,
+        onChange(dates) {
+          if (dates[0]) {
+            const d = dates[0];
+            document.getElementById('period-to')._isoValue =
+              d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            if (_fpFrom) _fpFrom.set('maxDate', dates[0]);
+          }
+          if (window.refreshReport) window.refreshReport();
+        }
+      });
+    }
+
+    window.openDatePicker = function(which) {
+      if (!_fpFrom) initFlatpickr();
+      if (which === 'from' && _fpFrom) _fpFrom.open();
+      if (which === 'to' && _fpTo) _fpTo.open();
+    };
+
+    // Init flatpickr when custom period tab is clicked
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.id === 'pb-custom') {
+        setTimeout(initFlatpickr, 80);
+      }
+    });
   </script>
   <script type="module" src="js/main.js"></script>
 </body>
