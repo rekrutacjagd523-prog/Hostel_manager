@@ -106,9 +106,9 @@ function renderBookingList() {
             '<div class="prop-actions" style="display:flex;flex-direction:column;gap:4px">' +
             '<button class="btn-sm" onclick="openBookingForm(\'' + b.id + '\')">✏️</button>' +
             (b.status === 'pending' ? '<button class="btn-sm" style="color:var(--green)" onclick="setBookingStatus(\'' + b.id + '\',\'confirmed\')" title="' + t('confirmBooking') + '">✓</button>' : '') +
-            (b.status === 'confirmed' ? '<button class="btn-sm" style="color:var(--accent)" onclick="checkInBooking(\'' + b.id + '\')" title="' + t('checkInBooking') + '">🏠</button>' : '') +
+            (b.status === 'confirmed' ? '<button class="btn-sm" style="color:var(--accent)" onclick="checkInBooking(\'' + b.id + '\')" title="' + t('checkInBooking') + '"></button>' : '') +
             ((b.status === 'pending' || b.status === 'confirmed') ? '<button class="btn-sm" style="color:var(--red)" onclick="setBookingStatus(\'' + b.id + '\',\'cancelled\')" title="' + t('cancelBooking') + '">✕</button>' : '') +
-            '<button class="btn-sm danger" onclick="deleteBooking(\'' + b.id + '\')">🗑</button>' +
+            '<button class="btn-sm danger" onclick="deleteBooking(\'' + b.id + '\')"></button>' +
             '</div></div>';
     }).join('');
     list.innerHTML = h;
@@ -197,7 +197,7 @@ export function openBookingForm(id) {
 
     if (id) {
         const b = bookings().find(x => x.id === id); if (!b) return;
-        document.getElementById('booking-form-title').textContent = '📅 ' + t('editBooking');
+        document.getElementById('booking-form-title').textContent = '' + t('editBooking');
         document.getElementById('bk-edit-id').value = id;
         document.getElementById('bk-guest').value = b.guestName || '';
         document.getElementById('bk-phone').value = b.phone || '';
@@ -210,7 +210,7 @@ export function openBookingForm(id) {
         document.getElementById('bk-notes').value = b.notes || '';
         document.getElementById('bk-status').value = b.status || 'pending';
     } else {
-        document.getElementById('booking-form-title').textContent = '📅 ' + t('newBooking');
+        document.getElementById('booking-form-title').textContent = '' + t('newBooking');
         document.getElementById('bk-edit-id').value = '';
         document.getElementById('bk-guest').value = '';
         document.getElementById('bk-phone').value = '';
@@ -272,7 +272,7 @@ export async function saveBooking() {
 }
 
 export function deleteBooking(id) {
-    showConfirm('🗑', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
         try { await window._fb.deleteDoc(bookDoc(id)); } catch (e) { alert('Error: ' + e.message); }
     });
 }
@@ -287,7 +287,7 @@ export async function setBookingStatus(id, status) {
 export async function checkInBooking(id) {
     const b = bookings().find(x => x.id === id); if (!b) return;
     const prop = b.propId ? properties().find(p => p.id === b.propId) : null;
-    showConfirm('🏠', t('checkInBooking'), esc(b.guestName) + ' → ' + (prop ? esc(prop.city + ' · ' + prop.address) : ''), t('confirmYes'), 'c-ok', async () => {
+    showConfirm('', t('checkInBooking'), esc(b.guestName) + ' → ' + (prop ? esc(prop.city + ' · ' + prop.address) : ''), t('confirmYes'), 'c-ok', async () => {
         try {
             // Create resident from booking
             const nameParts = (b.guestName || '').split(' ');
@@ -323,7 +323,7 @@ export function toggleSelectAllBooks() {
 }
 export function deleteSelectedBooks() {
     const n = selectedBookIds.size; if (!n) return;
-    showConfirm('🗑', t('confirmDelete'), n + ' ' + t('bookings').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), n + ' ' + t('bookings').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
         for (const id of selectedBookIds) { try { await window._fb.deleteDoc(bookDoc(id)); } catch (e) { } }
         selectedBookIds.clear(); bookSelectMode = false;
     });

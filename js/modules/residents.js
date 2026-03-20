@@ -48,7 +48,7 @@ export function onPropSelect() {
             document.getElementById('f-address').value = p.address;
             document.getElementById('f-type').value = p.housingType;
             const free = getFreeSpots(p);
-            info.textContent = free > 0 ? '✅ ' + free + ' ' + t('freeSpots') : '❌ ' + t('propFull');
+            info.textContent = free > 0 ? '' + free + ' ' + t('freeSpots') : '' + t('propFull');
             info.style.color = free > 0 ? 'var(--green)' : 'var(--red)';
             // Populate room dropdown
             const roomRow = document.getElementById('room-select-row');
@@ -201,7 +201,7 @@ export async function saveResident() {
         }
         const prop = properties().find(p => p.city === city && p.address === address && p.housingType === housingType);
         if (prop && getFreeSpots(prop) <= 0) {
-            return showConfirm('⚠️', t('propFull'), city + ' · ' + address, t('confirmNo'), 'c-cancel', () => { });
+            return showConfirm('', t('propFull'), city + ' · ' + address, t('confirmNo'), 'c-cancel', () => { });
         }
     }
 
@@ -235,7 +235,7 @@ export async function saveResident() {
             closeForm();
             if (groupRateApplied) {
                 const count = residents().filter(r => r.id !== editId && !r.checkOutDate && r.city === city && r.address === address && r.housingType === housingType).length;
-                alert('✅ Ставка обновлена для ' + count + ' жильцов на этом жилье');
+                alert('Ставка обновлена для ' + count + ' жильцов на этом жилье');
             }
         } catch (e) { alert('Error: ' + e.message); }
     } else {
@@ -261,7 +261,7 @@ export function checkOut(id) {
     el.style.zIndex = '200';
     el.innerHTML = `
         <div class="confirm-box" style="max-width:360px">
-            <div class="confirm-icon">↪</div>
+            <div class="confirm-icon"></div>
             <div class="confirm-title">${t('confirmCheckout')}</div>
             <div class="confirm-msg">${t('confirmCheckoutMsg').replace('{name}', resName(r))}</div>
             <div style="margin-bottom:16px">
@@ -291,7 +291,7 @@ export function checkOut(id) {
 
 export function deleteResident(id) {
     const r = residents().find(x => x.id === id);
-    showConfirm('🗑', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
         try { await window._fb.deleteDoc(resDoc(id)); }
         catch (e) { alert('Error: ' + e.message); }
     });
@@ -358,7 +358,7 @@ function updateSelCount() {
 
 export function deleteSelected() {
     const n = selectedIds.size; if (!n) return;
-    showConfirm('🗑', t('confirmDelete'), n + ' ' + t('residents').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), n + ' ' + t('residents').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
         for (const id of selectedIds) {
             try { await window._fb.deleteDoc(resDoc(id)); } catch (e) { }
         }
@@ -368,7 +368,7 @@ export function deleteSelected() {
 
 export function checkoutSelected() {
     const n = selectedIds.size; if (!n) return;
-    showConfirm('↪', t('confirmCheckout'), n + ' ' + t('residents').toLowerCase(), t('confirmYes'), 'c-ok', async () => {
+    showConfirm('', t('confirmCheckout'), n + ' ' + t('residents').toLowerCase(), t('confirmYes'), 'c-ok', async () => {
         for (const id of selectedIds) {
             const r = residents().find(x => x.id === id);
             if (r && !r.checkOutDate) {
@@ -393,6 +393,6 @@ export function onRoomSelect() {
     const editId = document.getElementById('edit-id').value;
     const occ = residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && r.roomId === roomId && r.id !== editId).length;
     const free = Math.max(0, (room.beds || 0) - occ);
-    info.textContent = free > 0 ? '✅ ' + free + ' ' + t('freeBedsInRoom') : '❌ ' + t('roomFull');
+    info.textContent = free > 0 ? '' + free + ' ' + t('freeBedsInRoom') : '' + t('roomFull');
     info.style.color = free > 0 ? 'var(--green)' : 'var(--red)';
 }

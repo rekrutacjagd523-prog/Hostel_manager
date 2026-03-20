@@ -84,7 +84,7 @@ export function doForgotPass() {
     const el = document.createElement('div');
     el.className = 'confirm-overlay';
     el.innerHTML = '<div class="confirm-box">' +
-        '<div class="confirm-icon">🔑</div>' +
+        '<div class="confirm-icon"></div>' +
         '<div class="confirm-title">' + at('forgot') + '</div>' +
         '<div class="confirm-msg">' + at('forgotMsg') + '</div>' +
         '<input class="auth-field" type="email" id="reset-email" placeholder="Email" style="margin-bottom:12px;text-align:left">' +
@@ -103,18 +103,18 @@ export function doForgotPass() {
     el.querySelector('#reset-send').onclick = async () => {
         const email = emailInput.value.trim();
         const status = el.querySelector('#reset-status');
-        if (!email) { status.textContent = '❌ ' + at('enterEmail'); status.style.color = 'var(--red)'; return; }
+        if (!email) { status.textContent = '' + at('enterEmail'); status.style.color = 'var(--red)'; return; }
         try {
             const { sendPasswordResetEmail } = window._fb;
             const auth = window._fb.auth;
             await sendPasswordResetEmail(auth, email);
-            status.textContent = '✅ ' + at('forgotSent') + ' ' + email;
+            status.textContent = '' + at('forgotSent') + ' ' + email;
             status.style.color = 'var(--green)';
             el.querySelector('#reset-send').style.display = 'none';
             el.querySelector('#reset-cancel').textContent = 'OK';
         } catch (e) {
             console.error('Reset email error:', e);
-            status.textContent = '❌ ' + (e.message || authErrorMsg(e.code));
+            status.textContent = '' + (e.message || authErrorMsg(e.code));
             status.style.color = 'var(--red)';
         }
     };

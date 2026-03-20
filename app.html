@@ -131,7 +131,7 @@
       <div class="header-left">
         <div class="logo" onclick="window.location.reload()" style="cursor:pointer" title="Odśwież"><i data-lucide="building-2" style="width:22px;height:22px;color:#0d0d14"></i></div>
         <div>
-          <h1>Lokum</h1>
+          <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.02em">Lokum</h1>
           <div class="header-sub">
             <p id="hdr-sub">Управление жильцами</p>
             <span class="conn-status"><i data-lucide="cloud" style="width:10px;height:10px"></i> Chmura</span>
@@ -438,7 +438,7 @@
     <div class="overlay hidden" id="settings-overlay"
       onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('settings')">
       <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="lbl-settings">⚙ Настройки</h3>
+        <h3 id="lbl-settings">Настройки</h3>
         <label class="field-label">Язык / Language</label>
         <select class="field" id="s-lang" onchange="applyLangImmediate(this.value)">
           <option value="RU">🇷🇺 Русский</option>
@@ -503,7 +503,7 @@
     <div class="overlay hidden" id="report-overlay"
       onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('report')">
       <div class="modal wide" onclick="event.stopPropagation()">
-        <h3 id="lbl-report">📄 Отчёт</h3>
+        <h3 id="lbl-report">Отчёт</h3>
         <div class="period-bar">
           <button class="period-btn active" onclick="setPeriod('all',this)" id="pb-all">Всё время</button>
           <button class="period-btn" onclick="setPeriod('week',this)" id="pb-week">За неделю</button>
@@ -530,7 +530,7 @@
     <!-- Rate History Modal -->
     <div class="overlay hidden" id="hist-overlay">
       <div class="modal hist-modal">
-        <h3 id="hist-title">📋 История ставок</h3>
+        <h3 id="hist-title">История ставок</h3>
         <div id="hist-content"></div>
         <div class="form-actions">
           <button class="btn btn-cancel"
@@ -543,7 +543,7 @@
     <div class="overlay hidden" id="prop-overlay"
       onclick="if(event.target===this&&window._mouseDownTarget===this)confirmExitOverlay('props')">
       <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
-        <h3 id="prop-form-title">🏢 Новый объект</h3>
+        <h3 id="prop-form-title">Новый объект</h3>
         <input type="hidden" id="prop-edit-id">
         <div class="form-row">
           <div><label class="field-label" id="lbl-prop-city">Город</label><input class="field" id="p-city"

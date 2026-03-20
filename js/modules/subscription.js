@@ -68,7 +68,7 @@ export function showUpgradeModal(reason) {
         text-align:center;
         border-bottom:1px solid rgba(255,255,255,.06)
       ">
-        <div style="font-size:40px;margin-bottom:8px">🚀</div>
+        <div style="font-size:40px;margin-bottom:8px"></div>
         <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">${t('upgradeToPro')}</div>
         <div style="font-size:13px;color:rgba(255,255,255,.5)">
           ${isResLimit
@@ -89,10 +89,10 @@ export function showUpgradeModal(reason) {
           <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px">🆓 Standard</div>
           <div style="font-size:22px;font-weight:800;margin-bottom:12px">$0<span style="font-size:12px;color:var(--text3)">${pm}</span></div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div>✅ ${t('residents')}: <b style="color:var(--text)">${FREE_LIMITS.residents}</b></div>
-            <div>✅ ${t('properties')}: <b style="color:var(--text)">${FREE_LIMITS.properties}</b></div>
-            <div>✅ ${t('report')}</div>
-            <div style="color:var(--text4)">❌ ${t('unlimited')}</div>
+            <div>${t('residents')}: <b style="color:var(--text)">${FREE_LIMITS.residents}</b></div>
+            <div>${t('properties')}: <b style="color:var(--text)">${FREE_LIMITS.properties}</b></div>
+            <div>${t('report')}</div>
+            <div style="color:var(--text4)">${t('unlimited')}</div>
           </div>
           <div style="
             margin-top:14px;padding:8px;border-radius:8px;
@@ -114,15 +114,15 @@ export function showUpgradeModal(reason) {
             font-size:10px;font-weight:800;
             padding:3px 28px;transform:rotate(45deg)
           ">HOT</div>
-          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">⭐ Pro</div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">Pro</div>
           <div style="font-size:22px;font-weight:800;margin-bottom:12px;color:var(--accent)">
             $19.99<span style="font-size:12px;color:var(--text3)">${pm}</span>
           </div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div>✅ <b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
-            <div>✅ <b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
-            <div>✅ ${t('report')}</div>
-            <div>✅ ${t('prioritySupport')}</div>
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
+            <div>${t('report')}</div>
+            <div>${t('prioritySupport')}</div>
           </div>
           <button id="btn-subscribe" onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription();" style="
             margin-top:14px;width:100%;padding:10px;border-radius:8px;
@@ -131,7 +131,7 @@ export function showUpgradeModal(reason) {
             background:linear-gradient(135deg,#e8a838,#d4883a);
             color:#0d0d14;transition:opacity .2s
           " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            ⭐ ${t('subscribe')} — $19.99
+            ${t('subscribe')} — $19.99
           </button>
         </div>
       </div>
@@ -227,7 +227,7 @@ export function openSubscription() {
       <div style="padding:12px 24px">
         <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:8px;border:1px solid var(--border3);background:var(--surface2)">
           <input type="checkbox" id="inv-toggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
-          <span style="font-size:13px;color:var(--text2)">📄 I need an invoice / Potrzebuję fakturę</span>
+          <span style="font-size:13px;color:var(--text2)">I need an invoice / Potrzebuję fakturę</span>
         </label>
       </div>
 
@@ -374,7 +374,7 @@ function showProActivatedModal() {
   el.style.zIndex = '400';
   el.innerHTML = `
     <div class="confirm-box" style="text-align:center;max-width:360px">
-      <div style="font-size:52px;margin-bottom:12px">🎉</div>
+      <div style="font-size:52px;margin-bottom:12px"></div>
       <div class="confirm-title" style="font-size:20px">Pro aktywowany!</div>
       <div class="confirm-msg">
         Dziękujemy za zakup. Twój plan <b style="color:var(--accent)">Pro</b> jest już aktywny.<br>
@@ -383,7 +383,7 @@ function showProActivatedModal() {
       <div class="confirm-btns">
         <button class="c-ok" style="width:100%;padding:12px;font-size:15px"
           onclick="this.closest('.confirm-overlay').remove()">
-          Świetnie! 🚀
+          Świetnie! 
         </button>
       </div>
     </div>
@@ -394,7 +394,7 @@ function showProActivatedModal() {
 
 // Plan badge text
 export function getPlanLabel() {
-  return isPro() ? '⭐ Pro' : '🆓 Free';
+  return isPro() ? 'Pro' : '🆓 Free';
 }
 
 export function getPlanStyle() {

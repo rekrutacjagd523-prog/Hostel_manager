@@ -125,7 +125,7 @@ export function renderExpenses() {
             '</div></div>' +
             '<div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openExpenseForm(\'' + e.id + '\')">✏️</button>' +
-            '<button class="btn-sm danger" onclick="deleteExpense(\'' + e.id + '\')">🗑</button>' +
+            '<button class="btn-sm danger" onclick="deleteExpense(\'' + e.id + '\')"></button>' +
             '</div></div>';
     }).join('');
 
@@ -161,7 +161,7 @@ export function openExpenseForm(id) {
 
     if (id) {
         const e = expenses().find(x => x.id === id); if (!e) return;
-        document.getElementById('fin-form-title').textContent = '💰 ' + t('editExpense');
+        document.getElementById('fin-form-title').textContent = '' + t('editExpense');
         document.getElementById('fin-edit-id').value = id;
         document.getElementById('fin-type').value = e.type || 'expense';
         document.getElementById('fin-category').value = e.category || 'other';
@@ -170,7 +170,7 @@ export function openExpenseForm(id) {
         document.getElementById('fin-desc').value = e.description || '';
         document.getElementById('fin-prop').value = e.propertyId || '';
     } else {
-        document.getElementById('fin-form-title').textContent = '💰 ' + t('newExpense');
+        document.getElementById('fin-form-title').textContent = '' + t('newExpense');
         document.getElementById('fin-edit-id').value = '';
         document.getElementById('fin-type').value = 'expense';
         document.getElementById('fin-category').value = 'other';
@@ -215,7 +215,7 @@ export async function saveExpense() {
 }
 
 export function deleteExpense(id) {
-    showConfirm('🗑', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
         try { await window._fb.deleteDoc(expDoc(id)); } catch (e) { alert('Error: ' + e.message); }
     });
 }
@@ -255,7 +255,7 @@ function updateExpSelCount() {
 
 export function deleteSelectedExp() {
     const n = selectedExpIds.size; if (!n) return;
-    showConfirm('🗑', t('confirmDelete'), n + ' ' + t('expenses').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), n + ' ' + t('expenses').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
         for (const id of selectedExpIds) {
             try { await window._fb.deleteDoc(expDoc(id)); } catch (e) { }
         }

@@ -37,7 +37,8 @@ export function resName(r) { return (r.firstName || r.fullName || '') + (r.lastN
 export function showConfirm(icon, title, msg, okText, okClass, onOk) {
     const el = document.createElement('div');
     el.className = 'confirm-overlay';
-    el.innerHTML = '<div class="confirm-box"><div class="confirm-icon">' + icon + '</div><div class="confirm-title">' + title + '</div><div class="confirm-msg">' + msg + '</div><div class="confirm-btns"><button class="c-cancel" id="c-no">' + t('confirmNo') + '</button><button class="' + (okClass || 'c-ok') + '" id="c-yes">' + (okText || t('confirmYes')) + '</button></div></div>';
+    const isDelete = okClass === 'c-danger';
+    el.innerHTML = '<div class="confirm-box"><div class="confirm-title">' + title + '</div>' + (msg ? '<div class="confirm-msg">' + msg + '</div>' : '') + '<div class="confirm-btns"><button class="c-cancel" id="c-no">' + t('confirmNo') + '</button><button class="' + (okClass || 'c-ok') + '" id="c-yes">' + (okText || t('confirmYes')) + '</button></div></div>';
     document.body.appendChild(el);
     el.querySelector('#c-no').onclick = () => el.remove();
     el.querySelector('#c-yes').onclick = () => { el.remove(); onOk(); };

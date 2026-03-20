@@ -72,7 +72,7 @@ export function applyLangImmediate(lang) {
 export function confirmExitOverlay(type) {
     const msgs = { settings: t('exitSettings'), props: t('exitProps'), resident: t('exitResident'), report: t('exitReport') };
     const closeFns = { settings: closeSettings, props: closePropForm, resident: closeForm, report: closeReport };
-    showConfirm('❓', '', msgs[type] || '', t('confirmYes'), 'c-ok', () => { closeFns[type](); });
+    showConfirm('', '', msgs[type] || '', t('confirmYes'), 'c-ok', () => { closeFns[type](); });
 }
 
 export async function saveSettings() {
@@ -106,13 +106,13 @@ export function deleteFieldValue(field, value) {
     if (activeRes.length > 0) {
         const el = document.createElement('div');
         el.className = 'confirm-overlay';
-        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon">⚠️</div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + activeRes.length + ' ' + t('residents').toLowerCase() + ': ' + activeRes.map(r => resName(r)).join(', ') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
+        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon"></div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + activeRes.length + ' ' + t('residents').toLowerCase() + ': ' + activeRes.map(r => resName(r)).join(', ') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
         document.body.appendChild(el);
         el.querySelector('button').onclick = () => el.remove();
         el.onclick = (e) => { if (e.target === el) el.remove(); };
         return;
     }
-    showConfirm('🗑', t('confirmDelete'), '"' + value + '" — ' + t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), '"' + value + '" — ' + t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
         const fb = window._fb;
         const { resDoc, cleanForFirebase } = await import('./utils.js');
         for (const r of residents().filter(x => x[field] === value)) {
@@ -152,7 +152,7 @@ export function renderMembers() {
 }
 
 export function removeMember(memberId) {
-    showConfirm('👤', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), t('confirmDeleteMsg'), t('confirmYes'), 'c-danger', async () => {
         try {
             const ownerUid = window._workspaceUid || window._currentUser.uid;
             const member = (window._members || []).find(m => m.id === memberId);
@@ -174,7 +174,7 @@ export function inviteUser() {
     const el = document.createElement('div');
     el.className = 'confirm-overlay';
     el.innerHTML = '<div class="confirm-box" style="text-align:left">' +
-        '<div style="text-align:center"><div class="confirm-icon">👤+</div><div class="confirm-title">' + t('inviteTitle') + '</div></div>' +
+        '<div style="text-align:center"><div class="confirm-icon"></div><div class="confirm-title">' + t('inviteTitle') + '</div></div>' +
         '<div class="confirm-msg" style="text-align:center">' + t('inviteMsg') + '</div>' +
         '<input class="auth-field" type="email" id="invite-email" placeholder="Email" style="text-align:left;margin-bottom:8px">' +
         '<div id="invite-status" style="font-size:12px;min-height:18px;margin-bottom:8px"></div>' +
@@ -188,11 +188,11 @@ export function inviteUser() {
     el.querySelector('#inv-send').onclick = async () => {
         const email = el.querySelector('#invite-email').value.trim();
         const status = el.querySelector('#invite-status');
-        if (!email) { status.textContent = '❌ Email!'; status.style.color = 'var(--red)'; return; }
+        if (!email) { status.textContent = 'Email!'; status.style.color = 'var(--red)'; return; }
         const uid = window._workspaceUid || window._currentUser.uid;
         const link = window.location.origin + '?invite=' + uid;
         try { await navigator.clipboard.writeText(link); } catch (e) { }
-        status.innerHTML = '✅ ' + t('inviteCopied') + '<br><code style="font-size:10px;word-break:break-all;color:var(--accent)">' + link + '</code>';
+        status.innerHTML = '' + t('inviteCopied') + '<br><code style="font-size:10px;word-break:break-all;color:var(--accent)">' + link + '</code>';
         status.style.color = 'var(--green)';
         el.querySelector('#inv-send').style.display = 'none';
     };

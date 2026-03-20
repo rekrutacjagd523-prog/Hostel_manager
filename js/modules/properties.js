@@ -51,7 +51,7 @@ export function renderProperties() {
             '<span class="prop-spot-tag ' + (isFull ? 'full' : 'free') + '">' + free + ' ' + t('freeSpots') + '</span>' +
             '</div><div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openPropForm(\'' + p.id + '\')">✏️</button>' +
-            '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')">🗑</button>' +
+            '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')"></button>' +
             '</div>' + // close prop-actions
             // Room mini-list
             (p.rooms && p.rooms.length ?
@@ -130,11 +130,11 @@ export function deleteSelectedProps() {
     }
     if (blocked.length) {
         const el = document.createElement('div'); el.className = 'confirm-overlay';
-        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon">⚠️</div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + blocked.join('<br>') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
+        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon"></div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + blocked.join('<br>') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
         document.body.appendChild(el); el.querySelector('button').onclick = () => el.remove();
         return;
     }
-    showConfirm('🗑', t('confirmDelete'), n + ' ' + t('properties').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), n + ' ' + t('properties').toLowerCase(), t('confirmYes'), 'c-danger', async () => {
         for (const id of selectedPropIds) { try { await window._fb.deleteDoc(propDoc(id)); } catch (e) { } }
         selectedPropIds.clear(); propSelectMode = false;
     });
@@ -144,14 +144,14 @@ export function openPropForm(id) {
     document.getElementById('prop-overlay').classList.remove('hidden');
     if (id) {
         const p = properties().find(x => x.id === id); if (!p) return;
-        document.getElementById('prop-form-title').textContent = '🏢 ' + t('editProp');
+        document.getElementById('prop-form-title').textContent = '' + t('editProp');
         document.getElementById('prop-edit-id').value = id;
         document.getElementById('p-city').value = p.city || '';
         document.getElementById('p-address').value = p.address || '';
         document.getElementById('p-type').value = p.housingType || 'hostel';
         document.getElementById('p-spots').value = p.spots || 1;
     } else {
-        document.getElementById('prop-form-title').textContent = '🏢 ' + t('newProp');
+        document.getElementById('prop-form-title').textContent = '' + t('newProp');
         document.getElementById('prop-edit-id').value = '';
         document.getElementById('p-city').value = '';
         document.getElementById('p-address').value = '';
@@ -195,13 +195,13 @@ export function deleteProp(id) {
     if (occ > 0) {
         const el = document.createElement('div');
         el.className = 'confirm-overlay';
-        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon">⚠️</div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + occ + ' ' + t('residents').toLowerCase() + ': ' + getResidentsOnProp(p).map(r => window.resName ? window.resName(r) : r.firstName).join(', ') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
+        el.innerHTML = '<div class="confirm-box"><div class="confirm-icon"></div><div class="confirm-title">' + t('propHasResidents') + '</div><div class="confirm-msg">' + occ + ' ' + t('residents').toLowerCase() + ': ' + getResidentsOnProp(p).map(r => window.resName ? window.resName(r) : r.firstName).join(', ') + '</div><div class="confirm-btns"><button class="c-ok" style="flex:none;padding:10px 40px">OK</button></div></div>';
         document.body.appendChild(el);
         el.querySelector('button').onclick = () => el.remove();
         el.onclick = (e) => { if (e.target === el) el.remove(); };
         return;
     }
-    showConfirm('🗑', t('confirmDelete'), t('confirmDeleteMsg'), '🗑', 'c-danger', async () => {
+    showConfirm('', t('confirmDelete'), t('confirmDeleteMsg'), '', 'c-danger', async () => {
         try { await window._fb.deleteDoc(propDoc(id)); } catch (e) { alert('Error: ' + e.message); }
     });
 }
@@ -267,7 +267,7 @@ export async function saveRoom() {
 }
 
 export function deleteRoom(propId, roomId) {
-    showConfirm('🗑', t('deleteRoom'), t('confirmDeleteRoom'), t('confirmYes'), 'c-danger', async () => {
+    showConfirm('', t('deleteRoom'), t('confirmDeleteRoom'), t('confirmYes'), 'c-danger', async () => {
         const p = properties().find(x => x.id === propId);
         if (!p) return;
         let rooms = p.rooms ? p.rooms.filter(r => r.id !== roomId) : [];

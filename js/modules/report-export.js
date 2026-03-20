@@ -124,7 +124,7 @@ export function refreshReport() {
     if (!af.length) h = '<div class="empty">' + t('noData') + '</div>';
     const props = properties();
     if (props.length) {
-        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')?\'▶\':\'▼\'">🏢 ' + t('propReport') + ' <span style="font-size:11px;color:var(--text4)">▼</span></h4><div class="report-table">' +
+        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')?\'▶\':\'▼\'">' + t('propReport') + ' <span style="font-size:11px;color:var(--text4)">▼</span></h4><div class="report-table">' +
             '<div class="report-header"><span style="flex:2">' + t('properties') + '</span><span style="flex:1">' + t('htype') + '</span><span style="flex:1;text-align:center">' + t('totalSpots') + '</span><span style="flex:1;text-align:center">' + t('occupied') + '</span><span style="flex:1;text-align:center">' + t('freeSpots') + '</span></div>';
         let totalS = 0, totalO = 0;
         props.forEach(p => {
@@ -156,8 +156,8 @@ export function refreshReport() {
         const totalIncome = incomes.reduce((s, e) => s + (e.amount || 0), 0);
         const totalExpense = expenseItems.reduce((s, e) => s + (e.amount || 0), 0);
         const netProfit = totalIncome - totalExpense;
-        const CATS = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '👤', other: '📎', income: '💰' };
-        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">💰 ' + t('finance') + ' (' + filteredExp.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
+        const CATS = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '', other: '📎', income: '💰' };
+        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">' + t('finance') + ' (' + filteredExp.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
         // Summary row
         h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">';
         h += '<div style="flex:1;min-width:140px;background:rgba(106,184,154,.08);border:1px solid rgba(106,184,154,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('income') + '</div><div style="font-weight:800;color:var(--green)">' + fmtUi(totalIncome) + '</div></div>';
@@ -192,12 +192,12 @@ export function refreshReport() {
             if (to && d > to) return false;
             return true;
         });
-        const STATUS_LABELS = { pending: '⏳ ' + t('bkPending'), confirmed: '✓ ' + t('bkConfirmed'), cancelled: '✕ ' + t('bkCancelled'), checkedIn: '🏠 ' + t('active') };
+        const STATUS_LABELS = { pending: '⏳ ' + t('bkPending'), confirmed: '✓ ' + t('bkConfirmed'), cancelled: '✕ ' + t('bkCancelled'), checkedIn: ' ' + t('active') };
         const STATUS_COLORS_MAP = { pending: '#f59e0b', confirmed: 'var(--green)', cancelled: 'var(--text4)', checkedIn: 'var(--accent)' };
         const confirmed = filteredBook.filter(b => b.status === 'confirmed' || b.status === 'checkedIn').length;
         const pending = filteredBook.filter(b => b.status === 'pending').length;
         const cancelled = filteredBook.filter(b => b.status === 'cancelled').length;
-        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">📅 ' + t('bookings') + ' (' + filteredBook.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
+        h += '<div class="report-section"><h4 style="cursor:pointer;user-select:none" onclick="this.nextElementSibling.classList.toggle(\'rpt-hidden\');this.querySelector(\'span\').textContent=this.nextElementSibling.classList.contains(\'rpt-hidden\')? \'▶\':\'▼\'">' + t('bookings') + ' (' + filteredBook.length + ') <span style="font-size:11px;color:var(--text4)">▼</span></h4><div>';
         // Status summary
         h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">';
         h += '<div style="flex:1;min-width:120px;background:rgba(106,184,154,.08);border:1px solid rgba(106,184,154,.2);border-radius:8px;padding:10px 14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">' + t('bkConfirmed') + '</div><div style="font-weight:800;color:var(--green)">' + confirmed + '</div></div>';
@@ -250,8 +250,8 @@ export function showExportDialog() {
         '<div class="export-opt-desc">' + t('residents') + ' + ' + t('properties') + '</div></div></label>' +
         '</div>' +
         '<div class="export-formats">' +
-        '<button class="btn btn-pdf" id="exp-pdf" onclick="doExport(\'pdf\')">📕 PDF</button>' +
-        '<button class="btn btn-xml" id="exp-excel" onclick="doExport(\'excel\')">📗 Excel</button>' +
+        '<button class="btn btn-pdf" id="exp-pdf" onclick="doExport(\'pdf\')">PDF</button>' +
+        '<button class="btn btn-xml" id="exp-excel" onclick="doExport(\'excel\')">Excel</button>' +
         '</div>' +
         '<div style="text-align:center;margin-top:12px"><button class="btn btn-cancel" id="exp-cancel">' + t('confirmNo') + '</button></div>' +
         '</div>';
@@ -338,7 +338,7 @@ function exportPDFByType(type) {
     if (type === 'props' || type === 'all') {
         const props = properties();
         if (props.length) {
-            h += '<h2>🏢 ' + t('propReport') + '</h2><table><tr><th class="purple">' + t('properties') + '</th><th class="purple">' + t('htype') + '</th><th class="purple">' + t('totalSpots') + '</th><th class="purple">' + t('occupied') + '</th><th class="purple">' + t('freeSpots') + '</th></tr>';
+            h += '<h2>' + t('propReport') + '</h2><table><tr><th class="purple">' + t('properties') + '</th><th class="purple">' + t('htype') + '</th><th class="purple">' + t('totalSpots') + '</th><th class="purple">' + t('occupied') + '</th><th class="purple">' + t('freeSpots') + '</th></tr>';
             let totalS = 0, totalO = 0;
             props.forEach(p => {
                 const occ = getResidentsOnProp(p).length; const free = Math.max(0, (p.spots || 0) - occ);
@@ -385,7 +385,7 @@ export function importCSV() {
     const el = document.createElement('div');
     el.className = 'confirm-overlay';
     el.innerHTML = '<div class="confirm-box" style="max-width:480px;text-align:left">' +
-        '<div style="text-align:center"><div class="confirm-icon">📥</div><div class="confirm-title">' + t('importCSV') + '</div></div>' +
+        '<div style="text-align:center"><div class="confirm-icon"></div><div class="confirm-title">' + t('importCSV') + '</div></div>' +
         '<div class="confirm-msg" style="text-align:center">' + t('importStep1') + '</div>' +
         '<div style="background:var(--surface);border-radius:8px;padding:10px 12px;margin:10px 0;font-family:monospace;font-size:11px;line-height:1.8;overflow-x:auto">' +
         '<div style="font-weight:700;color:var(--accent)">FirstName;LastName;City;Address;Type;CheckInDate;MonthlyRate</div>' +
@@ -413,11 +413,11 @@ export function importCSV() {
         status.textContent = '⏳ ...'; status.style.color = 'var(--text2)';
         try {
             const count = await processCSVFile(ev.target.files[0]);
-            status.textContent = '✅ ' + t('importDone') + ': ' + count + ' ' + t('residents').toLowerCase();
+            status.textContent = '' + t('importDone') + ': ' + count + ' ' + t('residents').toLowerCase();
             status.style.color = 'var(--green)';
             ev.target.value = '';
         } catch (e) {
-            status.textContent = '❌ ' + e.message; status.style.color = 'var(--red)';
+            status.textContent = '' + e.message; status.style.color = 'var(--red)';
         }
     };
 }

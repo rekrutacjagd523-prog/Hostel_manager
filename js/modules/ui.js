@@ -158,7 +158,7 @@ function renderGrouped() {
             h += `<div class=\"longpress-card\" data-id=\"${r.id}\" style=\"display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2);${selectMode ? 'cursor:pointer' : ''}\" ${selectMode ? `onclick="if(event.target.type!=='checkbox'){const cb=this.querySelector('.sel-check');if(cb){cb.checked=!cb.checked;toggleSelectItem('${r.id}',cb);}}"` : ''}>`;
             if (selectMode) h += `<input type="checkbox" class="sel-check item-check" data-id="${r.id}" ${selectedIds.has(r.id) ? 'checked' : ''} onchange="toggleSelectItem('${r.id}',this)" style="margin-right:8px;flex-shrink:0">`;
             h += `<div style=\"display:flex;align-items:center;gap:6px;font-size:13px\">${r.isSenior ? '<span style=\"color:#f59e0b\">⭐</span>' : ''}<span>${esc(name)}</span>${r.plannedCheckOut ? '<span style=\"font-size:11px;color:var(--accent)\">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : ''}</div>`;
-            h += `<div style=\"display:flex;align-items:center;gap:10px\" onclick=\"event.stopPropagation()\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\">↪</button></div>`;
+            h += `<div style=\"display:flex;align-items:center;gap:10px\" onclick=\"event.stopPropagation()\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\"></button></div>`;
             h += `</div>`;
         });
         h += `</div></div>`;
@@ -272,7 +272,7 @@ export function render() {
             '</div><div class="card-actions" onclick="event.stopPropagation()">' +
             (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '"><i data-lucide="clipboard-list" style="width:14px;height:14px"></i></button>' : '') +
             '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
-            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '↪' + '</button>' : '') +
+            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '' + '</button>' : '') +
             '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">' + '<i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div></div></div></div>';
     }).join('');
@@ -340,8 +340,8 @@ export function updateUI() {
     setText('lbl-frate', t('rate'));
     setText('lbl-planned-out', t('plannedOut'));
 
-    const srEl = document.getElementById('lbl-senior'); if (srEl) srEl.textContent = '⭐ ' + t('seniorRole').replace('⭐ ', '');
-    const gpEl = document.getElementById('lbl-group-prop'); if (gpEl) gpEl.textContent = '🏢 ' + t('groupByProp');
+    const srEl = document.getElementById('lbl-senior'); if (srEl) srEl.textContent = '' + t('seniorRole').replace('', '');
+    const gpEl = document.getElementById('lbl-group-prop'); if (gpEl) gpEl.textContent = '' + t('groupByProp');
 
     setText('lbl-ftype-name', t('ftypeName'));
     setText('lbl-ftype-type', t('ftypeType'));
@@ -376,7 +376,7 @@ export function updateUI() {
     const memEl = document.getElementById('lbl-members');
     if (memEl) {
         const memHidden = document.getElementById('members-list').classList.contains('rpt-hidden');
-        memEl.innerHTML = '👥 ' + t('members') + ' <span style="font-size:11px;color:var(--text4)">' + (memHidden ? '▶' : '▼') + '</span>';
+        memEl.innerHTML = '' + t('members') + ' <span style="font-size:11px;color:var(--text4)">' + (memHidden ? '▶' : '▼') + '</span>';
     }
 
     setText('lbl-report', t('report'));
@@ -398,7 +398,7 @@ export function updateUI() {
     setText('fin-cat-all', t('allCategories'));
     // Update category tab labels
     const catMap = { utilities: 'utilities', supplies: 'supplies', repairs: 'repairs', salary: 'salary', other: 'otherCat' };
-    const catIcons = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '👤', other: '📎' };
+    const catIcons = { utilities: '🔌', supplies: '📦', repairs: '🔧', salary: '', other: '📎' };
     Object.keys(catMap).forEach(cat => {
         const el = document.getElementById('fin-cat-' + cat);
         if (el) el.innerHTML = catIcons[cat] + ' <span class="fin-cat-label">' + t(catMap[cat]) + '</span>';
@@ -413,10 +413,10 @@ export function updateUI() {
     setText('btn-fin-save', t('accept'));
     // Update finance type dropdown options
     const finTypeEl = document.getElementById('fin-type');
-    if (finTypeEl) { finTypeEl.options[0].textContent = '📉 ' + t('expense'); finTypeEl.options[1].textContent = '💰 ' + t('income'); }
+    if (finTypeEl) { finTypeEl.options[0].textContent = '📉 ' + t('expense'); finTypeEl.options[1].textContent = '' + t('income'); }
     // Update finance category dropdown options
     const finCatEl = document.getElementById('fin-category');
-    if (finCatEl) { finCatEl.options[0].textContent = '🔌 ' + t('utilities'); finCatEl.options[1].textContent = '📦 ' + t('supplies'); finCatEl.options[2].textContent = '🔧 ' + t('repairs'); finCatEl.options[3].textContent = '👤 ' + t('salary'); finCatEl.options[4].textContent = '📎 ' + t('otherCat'); }
+    if (finCatEl) { finCatEl.options[0].textContent = '🔌 ' + t('utilities'); finCatEl.options[1].textContent = '📦 ' + t('supplies'); finCatEl.options[2].textContent = '🔧 ' + t('repairs'); finCatEl.options[3].textContent = ' ' + t('salary'); finCatEl.options[4].textContent = '📎 ' + t('otherCat'); }
     // Room labels
     setText('lbl-room-name', t('roomName'));
     setText('lbl-room-floor', t('roomFloor'));
@@ -454,7 +454,7 @@ export function updateUI() {
     setText('btn-bk-cancel', t('cancel'));
     setText('btn-bk-save', t('accept'));
     const bkStatusEl = document.getElementById('bk-status');
-    if (bkStatusEl) { bkStatusEl.options[0].textContent = '⏳ ' + t('bkPending'); bkStatusEl.options[1].textContent = '✓ ' + t('bkConfirmed'); bkStatusEl.options[2].textContent = '✕ ' + t('bkCancelled'); bkStatusEl.options[3].textContent = '🏠 ' + t('bkCheckedIn'); }
+    if (bkStatusEl) { bkStatusEl.options[0].textContent = '⏳ ' + t('bkPending'); bkStatusEl.options[1].textContent = '✓ ' + t('bkConfirmed'); bkStatusEl.options[2].textContent = '✕ ' + t('bkCancelled'); bkStatusEl.options[3].textContent = ' ' + t('bkCheckedIn'); }
     // Update booking status tab labels
     const bkTabPending = document.getElementById('book-tab-pending');
     const bkTabConfirmed = document.getElementById('book-tab-confirmed');
