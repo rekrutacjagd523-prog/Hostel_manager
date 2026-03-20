@@ -19,15 +19,19 @@ function getPeriodRange() {
         // _isoValue set by flatpickr (YYYY-MM-DD), fallback to .value for native input
         const rawFv = fromEl._isoValue || fromEl.value;
         const rawTv = toEl._isoValue || toEl.value;
-        // Convert dd.mm.yyyy → yyyy-mm-dd if needed
-        function toIso(s) {
-            if (!s) return '';
-            const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-            return m ? m[3] + '-' + m[2] + '-' + m[1] : s;
+        // Parse date string safely — handles dd.mm.yyyy and yyyy-mm-dd
+        function parseDate(s, endOfDay) {
+            if (!s) return null;
+            let d, mo, y;
+            const m1 = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+            const m2 = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+            if (m1) { d = +m1[1]; mo = +m1[2] - 1; y = +m1[3]; }
+            else if (m2) { y = +m2[1]; mo = +m2[2] - 1; d = +m2[3]; }
+            else return null;
+            return endOfDay ? new Date(y, mo, d, 23, 59, 59) : new Date(y, mo, d, 0, 0, 0);
         }
-        const fv = toIso(rawFv);
-        const tv = toIso(rawTv);
-        if (fv) from = new Date(fv + 'T00:00:00'); if (tv) to = new Date(tv + 'T23:59:59');
+        from = parseDate(rawFv, false);
+        to = parseDate(rawTv, true) || todayEnd;
     }
     return { from, to };
 }
