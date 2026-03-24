@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lokum-v1';
+const CACHE_NAME = 'lokum-v4';
 const PRECACHE = [
   '/',
   '/index.html'
@@ -13,29 +13,35 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate — clean old caches
+// Activate — delete ALL old caches immediately
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(keys.map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
 
-// Fetch — network first, fallback to cache
+// Fetch — ALWAYS network first, no caching of JS modules
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Skip non-GET and Firebase/Google API requests
   if (e.request.method !== 'GET') return;
   if (url.hostname.includes('googleapis.com')) return;
   if (url.hostname.includes('gstatic.com')) return;
   if (url.hostname.includes('firebaseapp.com')) return;
+  if (url.hostname.includes('unpkg.com')) return;
+  if (url.hostname.includes('cdnjs.cloudflare.com')) return;
+
+  // Never cache JS modules — always fetch fresh
+  if (url.pathname.endsWith('.js')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
 
   e.respondWith(
     fetch(e.request)
       .then(response => {
-        // Cache successful responses
         if (response.ok && url.protocol === 'https:') {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
