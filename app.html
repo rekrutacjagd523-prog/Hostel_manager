@@ -1125,6 +1125,7 @@
 window._paidMap = {};
 
 function openStatModal(type) {
+  alert("openStatModal called: " + type);
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const body = document.getElementById('stat-modal-body');
