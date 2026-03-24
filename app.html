@@ -1240,7 +1240,9 @@ function openStatModal(type) {
   }
 
   body.innerHTML = html;
-  document.getElementById('stat-modal-overlay').classList.remove('hidden');
+  const ov = document.getElementById('stat-modal-overlay');
+  alert('overlay classes: ' + ov.className + ' html len: ' + html.length);
+  ov.classList.remove('hidden');
 }
 
 function togglePaid(resId, checked) {
