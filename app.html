@@ -174,7 +174,7 @@
           <div class="stat-label" id="lbl-residents">Жильцов</div>
         </div>
       </button>
-      <button type="button" class="stat-card" onclick="openStatModal('owed')">
+      <button type="button" class="stat-card" onclick="openPaymentsDashboard()">
         <div class="stat-icon" id="stat-currency-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
         <div>
           <div class="stat-value" id="stat-owed">0.00 zł</div>
@@ -1393,6 +1393,197 @@ function closeStatModal() {
   const el = document.getElementById('stat-modal-overlay');
   if (el) el.classList.add('hidden');
 };
+  </script>
+  <script>
+
+// ===== PAYMENTS DASHBOARD =====
+function openPaymentsDashboard() {
+  var res = (window._residents||[]).filter(function(r){return !r.checkOutDate});
+  var props = window._properties||[];
+  var totalOwed = 0;
+  var debtors = [];
+  var byProp = {};
+  var fmtNum = function(n){ var s=(+n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,' '); return s+' '+(window._settings&&window._settings.currency?({PLN:'zł',EUR:'€',USD:'$'})[window._settings.currency]||'zł':'zł'); };
+  var fmtDate = function(d){if(!d)return'—';return new Date(d).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric'});};
+  var esc = function(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+  var T = window.t || function(k){return k;};
+
+  res.forEach(function(r){
+    var ms = new Date() - new Date(r.checkInDate);
+    var days = Math.max(0, Math.ceil(ms/86400000));
+    var owed = Math.round((r.monthlyRate||0)/30*days*100)/100;
+    totalOwed += owed;
+    var key = (r.city||'')+'||'+(r.address||'');
+    if(!byProp[key]) byProp[key] = {total:0,count:0,city:r.city||'—',addr:r.address||''};
+    byProp[key].total += owed;
+    byProp[key].count++;
+    debtors.push({id:r.id,name:((r.firstName||r.fullName||'')+' '+(r.lastName||'')).trim(),owed:owed,rate:r.monthlyRate||0,city:r.city,addr:r.address,days:days});
+  });
+
+  debtors.sort(function(a,b){return b.owed-a.owed});
+  var top = debtors.slice(0,8);
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var debtorLabel = {PL:'Najwięcej do zapłaty',RU:'Больше всего к оплате',UA:'Найбільше до оплати',EN:'Top amounts owed',LT:'Didžiausios sumos'};
+  var countLabel = {PL:'lokatorów',RU:'жильцов',UA:'мешканців',EN:'residents',LT:'gyventojų'};
+
+  var debtorRows = top.map(function(r){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px;cursor:pointer" onclick="this.closest(\'.overlay\').remove();editResident(\''+r.id+'\')"><div><div style="font-size:13px;font-weight:600">'+esc(r.name)+'</div><div style="font-size:11px;color:var(--text3)">'+esc(r.city||'')+(r.addr?' · '+esc(r.addr):'')+' · '+r.days+' '+T('days')+'</div></div><div style="font-weight:700;font-size:14px;color:var(--red)">'+fmtNum(r.owed)+'</div></div>';
+  }).join('');
+
+  var propList = Object.keys(byProp).map(function(k){return byProp[k]}).sort(function(a,b){return b.total-a.total});
+  var propRows = propList.map(function(p){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div style="font-size:13px"><span style="font-weight:600">'+esc(p.city)+'</span>'+(p.addr?' · '+esc(p.addr):'')+' <span style="color:var(--text3);font-size:11px">'+p.count+' '+(countLabel[lang]||'residents')+'</span></div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtNum(p.total)+'</div></div>';
+  }).join('');
+
+  var el = document.createElement('div');
+  el.className = 'overlay';
+  el.onclick = function(e){if(e.target===el)el.remove()};
+  el.innerHTML = '<div class="modal" style="max-width:560px;padding:0;overflow:hidden">' +
+    '<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><div style="font-size:18px;font-weight:700">'+T('owed')+'</div><button style="background:var(--surface);border:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text2)" onclick="this.closest(\'.overlay\').remove()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">' +
+    '<div style="padding:16px;text-align:center;border-right:1px solid var(--border)"><div style="font-size:22px;font-weight:800;color:var(--accent)">'+fmtNum(totalOwed)+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+T('owed')+'</div></div>' +
+    '<div style="padding:16px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--text)">'+res.length+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+(countLabel[lang]||'residents')+'</div></div>' +
+    '</div>' +
+    '<div style="padding:12px 18px;max-height:420px;overflow-y:auto">' +
+    '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+(debtorLabel[lang]||'Top amounts owed')+'</div>'+debtorRows +
+    '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">'+T('properties')+'</div>'+propRows +
+    '</div></div>';
+  document.body.appendChild(el);
+}
+
+// ===== FINANCE STAT DASHBOARDS =====
+function _fmtDash(n) {
+  var sym = (window._settings&&window._settings.currency?({PLN:'zł',EUR:'€',USD:'$'})[window._settings.currency]:'zł')||'zł';
+  return (+n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' '+sym;
+}
+function _escDash(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+function showFinDashModal(title, stats, sectionTitle, sectionContent) {
+  var el = document.createElement('div');
+  el.className = 'overlay';
+  el.onclick = function(e){if(e.target===el)el.remove()};
+  var statsHtml = stats.map(function(s,i){
+    var border = i<stats.length-1?'border-right:1px solid var(--border);':'';
+    return '<div style="padding:14px 8px;text-align:center;'+border+'"><div style="font-size:18px;font-weight:800;color:'+s.color+'">'+s.value+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+s.label+'</div></div>';
+  }).join('');
+  el.innerHTML = '<div class="modal" style="max-width:580px;padding:0;overflow:hidden">' +
+    '<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><div style="font-size:18px;font-weight:700">'+title+'</div><button style="background:var(--surface);border:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text2)" onclick="this.closest(\'.overlay\').remove()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>' +
+    '<div style="display:grid;grid-template-columns:repeat('+stats.length+',1fr);border-bottom:1px solid var(--border)">'+statsHtml+'</div>' +
+    '<div style="padding:14px 18px;max-height:420px;overflow-y:auto"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sectionTitle+'</div>'+sectionContent+'</div>' +
+    '</div>';
+  document.body.appendChild(el);
+}
+
+function openProjectedIncomeDash() {
+  var res = (window._residents||[]).filter(function(r){return !r.checkOutDate});
+  var props = window._properties||[];
+  var total = res.reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+  var T = window.t||function(k){return k;};
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var potential = 0;
+  var propData = props.map(function(p){
+    var pRes = res.filter(function(r){return (r.city===p.city&&r.address===p.address)||(r.propertyId===p.id)});
+    var income = pRes.reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+    var avgRate = pRes.length>0?Math.round(income/pRes.length):0;
+    var pot = avgRate*(p.spots||0);
+    potential += pot;
+    var occ = (p.spots||0)>0?Math.round(pRes.length/(p.spots||1)*100):0;
+    return {city:p.city,addr:p.address,count:pRes.length,spots:p.spots||0,income:income,occ:occ};
+  }).sort(function(a,b){return b.income-a.income});
+  var lostIncome = Math.max(0, potential-total);
+  var avgRate = res.length>0?Math.round(total/res.length):0;
+  var lbls = {PL:['Prognoza mies.','Potencjał 100%','Strata z pustostanów','Śr. stawka'],RU:['Прогноз мес.','Потенциал 100%','Потери от пустых','Ср. ставка'],UA:['Прогноз міс.','Потенціал 100%','Втрати від порожніх','Сер. ставка'],EN:['Monthly forecast','100% potential','Vacancy loss','Avg rate'],LT:['Mėn. prognozė','100% potencialas','Nuostoliai','Vid. tarifas']};
+  var l = lbls[lang]||lbls.EN;
+  var propRows = propData.map(function(p){
+    var barW = potential>0?Math.round(p.income/potential*100):0;
+    return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+_escDash(p.city)+' · '+_escDash(p.addr)+'<span style="color:var(--text3);font-size:11px;margin-left:6px">'+p.count+'/'+p.spots+'</span></div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+_fmtDash(p.income)+'</div></div><div style="height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+barW+'%;background:var(--green);border-radius:2px"></div></div></div>';
+  }).join('') || '<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+T('noProps')+'</div>';
+  showFinDashModal(T('projectedIncome'),[
+    {value:_fmtDash(total),label:l[0],color:'var(--green)'},
+    {value:_fmtDash(potential),label:l[1],color:'var(--text)'},
+    {value:_fmtDash(lostIncome),label:l[2],color:'var(--red)'},
+    {value:_fmtDash(avgRate),label:l[3],color:'var(--accent)'}
+  ],T('properties'),propRows);
+}
+
+function openActualIncomeDash() {
+  var exps = (window._expenses||[]).filter(function(e){return e.type==='income'});
+  var props = window._properties||[];
+  var total = exps.reduce(function(s,e){return s+(e.amount||0)},0);
+  var T = window.t||function(k){return k;};
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var projected = typeof calcProjectedIncome==='function'?calcProjectedIncome():(window._residents||[]).filter(function(r){return !r.checkOutDate}).reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+  var rate = projected>0?Math.round(total/projected*100):0;
+  var recentRows = exps.slice(-8).reverse().map(function(e){
+    var prop=props.find(function(p){return p.id===e.propertyId});
+    var pName=prop?_escDash(prop.city)+' · '+_escDash(prop.address):'—';
+    return '<div style="display:flex;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-size:13px;font-weight:600">'+_escDash(e.description||'—')+'</div><div style="font-size:11px;color:var(--text3)">'+pName+'</div></div><div style="font-weight:700;font-size:14px;color:var(--green)">+'+_fmtDash(e.amount||0)+'</div></div>';
+  }).join('') || '<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+T('noExpenses')+'</div>';
+  var lbls={PL:['Zebrano','Prognoza','Ściągalność','Wpisów'],RU:['Собрано','Прогноз','Сбор','Записей'],UA:['Зібрано','Прогноз','Збір','Записів'],EN:['Collected','Forecast','Collection rate','Entries'],LT:['Surinkta','Prognozė','Surinkimas','Įrašų']};
+  var l=lbls[lang]||lbls.EN;
+  var lblR={PL:'Ostatnie wpływy',RU:'Последние поступления',UA:'Останні надходження',EN:'Recent income',LT:'Paskutinės pajamos'};
+  showFinDashModal(T('actualIncome'),[
+    {value:_fmtDash(total),label:l[0],color:'var(--green)'},
+    {value:_fmtDash(projected),label:l[1],color:'var(--text)'},
+    {value:rate+'%',label:l[2],color:rate>=70?'var(--green)':rate>=40?'var(--accent)':'var(--red)'},
+    {value:String(exps.length),label:l[3],color:'var(--text)'}
+  ],lblR[lang]||'Recent income',recentRows);
+}
+
+function openExpensesDash() {
+  var exps = (window._expenses||[]).filter(function(e){return e.type==='expense'});
+  var total = exps.reduce(function(s,e){return s+(e.amount||0)},0);
+  var T = window.t||function(k){return k;};
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var catColors = {utilities:'var(--accent)',supplies:'var(--green)',repairs:'var(--red)',salary:'var(--purple)',other:'var(--text2)'};
+  var byCat = {};
+  exps.forEach(function(e){var c=e.category||'other';if(!byCat[c])byCat[c]={total:0,count:0,cat:c};byCat[c].total+=e.amount||0;byCat[c].count++;});
+  var catList = Object.keys(byCat).map(function(k){return byCat[k]}).sort(function(a,b){return b.total-a.total});
+  var catRows = catList.map(function(c){
+    var pct=total>0?Math.round(c.total/total*100):0;
+    var col=catColors[c.cat]||'var(--red)';
+    var name=T(c.cat==='other'?'otherCat':c.cat)||c.cat;
+    return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+name+' <span style="color:var(--text3);font-weight:400;font-size:11px">'+c.count+'</span></div><div style="font-weight:700;font-size:14px;color:'+col+'">'+_fmtDash(c.total)+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:2px"></div></div><span style="font-size:11px;color:var(--text3)">'+pct+'%</span></div></div>';
+  }).join('') || '<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+T('noExpenses')+'</div>';
+  var lbls={PL:['Wydatki ogółem','Kategorie','Śr. wpis','Wpisów'],RU:['Расходы всего','Категории','Ср. запись','Записей'],UA:['Видатки загалом','Категорії','Сер. запис','Записів'],EN:['Total expenses','Categories','Avg entry','Entries'],LT:['Išlaidos viso','Kategorijos','Vid. įrašas','Įrašų']};
+  var l=lbls[lang]||lbls.EN;
+  var avg=exps.length>0?Math.round(total/exps.length):0;
+  var lblC={PL:'Kategorie wydatków',RU:'Категории расходов',UA:'Категорії видатків',EN:'Expense categories',LT:'Išlaidų kategorijos'};
+  showFinDashModal(T('totalExpenses'),[
+    {value:_fmtDash(total),label:l[0],color:'var(--red)'},
+    {value:String(catList.length),label:l[1],color:'var(--text)'},
+    {value:_fmtDash(avg),label:l[2],color:'var(--accent)'},
+    {value:String(exps.length),label:l[3],color:'var(--text)'}
+  ],lblC[lang]||'Expense categories',catRows);
+}
+
+function openNetProfitDash() {
+  var allExps = window._expenses||[];
+  var income = allExps.filter(function(e){return e.type==='income'}).reduce(function(s,e){return s+(e.amount||0)},0);
+  var expense = allExps.filter(function(e){return e.type==='expense'}).reduce(function(s,e){return s+(e.amount||0)},0);
+  var net = income - expense;
+  var projected = (window._residents||[]).filter(function(r){return !r.checkOutDate}).reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+  var T = window.t||function(k){return k;};
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var props = window._properties||[];
+  var byProp = {};
+  allExps.forEach(function(e){var k=e.propertyId||'other';if(!byProp[k])byProp[k]={income:0,expense:0,id:k};if(e.type==='income')byProp[k].income+=e.amount||0;else byProp[k].expense+=e.amount||0;});
+  var propList = Object.keys(byProp).map(function(k){var d=byProp[k];var p=props.find(function(x){return x.id===d.id});d.city=p?p.city:'—';d.addr=p?p.address:'';d.net=d.income-d.expense;return d}).sort(function(a,b){return b.net-a.net});
+  var propRows = propList.map(function(p){
+    var nc=p.net>=0?'var(--green)':'var(--red)';
+    return '<div style="display:flex;justify-content:space-between;padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-weight:600;font-size:13px">'+_escDash(p.city)+' · '+_escDash(p.addr)+'</div><div style="font-size:11px;color:var(--text3)"><span style="color:var(--green)">+'+_fmtDash(p.income)+'</span> / <span style="color:var(--red)">-'+_fmtDash(p.expense)+'</span></div></div><div style="font-weight:700;font-size:14px;color:'+nc+'">'+(p.net>=0?'+':'')+_fmtDash(p.net)+'</div></div>';
+  }).join('') || '<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+T('noExpenses')+'</div>';
+  var lbls={PL:['Zysk netto','Przychody','Wydatki','Prognoza mies.'],RU:['Чистая прибыль','Доходы','Расходы','Прогноз мес.'],UA:['Чистий прибуток','Доходи','Видатки','Прогноз міс.'],EN:['Net profit','Income','Expenses','Forecast'],LT:['Grynasis pelnas','Pajamos','Išlaidos','Prognozė']};
+  var l=lbls[lang]||lbls.EN;
+  var lblP={PL:'Zysk po obiektach',RU:'Прибыль по объектам',UA:'Прибуток за обʼєктами',EN:'Profit by property',LT:'Pelnas pagal objektus'};
+  showFinDashModal(T('netProfit'),[
+    {value:(net>=0?'+':'')+_fmtDash(net),label:l[0],color:net>=0?'var(--green)':'var(--red)'},
+    {value:'+'+_fmtDash(income),label:l[1],color:'var(--green)'},
+    {value:'-'+_fmtDash(expense),label:l[2],color:'var(--red)'},
+    {value:_fmtDash(projected),label:l[3],color:'var(--accent)'}
+  ],lblP[lang]||'Profit by property',propRows);
+}
+
   </script>
   <script type="module" src="js/main.js?v=4"></script>
 </body>
