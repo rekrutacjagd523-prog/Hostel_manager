@@ -13,7 +13,7 @@
 // Import Firebase API first (handles auth state changes)
 import './modules/firebase-api.js';
 
-import { CURRENCIES, HTYPES } from './modules/constants.js';
+import { CURRENCIES, HTYPES, t } from './modules/constants.js';
 import {
     settings, residents, properties, cur,
     fmtUi, fmtPdf, fmtDate, todayStr, esc, daysBetween, daysLabel,
@@ -313,6 +313,11 @@ if ('serviceWorker' in navigator) {
 (function() {
   let archiveFilter = 'all';
   let archiveSort = { key: 'checkout', dir: -1 };
+  let archivePage = 1;
+  let archivePageSize = 10;
+
+  window.setArchivePageSize = function(n) { archivePageSize = n; archivePage = 1; renderArchive(); };
+  window.archiveGoPage = function(p) { archivePage = p; renderArchive(); };
 
   window.openArchiveModal = function() {
     const el = document.getElementById('archive-overlay');
@@ -476,12 +481,74 @@ if ('serviceWorker' in navigator) {
     }).join('');
 
     const ai = window._archiveI18n || {records:'записів', edit:'Редагувати', noData:'Немає записів'};
+    // Pagination
+    const total_count = list.length;
+    const totalPages = Math.max(1, Math.ceil(total_count / archivePageSize));
+    if (archivePage > totalPages) archivePage = totalPages;
+    const start = (archivePage - 1) * archivePageSize;
+    const pageList = list.slice(start, start + archivePageSize);
+
+    // Re-render tbody with paginated list
+    if (!pageList.length && total_count > 0) { archivePage = 1; renderArchive(); return; }
+
+    let pagedTotalSum = 0;
+    tbody.innerHTML = pageList.map(r => {
+      const isA = !r.checkOutDate;
+      const pay = window.calcCurrentPayment ? window.calcCurrentPayment(r) : 0;
+      pagedTotalSum += pay;
+      const d1 = r.checkInDate ? new Date(r.checkInDate) : null;
+      const d2 = r.checkOutDate ? new Date(r.checkOutDate) : new Date();
+      const days = d1 ? Math.max(0, Math.round((d2 - d1) / 86400000)) : 0;
+      const fullName = ((r.firstName||'') + ' ' + (r.lastName||'')).trim() || '?';
+      const initial = fullName.charAt(0).toUpperCase();
+      const colors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899'];
+      const bg = colors[fullName.charCodeAt(0) % colors.length];
+      const amountColor = isA ? 'var(--accent)' : 'var(--text2)';
+      return '<tr style="border-bottom:1px solid var(--border);' + (!isA ? 'opacity:0.75' : '') + '">' +
+        '<td style="padding:10px 20px"><div style="display:flex;align-items:center;gap:9px">' +
+          '<div style="width:30px;height:30px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0">' + initial + '</div>' +
+          '<div><div style="font-weight:600;color:var(--text)">' + fullName + '</div>' +
+          (isA ? '<div style="font-size:10px;color:var(--green)">● ' + (window._archiveI18n||{}).active + '</div>' : '<div style="font-size:10px;color:var(--text3)">' + (window._archiveI18n||{}).out + '</div>') +
+          '</div></div></td>' +
+        '<td style="padding:10px 8px;color:var(--text3);font-size:12px">' + ((r.city||'') + (r.address ? ' · ' + r.address : '')) + '</td>' +
+        '<td style="padding:10px 8px;font-size:12px">' + fmtD(r.checkInDate) + '</td>' +
+        '<td style="padding:10px 8px;font-size:12px">' + fmtD(r.checkOutDate) + '</td>' +
+        '<td style="padding:10px 8px;text-align:right;font-size:12px">' + days + '</td>' +
+        '<td style="padding:10px 8px;text-align:right;white-space:nowrap"><div style="font-weight:700;color:' + amountColor + ';font-size:12px">' + pay.toFixed(2) + ' ' + s + '</div></td>' +
+        '<td style="padding:10px 8px;text-align:right">' + renderPaidCell(r) + '</td>' +
+        '<td style="padding:10px 20px 10px 8px;text-align:right">' +
+          '<button onclick="closeArchiveModal();window.editResident && window.editResident('' + r.id + '')" style="background:none;border:1px solid var(--border2);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:inherit">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ' + (window._archiveI18n||{edit:'Edit'}).edit + '</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
     const countEl = document.getElementById('archive-count');
     const sumEl = document.getElementById('archive-total-sum');
     const emptyEl = document.getElementById('archive-empty');
-    if (countEl) countEl.textContent = list.length + ' ' + ai.records;
-    if (sumEl) sumEl.textContent = list.length ? totalSum.toFixed(2) + ' ' + s : '';
-    if (emptyEl) emptyEl.textContent = ai.noData;
+    if (countEl) countEl.textContent = total_count + ' ' + (ai.records||'records');
+    if (sumEl) sumEl.textContent = total_count ? totalSum.toFixed(2) + ' ' + s : '';
+    if (emptyEl) emptyEl.textContent = ai.noData || 'No records';
+
+    // Pagination controls
+    let pgEl = document.getElementById('archive-pagination');
+    if (!pgEl) {
+      pgEl = document.createElement('div');
+      pgEl.id = 'archive-pagination';
+      pgEl.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px';
+      const footer = document.querySelector('#archive-overlay .modal > div:last-child');
+      if (footer) footer.parentNode.insertBefore(pgEl, footer);
+    }
+    const sizeBtn = (n) => '<button onclick="setArchivePageSize(' + n + ')" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border2);cursor:pointer;font-size:12px;font-family:inherit;background:' + (archivePageSize===n?'var(--accent)':'var(--surface)') + ';color:' + (archivePageSize===n?'#000':'var(--text2)') + '">' + n + '</button>';
+    const navBtn = (p, label, disabled) => '<button onclick="archiveGoPage(' + p + ')" ' + (disabled?'disabled':'') + ' style="padding:4px 10px;border-radius:6px;border:1px solid var(--border2);cursor:pointer;font-size:12px;font-family:inherit;background:var(--surface);color:' + (disabled?'var(--text4)':'var(--text2)') + '">' + label + '</button>';
+    pgEl.innerHTML =
+      '<div style="display:flex;gap:4px;align-items:center"><span style="font-size:12px;color:var(--text3);margin-right:4px">Show:</span>' + sizeBtn(10) + sizeBtn(50) + sizeBtn(100) + '</div>' +
+      '<div style="display:flex;gap:4px;align-items:center">' +
+        navBtn(archivePage-1, '←', archivePage<=1) +
+        '<span style="font-size:12px;color:var(--text3);padding:0 6px">' + archivePage + ' / ' + totalPages + '</span>' +
+        navBtn(archivePage+1, '→', archivePage>=totalPages) +
+      '</div>';
+
     if (window.lucide) window.lucide.createIcons();
   };
 })();
@@ -497,7 +564,7 @@ window.openStatModal = function(type) {
   if (!body || !title) return;
   const cur = (window._settings && window._settings.currency) || 'PLN';
   const sym = ({PLN:'zł',EUR:'€',USD:'$'})[cur] || 'zł';
-  const T = window.t || (k => k);
+  const T = t;
 
   function fmtM(n) { return n.toFixed(2) + ' ' + sym; }
   function rName(r) { return ((r.firstName||'') + ' ' + (r.lastName||'')).trim() || '—'; }
@@ -571,10 +638,13 @@ window.openStatModal = function(type) {
       });
       const total = active.reduce((s,r)=>s+calcPay(r),0);
       const paidTotal = active.filter(r=>window._paidMap[r.id]).reduce((s,r)=>s+calcPay(r),0);
-      html += '<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.1);border-radius:8px">' +
+      const paidLbls={PL:'Opłacono',UA:'Оплачено',RU:'Оплачено',EN:'Paid',LT:'Sumokėta'};
+  const remLbls={PL:'Pozostało',UA:'Залишилось',RU:'Осталось',EN:'Remaining',LT:'Liko'};
+  const uiLang=(window._settings&&window._settings.lang)||'PL';
+  html += '<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.1);border-radius:8px">' +
         '<div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px"><span>' + T('totalLabel') + ':</span><span style="color:var(--accent)">' + fmtM(total) + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:12px;color:#22c55e"><span>✅ ' + (T('paidLabel')||'Opłacono') + ':</span><span>' + fmtM(paidTotal) + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3)"><span>' + (T('remainLabel')||'Pozostało') + ':</span><span>' + fmtM(total-paidTotal) + '</span></div></div>';
+        '<div style="display:flex;justify-content:space-between;font-size:12px;color:#22c55e"><span>✅ ' + (paidLbls[uiLang]||'Paid') + ':</span><span>' + fmtM(paidTotal) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3)"><span>' + (remLbls[uiLang]||'Remaining') + ':</span><span>' + fmtM(total-paidTotal) + '</span></div></div>';
     }
 
   } else if (type === 'total') {
