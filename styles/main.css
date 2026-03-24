@@ -2001,15 +2001,17 @@
       }
 
       .header {
-        padding: 12px 16px;
-        padding-top: max(12px, env(safe-area-inset-top));
-        flex-wrap: wrap;
-        gap: 8px
+        padding: 10px 12px;
+        padding-top: max(10px, env(safe-area-inset-top));
+        flex-wrap: nowrap;
+        gap: 6px;
+        min-height: 52px;
       }
 
       .header-left {
         flex: 0 0 auto;
-        max-width: 50%
+        min-width: 0;
+        overflow: hidden;
       }
 
       .header-left .logo {
@@ -2019,11 +2021,17 @@
       }
 
       .header h1 {
-        font-size: 14px
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .header p {
-        font-size: 10px
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .conn-status {
@@ -2041,8 +2049,8 @@
 
       .header-right .btn {
         font-size: 11px;
-        padding: 6px 8px;
-        white-space: nowrap
+        padding: 7px 10px;
+        white-space: nowrap;
       }
 
       .header-right .btn .btn-label {
