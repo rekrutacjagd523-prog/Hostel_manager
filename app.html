@@ -809,26 +809,24 @@
         if (btn) btn.setAttribute('aria-expanded', el.classList.contains('open'));
       };
 
-      // Show FAQ once user is logged in (hook into window.render)
-      const _origRender = window.render;
+      // Show FAQ when main-app becomes visible (after login)
       window._faqInit = function() {
         const sec = document.getElementById('faq-section');
-        if (sec && document.getElementById('main-app') &&
-            !document.getElementById('main-app').classList.contains('hidden') &&
-            document.getElementById('main-app').style.display !== 'none') {
-          sec.style.display = 'block';
-          window.renderFAQ();
-        }
+        if (sec) { sec.style.display = 'block'; window.renderFAQ(); }
       };
-      // Poll until main-app is visible (fires after login)
-      (function poll() {
+      const _faqObserver = new MutationObserver(function() {
         const app = document.getElementById('main-app');
-        if (app && app.style.display !== 'none') {
+        if (app && app.style.display === 'block') {
           window._faqInit();
-        } else {
-          setTimeout(poll, 500);
+          _faqObserver.disconnect();
         }
-      })();
+      });
+      const _appEl = document.getElementById('main-app');
+      if (_appEl && _appEl.style.display === 'block') {
+        window._faqInit();
+      } else if (_appEl) {
+        _faqObserver.observe(_appEl, { attributes: true, attributeFilter: ['style'] });
+      }
     })();
   </script>
   <script type="module" src="js/main.js"></script>
