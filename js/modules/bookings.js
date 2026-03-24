@@ -147,7 +147,7 @@ function renderCalendar() {
     // Get bookings for this month
     const monthStart = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-01';
     const monthEnd = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(daysInMonth).padStart(2, '0');
-    const monthBookings = bookings().filter(b => b.status !== 'cancelled' && b.startDate <= monthEnd && b.endDate >= monthStart);
+    const monthBookings = bookings().filter(b => b.status !== 'cancelled' && (!filterStatus || b.status === filterStatus) && b.startDate <= monthEnd && b.endDate >= monthStart);
 
     let h = '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;margin-bottom:4px">' +
         '<button class="btn btn-secondary" onclick="goCalMonth(-1)" style="padding:4px 12px;font-size:14px">' + t('prevMonth') + '</button>' +
@@ -253,8 +253,16 @@ export async function saveBooking() {
     const amount = parseFloat(document.getElementById('bk-amount').value) || 0;
     const notes = document.getElementById('bk-notes').value.trim();
     const status = document.getElementById('bk-status').value;
-    if (!guestName || !startDate || !endDate) return alert(t('guestName') + ', ' + t('startDate') + ', ' + t('endDate') + '!');
-    if (endDate < startDate) return alert(t('endDate') + ' < ' + t('startDate'));
+    const errEl = document.getElementById('bk-error');
+    if (!guestName || !startDate || !endDate) {
+        if (errEl) { errEl.textContent = t('guestName') + ', ' + t('startDate') + ', ' + t('endDate') + '!'; errEl.style.display = 'block'; }
+        return;
+    }
+    if (endDate < startDate) {
+        if (errEl) { errEl.textContent = t('endDate') + ' < ' + t('startDate'); errEl.style.display = 'block'; }
+        return;
+    }
+    if (errEl) errEl.style.display = 'none';
     const editId = document.getElementById('bk-edit-id').value;
     if (!editId && !canAddBooking()) return showUpgradeModal('bookings');
     const data = { guestName, phone, propId, roomId, startDate, endDate, amount, notes, status };
