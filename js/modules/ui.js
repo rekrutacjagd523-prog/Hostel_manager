@@ -109,21 +109,35 @@ export function renderCheckoutForecast() {
     if (!upcoming.length) { block.style.display = 'none'; return; }
     block.style.display = 'block';
     const urgentColor = d => d <= 3 ? 'var(--red)' : d <= 7 ? '#f59e0b' : 'var(--text3)';
+    const sym = (window._settings && window._settings.currency) ? (({PLN:'zł',EUR:'€',USD:'$'})[window._settings.currency]||'zł') : 'zł';
     block.innerHTML = `
-        <div style="background:var(--surface);border:1px solid var(--border3);border-radius:12px;padding:12px 16px;">
-            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">${t('checkoutSoon')} (${upcoming.length})</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:0 24px 12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <i data-lucide="door-open" style="width:16px;height:16px;color:var(--accent)"></i>
+                <span style="font-size:13px;font-weight:700;color:var(--text)">${t('checkoutSoon')}</span>
+                <span style="font-size:11px;background:var(--accent-subtle-2);color:var(--accent);padding:2px 8px;border-radius:20px;font-weight:600">${upcoming.length}</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
                 ${upcoming.map(r => {
         const days = daysBetweenDates(today, r.plannedCheckOut);
         const name = (r.firstName || r.fullName || '') + (r.lastName ? ' ' + r.lastName : '');
-        return `<div style="display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:8px;padding:6px 10px;font-size:12px">
-                        <span>${esc(name)}</span>
-                        <span style="font-weight:700;color:${urgentColor(days)}">${days} ${t('forecastDays')}</span>
-                        <button onclick="editResident('${r.id}')" style="background:none;border:none;cursor:pointer;padding:0;font-size:12px;color:var(--text3)">✏️</button>
+        const urgColor = urgentColor(days);
+        const pay = window.calcCurrentPayment ? window.calcCurrentPayment(r) : 0;
+        return `<div onclick="editResident('${r.id}')" style="display:flex;align-items:center;gap:8px;background:var(--card-bg);border:1px solid var(--border2);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(245,158,11,.3)'" onmouseout="this.style.borderColor='var(--border2)'">
+                        <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0">${esc((name[0]||'?').toUpperCase())}</div>
+                        <div>
+                            <div style="font-weight:600;color:var(--text)">${esc(name)}</div>
+                            <div style="font-size:11px;color:var(--text3)">${pay > 0 ? pay.toFixed(0) + ' ' + sym : ''}</div>
+                        </div>
+                        <div style="margin-left:auto;text-align:right">
+                            <div style="font-weight:700;color:${urgColor};font-size:13px">${days}</div>
+                            <div style="font-size:10px;color:var(--text3)">${t('forecastDays')}</div>
+                        </div>
                     </div>`;
     }).join('')}
             </div>
         </div>`;
+    if (window.lucide) window.lucide.createIcons();
 }
 
 function renderGrouped() {
