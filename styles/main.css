@@ -2057,10 +2057,15 @@
         display: none;
       }
 
-      /* Hide report text label on mobile */
+      /* Mobile header: hide non-essential elements */
       #btn-report-lbl { display: none; }
-      /* Hide user name on mobile */
       #user-name { display: none; }
+      /* Hide settings button — accessible via user menu */
+      .header-right > .btn.btn-secondary:not(#btn-report) { display: none; }
+      /* Smaller plan badge */
+      #plan-badge { padding: 3px 8px; font-size: 10px; }
+      /* Compact user badge */
+      .conn-status { display: none; }
 
       .user-badge {
         padding: 4px 6px;
