@@ -104,7 +104,7 @@ function renderBookingList() {
             (b.notes ? '<div style="font-size:11px;color:var(--text3);margin-top:4px">' + esc(b.notes) + '</div>' : '') +
             '</div>' +
             '<div class="prop-actions" style="display:flex;flex-direction:column;gap:4px">' +
-            '<button class="btn-sm" onclick="openBookingForm(\'' + b.id + '\')">✏️</button>' +
+            '<button class="btn-sm" onclick="openBookingForm(\'' + b.id + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
             (b.status === 'pending' ? '<button class="btn-sm" style="color:var(--green)" onclick="setBookingStatus(\'' + b.id + '\',\'confirmed\')" title="' + t('confirmBooking') + '">✓</button>' : '') +
             (b.status === 'confirmed' ? '<button class="btn-sm" style="color:var(--accent)" onclick="checkInBooking(\'' + b.id + '\')" title="' + t('checkInBooking') + '"></button>' : '') +
             ((b.status === 'pending' || b.status === 'confirmed') ? '<button class="btn-sm" style="color:var(--red)" onclick="setBookingStatus(\'' + b.id + '\',\'cancelled\')" title="' + t('cancelBooking') + '">✕</button>' : '') +

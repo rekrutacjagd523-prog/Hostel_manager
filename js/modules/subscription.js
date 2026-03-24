@@ -199,7 +199,7 @@ export function openSubscription() {
     ">
       <!-- Header -->
       <div style="background:linear-gradient(135deg,#1a1535,#0d1a2e);padding:24px 28px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:36px;margin-bottom:8px">⭐</div>
+        <div style="font-size:36px;margin-bottom:8px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Upgrade to Pro</div>
         <div style="font-size:22px;font-weight:800;color:var(--accent)">$19.99<span style="font-size:13px;color:rgba(255,255,255,.4)">/month</span></div>
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
