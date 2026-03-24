@@ -36,6 +36,21 @@ export function canAddBooking() {
 }
 
 // ---- Upgrade Modal ----
+function subSetBilling(type) {
+  const price = type === 'annual' ? '17' : '19.99';
+  const pv = document.getElementById('sub-price-val');
+  const pb = document.getElementById('sub-price-btn');
+  if (pv) pv.textContent = price;
+  if (pb) pb.textContent = price;
+  const active = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
+  const inactive = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s';
+  const mb = document.getElementById('sub-btn-monthly');
+  const ab = document.getElementById('sub-btn-annual');
+  if (mb) mb.style.cssText = type === 'monthly' ? active : inactive;
+  if (ab) ab.style.cssText = type === 'annual' ? active : inactive;
+}
+window.subSetBilling = subSetBilling;
+
 export function showUpgradeModal(reason) {
   // Remove existing if any
   const old = document.getElementById('upgrade-overlay');
@@ -77,8 +92,20 @@ export function showUpgradeModal(reason) {
         </div>
       </div>
 
+      <!-- Billing toggle -->
+      <div style="display:flex;justify-content:center;padding:16px 20px 0">
+        <div style="display:inline-flex;align-items:center;gap:0;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:3px">
+          <button id="sub-btn-monthly" onclick="subSetBilling('monthly')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+            ${t('perMonth').replace('/','') || 'mies.'}
+          </button>
+          <button id="sub-btn-annual" onclick="subSetBilling('annual')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
+            ${t('annual') || 'Rok'} <span style="background:rgba(74,222,128,.15);color:var(--green);padding:1px 6px;border-radius:20px;font-size:10px">-15%</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Plans -->
-      <div style="display:flex;gap:12px;padding:20px 20px 0">
+      <div style="display:flex;gap:12px;padding:12px 20px 0">
 
         <!-- Free card -->
         <div style="
@@ -116,7 +143,7 @@ export function showUpgradeModal(reason) {
           ">HOT</div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">Pro</div>
           <div style="font-size:22px;font-weight:800;margin-bottom:12px;color:var(--accent)">
-            $19.99<span style="font-size:12px;color:var(--text3)">${pm}</span>
+            $<span id="sub-price-val">19.99</span><span style="font-size:12px;color:var(--text3)">${pm}</span>
           </div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
@@ -131,7 +158,7 @@ export function showUpgradeModal(reason) {
             background:linear-gradient(135deg,#e8a838,#d4883a);
             color:#0d0d14;transition:opacity .2s
           " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            ${t('subscribe')} — $19.99
+            ${t('subscribe')} — $<span id="sub-price-btn">19.99</span>
           </button>
         </div>
       </div>
