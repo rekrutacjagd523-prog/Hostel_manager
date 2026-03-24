@@ -42,7 +42,7 @@ function startListening(uid) {
         if (d.exists()) window._settings = d.data();
         const _hlm = { RU: 'ru', PL: 'pl', UA: 'uk', EN: 'en', LT: 'lt' };
         if (window._settings && window._settings.lang) document.documentElement.lang = _hlm[window._settings.lang] || 'ru';
-        if (window.render) { window.render(); if (typeof window.updateUI === 'function') window.updateUI(); }
+        if (window.render) { window.render(); if (typeof window.updateUI === 'function') window.updateUI(); if (window.renderFAQ) window.renderFAQ(); }
     });
     const u3 = onSnapshot(query(propCol, orderBy("createdAt", "desc")), s => {
         window._properties = []; s.forEach(d => window._properties.push({ id: d.id, ...d.data() }));
