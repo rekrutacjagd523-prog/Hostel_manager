@@ -324,7 +324,8 @@
     .header-right {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap
+      flex-wrap: nowrap;
+      align-items: center;
     }
 
     .btn {
@@ -2001,17 +2002,24 @@
       }
 
       .header {
-        padding: 10px 12px;
-        padding-top: max(10px, env(safe-area-inset-top));
-        flex-wrap: nowrap;
+        padding: 8px 12px;
+        padding-top: max(8px, env(safe-area-inset-top));
+        flex-wrap: nowrap !important;
         gap: 6px;
-        min-height: 52px;
+        min-height: 48px;
+        align-items: center;
       }
 
       .header-left {
-        flex: 0 0 auto;
+        flex: 1 1 auto;
         min-width: 0;
         overflow: hidden;
+      }
+
+      .header-right {
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        flex-wrap: nowrap !important;
       }
 
       .header-left .logo {
@@ -2039,14 +2047,6 @@
         padding: 1px 5px
       }
 
-      .header-right {
-        flex: 0 0 auto;
-        gap: 4px;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        align-items: center;
-      }
-
       .header-right .btn {
         font-size: 11px;
         padding: 7px 10px;
@@ -2060,12 +2060,14 @@
       /* Mobile header: hide non-essential elements */
       #btn-report-lbl { display: none; }
       #user-name { display: none; }
-      /* Hide settings button — accessible via user menu */
+      .header-sub { display: none !important; }
+      .header p { display: none; }
+      /* Hide settings button */
       .header-right > .btn.btn-secondary:not(#btn-report) { display: none; }
-      /* Smaller plan badge */
-      #plan-badge { padding: 3px 8px; font-size: 10px; }
-      /* Compact user badge */
+      /* Compact */
+      #plan-badge { padding: 3px 7px; font-size: 10px; }
       .conn-status { display: none; }
+      .header h1 { font-size: 15px; font-weight: 700; }
 
       .user-badge {
         padding: 4px 6px;
