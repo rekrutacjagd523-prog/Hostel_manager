@@ -1125,12 +1125,11 @@
 window._paidMap = {};
 
 function openStatModal(type) {
-  try {
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const cur = (window._settings && window._settings.currency) || 'PLN';
   const sym = ({PLN:'zł',EUR:'€',USD:'$'})[cur] || 'zł';
-  const T = t;
+  const T = window.t || (k => k);
 
   function fmtM(n) { return n.toFixed(2) + ' ' + sym; }
   function rName(r) { return ((r.firstName||'') + ' ' + (r.lastName||'')).trim() || '—'; }
@@ -1242,7 +1241,6 @@ function openStatModal(type) {
 
   body.innerHTML = html;
   document.getElementById('stat-modal-overlay').classList.remove('hidden');
-  } catch(e) { alert("ERR: " + e.message + " @ " + e.stack); }
 }
 
 function togglePaid(resId, checked) {
