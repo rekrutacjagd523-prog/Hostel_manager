@@ -355,7 +355,7 @@ if ('serviceWorker' in navigator) {
         '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
         '</button></div>';
     }
-    return '<button onclick="editPaidAmount(\'' + r.id + '\',event)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:11px;font-family:inherit">+ вказати</button>';
+    return '<button onclick="editPaidAmount(\'' + r.id + '\',event)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:11px;font-family:inherit">+ ' + (window._archiveI18n||{paid:'вказати'}).paid + '</button>';
   }
 
   window.editPaidAmount = function(id, event) {
@@ -460,7 +460,7 @@ if ('serviceWorker' in navigator) {
         '<td style="padding:10px 20px"><div style="display:flex;align-items:center;gap:9px">' +
           '<div style="width:30px;height:30px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0">' + initial + '</div>' +
           '<div><div style="font-weight:600;color:var(--text)">' + fullName + '</div>' +
-          (isA ? '<div style="font-size:10px;color:var(--green)">● активний</div>' : '<div style="font-size:10px;color:var(--text3)">виселений</div>') +
+          (isA ? '<div style="font-size:10px;color:var(--green)">● ' + (window._archiveI18n||{active:'active'}).active + '</div>' : '<div style="font-size:10px;color:var(--text3)">' + (window._archiveI18n||{out:'checked out'}).out + '</div>') +
           '</div></div></td>' +
         '<td style="padding:10px 8px;color:var(--text3);font-size:12px">' + ((r.city||'') + (r.address ? ' · ' + r.address : '')) + '</td>' +
         '<td style="padding:10px 8px;font-size:12px">' + fmtD(r.checkInDate) + '</td>' +

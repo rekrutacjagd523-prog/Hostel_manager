@@ -344,6 +344,15 @@ export function updateUI() {
     const archActive = document.getElementById('arch-tab-active'); if(archActive) archActive.textContent = ai.active;
     const archOut = document.getElementById('arch-tab-out'); if(archOut) archOut.textContent = ai.out;
     window._archiveI18n = ai;
+    // Fill table headers
+    const setTh = (id, txt) => { const el = document.getElementById(id); if(el) { el.childNodes[0].textContent = txt + ' '; } };
+    setTh('arch-th-name',     ai.name);
+    setTh('arch-th-obj',      ai.obj);
+    setTh('arch-th-checkin',  ai.checkin);
+    setTh('arch-th-checkout', ai.checkout);
+    setTh('arch-th-days',     ai.days);
+    setTh('arch-th-sum',      ai.sum);
+    const paidTh = document.getElementById('arch-th-paid'); if(paidTh) paidTh.textContent = ai.paid;
     if (window.renderArchive && document.getElementById('archive-overlay') && !document.getElementById('archive-overlay').classList.contains('hidden')) window.renderArchive();
     setText('tab-active', t('active'));
     setText('tab-out', t('out'));

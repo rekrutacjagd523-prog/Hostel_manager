@@ -713,13 +713,13 @@
           <table id="archive-table" style="width:100%;border-collapse:collapse;font-size:13px">
             <thead>
               <tr style="position:sticky;top:0;background:var(--modal-bg);z-index:2">
-                <th style="padding:10px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('name')">Ім'я <span id="arch-sort-name"></span></th>
-                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Об'єкт</th>
-                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('checkin')">Заселення <span id="arch-sort-checkin"></span></th>
-                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('checkout')">Виселення <span id="arch-sort-checkout"></span></th>
-                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('days')">Днів <span id="arch-sort-days"></span></th>
-                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('amount')">Сума <span id="arch-sort-amount"></span></th>
-                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Оплачено</th>
+                <th style="padding:10px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('name')" id="arch-th-name"> <span id="arch-sort-name"></span></th>
+                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em" id="arch-th-obj"></th>
+                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('checkin')" id="arch-th-checkin"> <span id="arch-sort-checkin"></span></th>
+                <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('checkout')" id="arch-th-checkout"> <span id="arch-sort-checkout"></span></th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('days')" id="arch-th-days"> <span id="arch-sort-days"></span></th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;cursor:pointer" onclick="sortArchive('amount')" id="arch-th-sum"> <span id="arch-sort-amount"></span></th>
+                <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em" id="arch-th-paid"></th>
                 <th style="padding:10px 20px 10px 8px;text-align:right"></th>
               </tr>
             </thead>
