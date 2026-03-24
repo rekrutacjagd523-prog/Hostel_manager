@@ -276,6 +276,21 @@ body {
   background: var(--stat3)
 }
 
+.stat-card:nth-child(4) {
+  background: var(--stat1);
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: rgba(139, 92, 246, .1);
+  color: #a78bfa;
+}
+
 .stat-icon {
   width: 44px;
   height: 44px;
@@ -300,6 +315,11 @@ body {
 .stat-card:nth-child(3) .stat-icon {
   background: rgba(106, 184, 154, .15);
   color: var(--green)
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: rgba(139, 92, 246, .1);
+  color: #a78bfa;
 }
 
 .stat-value {
