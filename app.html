@@ -1124,7 +1124,7 @@
 // ===== STAT MODAL =====
 window._paidMap = {};
 
-window.openStatModal = function(type) {
+function openStatModal(type) {
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const body = document.getElementById('stat-modal-body');
@@ -1246,17 +1246,17 @@ window.openStatModal = function(type) {
   document.getElementById('stat-modal-overlay').classList.remove('hidden');
 };
 
-window.togglePaid = function(resId, checked) {
+function togglePaid(resId, checked) {
   if (checked) {
     const now = new Date();
     window._paidMap[resId] = now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'});
   } else {
     delete window._paidMap[resId];
   }
-  window.openStatModal('owed');
+  openStatModal('owed');
 };
 
-window.closeStatModal = function() {
+function closeStatModal() {
   const el = document.getElementById('stat-modal-overlay');
   if (el) el.classList.add('hidden');
 };
