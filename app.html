@@ -1125,7 +1125,7 @@
 window._paidMap = {};
 
 function openStatModal(type) {
-  alert("SM: b=" + !!document.getElementById('stat-modal-body') + " t=" + !!document.getElementById('stat-modal-title') + " o=" + !!document.getElementById('stat-modal-overlay'));
+  try {
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const cur = (window._settings && window._settings.currency) || 'PLN';
@@ -1242,7 +1242,8 @@ function openStatModal(type) {
 
   body.innerHTML = html;
   document.getElementById('stat-modal-overlay').classList.remove('hidden');
-};
+  } catch(e) { alert("ERR: " + e.message + " @ " + e.stack); }
+}
 
 function togglePaid(resId, checked) {
   if (checked) {
