@@ -776,14 +776,6 @@
 
   </div>
   <script>
-    // Wrappers for ES module functions (needed for iOS onclick reliability)
-    function openArchiveModal() { if(window.openArchiveModal) window.openArchiveModal(); else setTimeout(()=>window.openArchiveModal&&window.openArchiveModal(),200); }
-    function closeArchiveModal() { if(window.closeArchiveModal) window.closeArchiveModal(); }
-    function renderArchive() { if(window.renderArchive) window.renderArchive(); }
-    function setArchiveFilter(f,b) { if(window.setArchiveFilter) window.setArchiveFilter(f,b); }
-    function sortArchive(k) { if(window.sortArchive) window.sortArchive(k); }
-    function editPaidAmount(id,e) { if(window.editPaidAmount) window.editPaidAmount(id,e); }
-
     window.closeOnboarding = function () {
       document.getElementById('onboarding-overlay').classList.add('hidden');
       if (window._onboardingSeenKey) {
