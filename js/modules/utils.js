@@ -7,6 +7,14 @@ export function residents() { return window._residents || []; }
 export function properties() { return window._properties || []; }
 export function cur() { return CURRENCIES[settings().currency] || CURRENCIES.PLN; }
 
+export function fmtNum(n) {
+    if (typeof n !== 'number') n = parseFloat(n) || 0;
+    const sym = (window._settings && ({PLN:'zł',EUR:'€',USD:'$'})[window._settings.currency]) || 'zł';
+    const parts = n.toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return parts.join('.') + ' ' + sym;
+}
+
 export function fmtUi(a) { return a.toFixed(2) + ' ' + cur().symbolU; }
 export function fmtPdf(a) { return a.toFixed(2) + ' ' + cur().symbol; }
 export function fmtDate(d) {

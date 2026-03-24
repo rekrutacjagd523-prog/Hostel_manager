@@ -16,8 +16,8 @@ import './modules/firebase-api.js?v=4';
 import { CURRENCIES, HTYPES, t } from './modules/constants.js?v=4';
 window.t = t;
 import {
-    settings, residents, properties, cur,
-    fmtUi, fmtPdf, fmtDate, todayStr, esc, daysBetween, daysLabel,
+    settings, residents, properties, expenses, cur,
+    fmtUi, fmtPdf, fmtDate, fmtNum, todayStr, esc, daysBetween, daysLabel,
     genId, resName, showConfirm, cleanForFirebase, resDoc, propDoc
 } from './modules/utils.js?v=4';
 import { buildRateHistory, calcPaymentWithHistory, calcCurrentPayment } from './modules/rate-history.js?v=4';
