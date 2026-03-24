@@ -52,7 +52,7 @@ import {
 } from './modules/auth.js?v=4';
 import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode, checkStripeReturn } from './modules/subscription.js?v=4';
 import {
-    expSelectMode, renderFinSummary, renderExpenses, openExpenseForm, closeExpenseForm, calcProjectedIncome, calcActualIncome, calcTotalExpenses,
+    expSelectMode, renderFinSummary, renderExpenses, openExpenseForm, closeExpenseForm, calcProjectedIncome, calcActualIncome, calcTotalExpenses, calcNetProfit,
     saveExpense, deleteExpense, setFinCategoryFilter, setFinPropFilter,
     goFinPage, changeFinPageSize, toggleExpSelect, cancelExpSelect,
     toggleExpItem, toggleSelectAllExp, deleteSelectedExp
