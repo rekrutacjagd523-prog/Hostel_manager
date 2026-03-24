@@ -14,6 +14,7 @@
 import './modules/firebase-api.js';
 
 import { CURRENCIES, HTYPES, t } from './modules/constants.js';
+window.t = t;
 import {
     settings, residents, properties, cur,
     fmtUi, fmtPdf, fmtDate, todayStr, esc, daysBetween, daysLabel,
