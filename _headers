@@ -9,3 +9,11 @@ https://lokum.cloud/*
 https://hostel-manager.pages.dev/*
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   Cross-Origin-Embedder-Policy: unsafe-none
+
+/*.js
+  Cache-Control: no-store, no-cache, must-revalidate
+  Pragma: no-cache
+
+/js/*
+  Cache-Control: no-store, no-cache, must-revalidate
+  Pragma: no-cache
