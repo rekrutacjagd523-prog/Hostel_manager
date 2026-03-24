@@ -175,14 +175,14 @@
         </div>
       </button>
       <button type="button" class="stat-card" onclick="openStatModal('owed')">
-        <div class="stat-icon" id="stat-currency-icon">zł</div>
+        <div class="stat-icon" id="stat-currency-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
         <div>
           <div class="stat-value" id="stat-owed">0.00 zł</div>
           <div class="stat-label" id="lbl-owed">К оплате (текущие)</div>
         </div>
       </button>
       <button type="button" class="stat-card" onclick="openStatModal('total')">
-        <div class="stat-icon">Σ</div>
+        <div class="stat-icon"><i data-lucide="trending-up" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-total">0</div>
           <div class="stat-label" id="lbl-total">Всего записей</div>
@@ -200,7 +200,7 @@
     <!-- Checkout Forecast Block -->
     <div id="forecast-block" style="display:none;margin:0 0 10px"></div>
 
-    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span><i data-lucide="building-2" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props">▼</span></span> <span
+    <div class="section-title" id="prop-section-title" onclick="toggleSection('props')"><span><i data-lucide="building-2" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-properties">Объекты</span> <span class="section-toggle" id="toggle-props"><i data-lucide="chevron-down" style="width:14px;height:14px"></i></span></span> <span
         onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
           onclick="openPropForm()" style="padding:6px 14px;font-size:12px" id="btn-add-prop">＋ Добавить
           объект</button></span></div>
@@ -208,7 +208,7 @@
 
     <!-- Bookings Section -->
     <div class="section-title" id="booking-section-title" onclick="toggleSection('bookings')">
-      <span>📅 <span id="lbl-bookings">Бронирования</span> <span class="section-toggle" id="toggle-bookings">▼</span></span>
+      <span><i data-lucide="calendar" style="width:16px;height:16px;display:inline;vertical-align:middle"></i> <span id="lbl-bookings">Бронирования</span> <span class="section-toggle" id="toggle-bookings"><i data-lucide="chevron-down" style="width:14px;height:14px"></i></span></span>
       <span onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center">
         <button class="tab book-view-btn" id="btn-book-list" onclick="setBookViewMode('list')" style="padding:4px 10px;font-size:11px;background:var(--accent);color:#fff">📋</button>
         <button class="tab book-view-btn" id="btn-book-cal" onclick="setBookViewMode('calendar')" style="padding:4px 10px;font-size:11px">📅</button>
@@ -228,8 +228,7 @@
     </div>
 
     <!-- Finance Section -->
-    <div class="section-title" id="fin-section-title" onclick="toggleSection('finance')"><span>💰 <span
-          id="lbl-finance">Финансы</span> <span class="section-toggle" id="toggle-finance">▼</span></span> <span
+    <div class="section-title" id="fin-section-title" onclick="toggleSection('finance')"><span><i data-lucide="wallet" style="width:16px;height:16px;display:inline;vertical-align:middle"></i> <span id="lbl-finance">Финансы</span> <span class="section-toggle" id="toggle-finance"><i data-lucide="chevron-down" style="width:14px;height:14px"></i></span></span> <span
         onclick="event.stopPropagation()" style="display:flex;gap:6px"><button class="btn btn-primary"
           onclick="openExpenseForm()" style="padding:6px 14px;font-size:12px" id="btn-add-expense">+ Добавить
           запись</button></span></div>
@@ -290,7 +289,7 @@
       </div>
     </div>
 
-    <div class="section-title" onclick="toggleSection('residents')"><span><i data-lucide="users" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents">▼</span></span>
+    <div class="section-title" onclick="toggleSection('residents')"><span><i data-lucide="users" style="width:14px;height:14px;display:inline;vertical-align:middle"></i> <span id="lbl-residents-section">Жильцы</span> <span class="section-toggle" id="toggle-residents"><i data-lucide="chevron-down" style="width:14px;height:14px"></i></span></span>
     </div>
     <div class="section-content" id="residents-section">
       <div class="tabs" id="tabs-bar">
