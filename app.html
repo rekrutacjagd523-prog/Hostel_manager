@@ -164,28 +164,28 @@
     </header>
 
     <div class="stats">
-      <button type="button" class="stat-card" onclick="openStatModal('residents')">
+      <button type="button" class="stat-card" data-action="stat-residents">
         <div class="stat-icon"><i data-lucide="users" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-active">0</div>
           <div class="stat-label" id="lbl-residents">Жильцов</div>
         </div>
       </button>
-      <button type="button" class="stat-card" onclick="openStatModal('owed')">
+      <button type="button" class="stat-card" data-action="stat-owed">
         <div class="stat-icon" id="stat-currency-icon">zł</div>
         <div>
           <div class="stat-value" id="stat-owed">0.00 zł</div>
           <div class="stat-label" id="lbl-owed">К оплате (текущие)</div>
         </div>
       </button>
-      <button type="button" class="stat-card" onclick="openStatModal('total')">
+      <button type="button" class="stat-card" data-action="stat-total">
         <div class="stat-icon">Σ</div>
         <div>
           <div class="stat-value" id="stat-total">0</div>
           <div class="stat-label" id="lbl-total">Всего записей</div>
         </div>
       </button>
-      <button type="button" class="stat-card" onclick="openArchiveModal()">
+      <button type="button" class="stat-card" data-action="stat-archive">
         <div class="stat-icon"><i data-lucide="archive" style="width:22px;height:22px"></i></div>
         <div>
           <div class="stat-value" id="stat-archive">0</div>
