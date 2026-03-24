@@ -203,8 +203,11 @@ export function render() {
     else ftEl.querySelectorAll('.fp-check').forEach((e, i) => { e.lastChild.textContent = ' ' + t(HTYPES[i]); });
     const checkedTypes = []; ftEl.querySelectorAll('input:checked').forEach(i => checkedTypes.push(i.dataset.ht));
     const active = all.filter(r => !r.checkOutDate);
+    const checkedOut = all.filter(r => !!r.checkOutDate);
     document.getElementById('stat-active').textContent = active.length;
     document.getElementById('stat-total').textContent = all.length;
+    const archiveEl = document.getElementById('stat-archive');
+    if (archiveEl) archiveEl.textContent = checkedOut.length;
     const totalOwed = active.reduce((s, r) => s + calcCurrentPayment(r), 0);
     document.getElementById('stat-owed').textContent = fmtUi(totalOwed);
     renderCheckoutForecast();
@@ -325,6 +328,7 @@ export function updateUI() {
     setText('lbl-residents', t('residents'));
     setText('lbl-owed', t('owed'));
     setText('lbl-total', t('total'));
+    setText('lbl-archive', t('archiveLabel') || 'Архів');
     setText('tab-active', t('active'));
     setText('tab-out', t('out'));
     setText('tab-all', t('all'));

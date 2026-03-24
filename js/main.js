@@ -308,3 +308,177 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => { });
 }
 
+
+// ===== ARCHIVE MODAL =====
+(function() {
+  let archiveFilter = 'all';
+  let archiveSort = { key: 'checkout', dir: -1 };
+
+  window.openArchiveModal = function() {
+    const el = document.getElementById('archive-overlay');
+    if (!el) return;
+    el.classList.remove('hidden');
+    const s = document.getElementById('archive-search');
+    if (s) s.value = '';
+    renderArchive();
+    if (window.lucide) window.lucide.createIcons();
+  };
+
+  window.closeArchiveModal = function() {
+    const el = document.getElementById('archive-overlay');
+    if (el) el.classList.add('hidden');
+  };
+
+  window.setArchiveFilter = function(f, btn) {
+    archiveFilter = f;
+    document.querySelectorAll('#archive-overlay .tab').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderArchive();
+  };
+
+  window.sortArchive = function(key) {
+    if (archiveSort.key === key) archiveSort.dir *= -1;
+    else { archiveSort.key = key; archiveSort.dir = -1; }
+    renderArchive();
+  };
+
+  function sym() {
+    return ({ PLN:'zł', EUR:'€', USD:'$' })[(window._settings||{}).currency] || 'zł';
+  }
+
+  function renderPaidCell(r) {
+    const s = sym();
+    if (r.paidAmount != null && r.paidAmount > 0) {
+      return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">' +
+        '<span style="font-size:13px;font-weight:600;color:var(--green)">' + r.paidAmount.toFixed(2) + ' ' + s + '</span>' +
+        '<button onclick="editPaidAmount(\'' + r.id + '\',event)" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px" title="Змінити">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+        '</button></div>';
+    }
+    return '<button onclick="editPaidAmount(\'' + r.id + '\',event)" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:11px;font-family:inherit">+ вказати</button>';
+  }
+
+  window.editPaidAmount = function(id, event) {
+    if (event) event.stopPropagation();
+    const all = window._residents || [];
+    const r = all.find(x => x.id === id);
+    if (!r) return;
+    const pay = window.calcCurrentPayment ? window.calcCurrentPayment(r) : 0;
+    const s = sym();
+    const el = document.createElement('div');
+    el.className = 'confirm-overlay';
+    el.style.zIndex = '9999';
+    el.innerHTML = '<div class="confirm-box">' +
+      '<div class="confirm-title">Фактично оплачено</div>' +
+      '<div class="confirm-msg" style="margin-bottom:6px">' + (r.firstName||'') + ' ' + (r.lastName||'') + '</div>' +
+      '<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Нараховано: <strong>' + pay.toFixed(2) + ' ' + s + '</strong></div>' +
+      '<input type="number" id="paid-amount-input" class="field" value="' + (r.paidAmount != null ? r.paidAmount : '') + '" placeholder="0.00" min="0" step="0.01" style="width:100%;margin-bottom:4px">' +
+      '<div style="font-size:11px;color:var(--text3);margin-bottom:12px;text-align:left">Залиш порожнім щоб скинути</div>' +
+      '<div class="confirm-btns"><button class="c-cancel" id="c-no">Скасувати</button><button class="c-ok" id="c-yes">Зберегти</button></div>' +
+      '</div>';
+    document.body.appendChild(el);
+    el.querySelector('#paid-amount-input').focus();
+    el.querySelector('#c-no').onclick = () => el.remove();
+    el.querySelector('#c-yes').onclick = async () => {
+      const val = el.querySelector('#paid-amount-input').value.trim();
+      el.remove();
+      try {
+        const resDoc = window._fb.doc(window._fb.db, 'users', window._currentUser.uid, 'residents', id);
+        const data = Object.assign({}, r);
+        delete data.id;
+        data.paidAmount = val === '' ? null : parseFloat(val) || 0;
+        await window._fb.setDoc(resDoc, data);
+        renderArchive();
+      } catch(e) { alert('Error: ' + e.message); }
+    };
+    el.onclick = (e) => { if (e.target === el) el.remove(); };
+  };
+
+  window.renderArchive = function() {
+    const search = (document.getElementById('archive-search')?.value || '').toLowerCase();
+    let list = (window._residents || []).filter(r => {
+      if (archiveFilter === 'active') return !r.checkOutDate;
+      if (archiveFilter === 'out') return !!r.checkOutDate;
+      return true;
+    });
+    if (search) list = list.filter(r =>
+      ((r.firstName||'') + ' ' + (r.lastName||'') + ' ' + (r.city||'') + ' ' + (r.address||''))
+        .toLowerCase().includes(search)
+    );
+
+    list.sort((a, b) => {
+      let va, vb;
+      const name = r => ((r.firstName||'') + ' ' + (r.lastName||'')).toLowerCase();
+      const calc = r => window.calcCurrentPayment ? window.calcCurrentPayment(r) : 0;
+      const days = (ci, co) => {
+        if (!ci) return 0;
+        const d1 = new Date(ci), d2 = co ? new Date(co) : new Date();
+        return Math.max(0, Math.round((d2 - d1) / 86400000));
+      };
+      if (archiveSort.key === 'name')     { va = name(a); vb = name(b); }
+      else if (archiveSort.key === 'checkin')  { va = a.checkInDate || ''; vb = b.checkInDate || ''; }
+      else if (archiveSort.key === 'checkout') { va = a.checkOutDate || '9999'; vb = b.checkOutDate || '9999'; }
+      else if (archiveSort.key === 'days')     { va = days(a.checkInDate, a.checkOutDate); vb = days(b.checkInDate, b.checkOutDate); }
+      else if (archiveSort.key === 'amount')   { va = calc(a); vb = calc(b); }
+      else { va = ''; vb = ''; }
+      return va < vb ? -archiveSort.dir : va > vb ? archiveSort.dir : 0;
+    });
+
+    ['name','checkin','checkout','days','amount'].forEach(k => {
+      const el = document.getElementById('arch-sort-' + k);
+      if (el) el.textContent = archiveSort.key === k ? (archiveSort.dir === 1 ? ' ↑' : ' ↓') : '';
+    });
+
+    const tbody = document.getElementById('archive-tbody');
+    const empty = document.getElementById('archive-empty');
+    const s = sym();
+    if (!tbody) return;
+    if (!list.length) { tbody.innerHTML = ''; if(empty) empty.style.display = 'block'; }
+    else { if(empty) empty.style.display = 'none'; }
+
+    const fmtD = d => {
+      if (!d) return '—';
+      if (window.fmtDate) return window.fmtDate(d);
+      return d;
+    };
+
+    let totalSum = 0;
+    tbody.innerHTML = list.map(r => {
+      const isA = !r.checkOutDate;
+      const pay = window.calcCurrentPayment ? window.calcCurrentPayment(r) : 0;
+      totalSum += pay;
+      const d1 = r.checkInDate ? new Date(r.checkInDate) : null;
+      const d2 = r.checkOutDate ? new Date(r.checkOutDate) : new Date();
+      const days = d1 ? Math.max(0, Math.round((d2 - d1) / 86400000)) : 0;
+      const fullName = ((r.firstName||'') + ' ' + (r.lastName||'')).trim() || '?';
+      const initial = fullName.charAt(0).toUpperCase();
+      const colors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899'];
+      const bg = colors[fullName.charCodeAt(0) % colors.length];
+      const amountColor = isA ? 'var(--accent)' : 'var(--text2)';
+
+      return '<tr style="border-bottom:1px solid var(--border);' + (!isA ? 'opacity:0.75' : '') + '">' +
+        '<td style="padding:10px 20px"><div style="display:flex;align-items:center;gap:9px">' +
+          '<div style="width:30px;height:30px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0">' + initial + '</div>' +
+          '<div><div style="font-weight:600;color:var(--text)">' + fullName + '</div>' +
+          (isA ? '<div style="font-size:10px;color:var(--green)">● активний</div>' : '<div style="font-size:10px;color:var(--text3)">виселений</div>') +
+          '</div></div></td>' +
+        '<td style="padding:10px 8px;color:var(--text3);font-size:12px">' + ((r.city||'') + (r.address ? ' · ' + r.address : '')) + '</td>' +
+        '<td style="padding:10px 8px;font-size:12px">' + fmtD(r.checkInDate) + '</td>' +
+        '<td style="padding:10px 8px;font-size:12px">' + fmtD(r.checkOutDate) + '</td>' +
+        '<td style="padding:10px 8px;text-align:right;font-size:12px">' + days + '</td>' +
+        '<td style="padding:10px 8px;text-align:right;white-space:nowrap"><div style="font-weight:700;color:' + amountColor + ';font-size:12px">' + pay.toFixed(2) + ' ' + s + '</div></td>' +
+        '<td style="padding:10px 8px;text-align:right">' + renderPaidCell(r) + '</td>' +
+        '<td style="padding:10px 20px 10px 8px;text-align:right">' +
+          '<button onclick="closeArchiveModal();window.editResident && window.editResident(\'' + r.id + '\')" style="background:none;border:1px solid var(--border2);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:inherit">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Редагувати</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+    const countEl = document.getElementById('archive-count');
+    const sumEl = document.getElementById('archive-total-sum');
+    if (countEl) countEl.textContent = list.length + ' записів';
+    if (sumEl) sumEl.textContent = list.length ? totalSum.toFixed(2) + ' ' + s : '';
+    if (window.lucide) window.lucide.createIcons();
+  };
+})();
