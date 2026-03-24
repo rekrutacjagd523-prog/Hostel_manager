@@ -329,7 +329,6 @@ export function updateUI() {
     setText('lbl-owed', t('owed'));
     setText('lbl-total', t('total'));
     const archiveLbls = {PL:'Archiwum',UA:'Архів',RU:'Архив',EN:'Archive',LT:'Archyvas'};
-    const lang = (window._settings && window._settings.lang) || 'PL';
     setText('lbl-archive', archiveLbls[lang] || 'Archive');
     setText('tab-active', t('active'));
     setText('tab-out', t('out'));
