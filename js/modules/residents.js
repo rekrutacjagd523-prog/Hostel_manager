@@ -62,7 +62,7 @@ export function onPropSelect() {
                         const occ = residents().filter(r => !r.checkOutDate && r.city === p.city && r.address === p.address && r.roomId === rm.id && r.id !== editId).length;
                         const free = Math.max(0, (rm.beds || 0) - occ);
                         const selected = currentResident && currentResident.roomId === rm.id ? ' selected' : '';
-                        return '<option value="' + rm.id + '"' + selected + (free <= 0 ? ' disabled' : '') + '>🚪 ' + esc(rm.name) + ' (F' + rm.floor + ') — ' + free + ' ' + t('freeBedsInRoom') + '</option>';
+                        return '<option value="' + rm.id + '"' + selected + (free <= 0 ? ' disabled' : '') + '><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + esc(rm.name) + ' (F' + rm.floor + ') — ' + free + ' ' + t('freeBedsInRoom') + '</option>';
                     }).join('');
             } else {
                 roomRow.style.display = 'none';

@@ -60,14 +60,14 @@ export function renderProperties() {
                     const roomOcc = getRoomOccupancy(p.id, rm.id);
                     const roomFree = Math.max(0, (rm.beds || 0) - roomOcc);
                     return '<div class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\',\'' + rm.id + '\')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--surface2);border-radius:6px;font-size:11px;cursor:pointer;margin:2px">' +
-                        '<span>🚪 ' + esc(rm.name) + '</span>' +
+                        '<span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + esc(rm.name) + '</span>' +
                         '<span style="color:var(--text4)">F' + rm.floor + '</span>' +
                         '<span style="color:' + (roomFree > 0 ? 'var(--green)' : 'var(--red)') + ';font-weight:600">' + roomOcc + '/' + rm.beds + '</span>' +
                         '</div>';
                 }).join('') +
                 '<button class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\')" style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;margin:2px">+ ' + t('addRoom').replace('+ ', '') + '</button>' +
                 '</div>' :
-                '<div style="width:100%;margin-top:4px"><button class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\')" style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:var(--surface2);border:1px dashed var(--border3);border-radius:6px;font-size:11px;cursor:pointer;margin:2px;color:var(--text3)">🚪 ' + t('addRoom') + '</button></div>'
+                '<div style="width:100%;margin-top:4px"><button class="room-chip" onclick="event.stopPropagation();openRoomForm(\'' + p.id + '\')" style="display:inline-flex;align-items:center;gap:2px;padding:3px 8px;background:var(--surface2);border:1px dashed var(--border3);border-radius:6px;font-size:11px;cursor:pointer;margin:2px;color:var(--text3)"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + t('addRoom') + '</button></div>'
             ) +
             '</div>'; // close prop-card
     }).join('');
@@ -221,13 +221,13 @@ export function openRoomForm(propId, roomId) {
         const p = properties().find(x => x.id === propId);
         const room = p && p.rooms ? p.rooms.find(r => r.id === roomId) : null;
         if (!room) return;
-        document.getElementById('room-form-title').textContent = '🚪 ' + t('editRoom');
+        document.getElementById('room-form-title').textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + t('editRoom');
         document.getElementById('room-edit-id').value = roomId;
         document.getElementById('r-name').value = room.name || '';
         document.getElementById('r-floor').value = room.floor || 1;
         document.getElementById('r-beds').value = room.beds || 1;
     } else {
-        document.getElementById('room-form-title').textContent = '🚪 ' + t('addRoom');
+        document.getElementById('room-form-title').textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + t('addRoom');
         document.getElementById('room-edit-id').value = '';
         document.getElementById('r-name').value = '';
         document.getElementById('r-floor').value = 1;

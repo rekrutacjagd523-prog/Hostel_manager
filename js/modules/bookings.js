@@ -98,7 +98,7 @@ function renderBookingList() {
             '<span class="tag">' + dateLabel + '</span>' +
             '<span class="tag" style="background:' + sb + ';color:' + sc + ';font-weight:600;border-color:' + sc + '">' + statusLabel + '</span>' +
             (prop ? '<span class="tag">' + esc(prop.city) + ' · ' + esc(prop.address) + '</span>' : '') +
-            (room ? '<span class="tag">🚪 ' + esc(room.name) + '</span>' : '') +
+            (room ? '<span class="tag"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + esc(room.name) + '</span>' : '') +
             (b.phone ? '<span class="tag">📞 ' + esc(b.phone) + '</span>' : '') +
             '</div>' +
             (b.notes ? '<div style="font-size:11px;color:var(--text3);margin-top:4px">' + esc(b.notes) + '</div>' : '') +
@@ -236,7 +236,7 @@ export function onBookPropSelect() {
     if (p && p.rooms && p.rooms.length) {
         roomRow.style.display = 'block';
         roomSel.innerHTML = '<option value="">— ' + t('unassigned') + ' —</option>' +
-            p.rooms.map(rm => '<option value="' + rm.id + '">🚪 ' + esc(rm.name) + ' (F' + rm.floor + ', ' + rm.beds + ' ' + t('bedsShort') + ')</option>').join('');
+            p.rooms.map(rm => '<option value="' + rm.id + '"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + esc(rm.name) + ' (F' + rm.floor + ', ' + rm.beds + ' ' + t('bedsShort') + ')</option>').join('');
     } else {
         roomRow.style.display = 'none';
         roomSel.innerHTML = '<option value="">—</option>';
