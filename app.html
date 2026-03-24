@@ -1244,7 +1244,7 @@ function openStatModal(type) {
   body.innerHTML = html;
   const ov = document.getElementById('stat-modal-overlay');
   ov.classList.remove('hidden');
-  alert('classes after: ' + ov.className + ' display: ' + getComputedStyle(ov).display + ' z: ' + getComputedStyle(ov).zIndex);
+  const d = getComputedStyle(ov).display; alert(d);
   } catch(e) { alert('ERR2: ' + e.message); }
 }
 
