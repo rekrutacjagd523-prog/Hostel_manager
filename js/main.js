@@ -693,22 +693,15 @@ window.closeStatModal = function() {
   if (el) el.classList.add('hidden');
 };
 
-// ===== STAT CARD TOUCH HANDLERS =====
-// Use addEventListener instead of onclick for reliable iOS Safari touch
+// ===== STAT CARD CLICK HANDLERS =====
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.stat-card[data-action]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
+    btn.addEventListener('click', function() {
       const action = btn.getAttribute('data-action');
       if (action === 'stat-residents') window.openStatModal && window.openStatModal('residents');
-      else if (action === 'stat-owed')      window.openStatModal && window.openStatModal('owed');
-      else if (action === 'stat-total')     window.openStatModal && window.openStatModal('total');
-      else if (action === 'stat-archive')   window.openArchiveModal && window.openArchiveModal();
+      else if (action === 'stat-owed')    window.openStatModal && window.openStatModal('owed');
+      else if (action === 'stat-total')   window.openStatModal && window.openStatModal('total');
+      else if (action === 'stat-archive') window.openArchiveModal && window.openArchiveModal();
     });
-    // Also bind touchend for iOS
-    btn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      btn.click();
-    }, { passive: false });
   });
 });
