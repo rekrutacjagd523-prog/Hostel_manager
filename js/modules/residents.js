@@ -319,13 +319,22 @@ export function showHistory(id) {
 }
 
 // ===== SELECTION MODE =====
-export function toggleSelectMode() {
+export function toggleSelectMode(autoSelectId) {
     selectMode = !selectMode;
     selectedIds.clear();
     document.getElementById('select-bar').classList.toggle('active', selectMode);
     document.getElementById('sel-all').checked = false;
     updateSelCount();
-    if (window.render) window.render();
+    if (window.render) {
+        window.render();
+        // After render, auto-select the longpressed card
+        if (autoSelectId) {
+            requestAnimationFrame(() => {
+                const cb = document.querySelector('.item-check[data-id="' + autoSelectId + '"]');
+                if (cb) { cb.checked = true; toggleSelectItem(autoSelectId, cb); }
+            });
+        }
+    }
 }
 
 export function cancelSelect() {

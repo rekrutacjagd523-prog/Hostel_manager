@@ -100,11 +100,7 @@ function handlePressStart(e) {
         const targetId = _pressTarget.id;
 
         if (_pressTarget.type === 'res') {
-            toggleSelectMode();
-            setTimeout(() => {
-                const cb = document.querySelector(`.sel-check[data-id="${targetId}"]`);
-                if (cb) { cb.checked = true; toggleSelectItem(targetId, cb); }
-            }, 50);
+            toggleSelectMode(targetId);
         } else if (_pressTarget.type === 'exp') {
             toggleExpSelect();
             setTimeout(() => {
