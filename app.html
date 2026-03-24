@@ -1125,12 +1125,15 @@
 window._paidMap = {};
 
 function openStatModal(type) {
-  alert("openStatModal called: " + type);
-  const all = window._residents || [];
-  const active = all.filter(r => !r.checkOutDate);
   const body = document.getElementById('stat-modal-body');
   const title = document.getElementById('stat-modal-title');
-  if (!body || !title) return;
+  const overlay = document.getElementById('stat-modal-overlay');
+  if (!body || !title || !overlay) {
+    alert("MISSING: body=" + !!body + " title=" + !!title + " overlay=" + !!overlay);
+    return;
+  }
+  const all = window._residents || [];
+  const active = all.filter(r => !r.checkOutDate);
   const cur = (window._settings && window._settings.currency) || 'PLN';
   const sym = ({PLN:'zł',EUR:'€',USD:'$'})[cur] || 'zł';
   const T = t;
