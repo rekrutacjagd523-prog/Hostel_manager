@@ -345,7 +345,7 @@ export function updateUI() {
     const archOut = document.getElementById('arch-tab-out'); if(archOut) archOut.textContent = ai.out;
     window._archiveI18n = ai;
     // Fill table headers
-    const setTh = (id, txt) => { const el = document.getElementById(id); if(el) { el.childNodes[0].textContent = txt + ' '; } };
+    const setTh = (id, txt) => { const el = document.getElementById(id); if(!el) return; const sp = el.querySelector('span'); if(sp) { el.firstChild.textContent = txt + ' '; } else { el.textContent = txt; } };
     setTh('arch-th-name',     ai.name);
     setTh('arch-th-obj',      ai.obj);
     setTh('arch-th-checkin',  ai.checkin);
