@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1a1b1e">
-  <meta name="description" content="Lokum — system zarządzania kwaterami pracowniczymi. Mieszkańcy, płatności, raporty — wszystko w jednym miejscu.">
-  <title>Lokum — Zarządzanie kwaterami pracowniczymi</title>
+  <meta name="description" content="Lokum — system zarządzania kwaterami pracowniczymi.">
+  <title>Lokum — Zarządzanie kwaterami</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #1a1b1e;
@@ -415,32 +414,24 @@
       .banner-stat { border-right: none; border-bottom: 1px solid var(--border2); width: 100%; }
       .banner-stat:last-child { border-bottom: none; }
     }
-  </style>
+    </style>
 </head>
-
 <body>
 
   <!-- NAV -->
   <nav>
     <a href="#" class="nav-logo">
       <div class="nav-logo-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </div>
       <span class="nav-logo-name">Lokum</span>
     </a>
     <div class="nav-right">
-<button class="nav-link hide-mob" onclick="toggleLang()">🇺🇦 UA</button>
-      <a href="#pricing" class="nav-link hide-mob">
-        <span class="lang-pl">Cennik</span>
-        <span class="lang-ua" style="display:none">Ціни</span>
-      </a>
+      <button id="lang-btn" class="nav-link hide-mob" onclick="toggleLang()">🇺🇦 UA</button>
+      <a href="#pricing" class="nav-link hide-mob" data-i18n="nav_pricing">Cennik</a>
       <a href="app.html" class="btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        <span class="lang-pl">Zaloguj się</span>
-        <span class="lang-ua" style="display:none">Увійти</span>
+        <span data-i18n="nav_login">Zaloguj się</span>
       </a>
     </div>
   </nav>
@@ -449,32 +440,19 @@
   <section class="hero">
     <div class="hero-badge">
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span class="lang-pl">Darmowy plan dostępny</span>
-      <span class="lang-ua" style="display:none">Безкоштовний план доступний</span>
+      <span data-i18n="hero_badge">Darmowy plan dostępny</span>
     </div>
-
-    <h1>
-      <span class="lang-pl">Zarządzaj kwaterami<br><span>bez arkuszy Excel</span></span>
-      <span class="lang-ua" style="display:none">Керуйте житлом<br><span>без таблиць Excel</span></span>
-    </h1>
-
-    <p>
-      <span class="lang-pl">Mieszkańcy, płatności, raporty — wszystko w jednym miejscu. Sprawdź kto ile jest winien w kilka sekund.</span>
-      <span class="lang-ua" style="display:none">Мешканці, платежі, звіти — все в одному місці. Дізнайтесь хто скільки заборгував за кілька секунд.</span>
-    </p>
-
+    <h1 data-i18n="hero_h1">Zarządzaj kwaterami<br><span>bez arkuszy Excel</span></h1>
+    <p data-i18n="hero_p">Mieszkańcy, płatności, raporty — wszystko w jednym miejscu.</p>
     <div class="hero-cta">
       <a href="app.html" class="btn-primary" style="font-size:16px;padding:13px 28px">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
-        <span class="lang-pl">Zacznij za darmo</span>
-        <span class="lang-ua" style="display:none">Почати безкоштовно</span>
+        <span data-i18n="hero_cta1">Zacznij za darmo</span>
       </a>
       <a href="#features" class="btn-secondary" style="font-size:16px;padding:13px 28px">
-        <span class="lang-pl">Zobacz demo</span>
-        <span class="lang-ua" style="display:none">Дивитись демо</span>
+        <span data-i18n="hero_cta2">Zobacz demo</span>
       </a>
     </div>
-
     <div class="hero-video-wrap">
       <div class="hero-video-frame">
         <video autoplay muted loop playsinline preload="auto">
@@ -484,87 +462,60 @@
     </div>
   </section>
 
-  <!-- STATS BANNER -->
+  <!-- BANNER -->
   <div class="banner" id="stats-banner">
     <div class="banner-stat">
       <div class="banner-val">500+</div>
-      <div class="banner-lbl"><span class="lang-pl">Pracowników w bazie</span><span class="lang-ua" style="display:none">Працівників у базі</span></div>
-      <div class="banner-note">* z beta testu</div>
+      <div class="banner-lbl" data-i18n="banner_lbl1">Pracowników w bazie</div>
+      <div class="banner-note" data-i18n="banner_note1">* z beta testu</div>
     </div>
     <div class="banner-stat">
       <div class="banner-val">15 min</div>
-      <div class="banner-lbl"><span class="lang-pl">Onboarding lokatora</span><span class="lang-ua" style="display:none">Онбординг мешканця</span></div>
+      <div class="banner-lbl" data-i18n="banner_lbl2">Onboarding lokatora</div>
     </div>
     <div class="banner-stat">
-      <div class="banner-val">0 zł</div>
-      <div class="banner-lbl"><span class="lang-pl">Za start</span><span class="lang-ua" style="display:none">За старт</span></div>
+      <div class="banner-val">0 $</div>
+      <div class="banner-lbl" data-i18n="banner_lbl3">Za start</div>
     </div>
   </div>
 
   <!-- FEATURES -->
   <section class="section" id="features">
     <div>
-      <div class="sec-label">
-        <span class="lang-pl">Funkcje</span>
-        <span class="lang-ua" style="display:none">Можливості</span>
-      </div>
-      <h2 class="sec-title">
-        <span class="lang-pl">Wszystko czego potrzebujesz</span>
-        <span class="lang-ua" style="display:none">Все що вам потрібно</span>
-      </h2>
-      <p class="sec-sub">
-        <span class="lang-pl">Prosty system do zarządzania kwaterami pracowniczymi — bez zbędnej komplikacji.</span>
-        <span class="lang-ua" style="display:none">Проста система для управління житлом для працівників — без зайвих ускладнень.</span>
-      </p>
+      <div class="sec-label" data-i18n="feat_label">Funkcje</div>
+      <h2 class="sec-title" data-i18n="feat_h2">Wszystko czego potrzebujesz</h2>
+      <p class="sec-sub" data-i18n="feat_sub">Prosty system do zarządzania kwaterami pracowniczymi.</p>
     </div>
-
     <div class="features-grid">
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(74,222,128,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <h3><span class="lang-pl">Baza mieszkańców</span><span class="lang-ua" style="display:none">База мешканців</span></h3>
-        <p><span class="lang-pl">Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika.</span><span class="lang-ua" style="display:none">Відстежуйте заїзди, виїзди та час перебування кожного працівника.</span></p>
+        <div class="feat-icon" style="background:rgba(74,222,128,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3 data-i18n="feat1_h">Baza mieszkańców</h3>
+        <p data-i18n="feat1_p">Śledź zameldowania, wymeldowania i czas pobytu.</p>
       </div>
-
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(245,158,11,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
-        </div>
-        <h3><span class="lang-pl">Automatyczne płatności</span><span class="lang-ua" style="display:none">Автоматичні платежі</span></h3>
-        <p><span class="lang-pl">System przelicza należności na podstawie stawki miesięcznej. Zero ręcznych obliczeń.</span><span class="lang-ua" style="display:none">Система розраховує заборгованість на основі місячної ставки. Нуль ручних обчислень.</span></p>
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
+        <h3 data-i18n="feat2_h">Automatyczne płatności</h3>
+        <p data-i18n="feat2_p">System przelicza należności. Zero ręcznych obliczeń.</p>
       </div>
-
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(192,132,252,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-        </div>
-        <h3><span class="lang-pl">Raporty finansowe</span><span class="lang-ua" style="display:none">Фінансові звіти</span></h3>
-        <p><span class="lang-pl">Prognoza, faktyczny dochód, wydatki i zysk netto — wszystko w czytelnych wykresach.</span><span class="lang-ua" style="display:none">Прогноз, фактичний дохід, витрати і чистий прибуток — все у зрозумілих графіках.</span></p>
+        <div class="feat-icon" style="background:rgba(192,132,252,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <h3 data-i18n="feat3_h">Raporty finansowe</h3>
+        <p data-i18n="feat3_p">Prognoza, dochód, wydatki i zysk netto.</p>
       </div>
-
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(248,113,113,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <h3><span class="lang-pl">Eksport PDF / Excel</span><span class="lang-ua" style="display:none">Експорт PDF / Excel</span></h3>
-        <p><span class="lang-pl">Generuj przejrzyste raporty dla firm i księgowości jednym kliknięciem.</span><span class="lang-ua" style="display:none">Генеруйте чіткі звіти для компаній та бухгалтерії в один клік.</span></p>
+        <div class="feat-icon" style="background:rgba(248,113,113,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h3 data-i18n="feat4_h">Eksport PDF / Excel</h3>
+        <p data-i18n="feat4_p">Generuj raporty jednym kliknięciem.</p>
       </div>
-
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(74,222,128,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        </div>
-        <h3><span class="lang-pl">Działa na telefonie</span><span class="lang-ua" style="display:none">Працює на телефоні</span></h3>
-        <p><span class="lang-pl">PWA — instalujesz jak aplikację na iPhone i Android. Działa też offline.</span><span class="lang-ua" style="display:none">PWA — встановлюєш як додаток на iPhone та Android. Працює також офлайн.</span></p>
+        <div class="feat-icon" style="background:rgba(74,222,128,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3 data-i18n="feat5_h">Działa na telefonie</h3>
+        <p data-i18n="feat5_p">PWA na iPhone i Android. Działa offline.</p>
       </div>
-
       <div class="feat-card">
-        <div class="feat-icon" style="background:rgba(245,158,11,.1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <h3><span class="lang-pl">Współdzielenie</span><span class="lang-ua" style="display:none">Спільний доступ</span></h3>
-        <p><span class="lang-pl">Zaproś menedżerów i właścicieli obiektów do podglądu danych w czasie rzeczywistym.</span><span class="lang-ua" style="display:none">Запросіть менеджерів та власників для перегляду даних у реальному часі.</span></p>
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3 data-i18n="feat6_h">Współdzielenie</h3>
+        <p data-i18n="feat6_p">Zaproś menedżerów do podglądu danych.</p>
       </div>
     </div>
   </section>
@@ -572,43 +523,16 @@
   <!-- PRICING -->
   <section class="section" id="pricing" style="padding-top:20px">
     <div style="text-align:center;margin-bottom:60px">
-      <div class="sec-label">
-        <span class="lang-pl">Cennik</span>
-        <span class="lang-ua" style="display:none">Ціни</span>
-        <span class="lang-ru" style="display:none">Тарифы</span>
-        <span class="lang-en" style="display:none">Pricing</span>
-        <span class="lang-lt" style="display:none">Kainos</span>
-      </div>
-      <h2 class="sec-title">
-        <span class="lang-pl">Prosty, uczciwy cennik</span>
-        <span class="lang-ua" style="display:none">Простий, чесний прайс</span>
-        <span class="lang-ru" style="display:none">Простой, честный прайс</span>
-        <span class="lang-en" style="display:none">Simple, honest pricing</span>
-        <span class="lang-lt" style="display:none">Paprasta kainodara</span>
-      </h2>
-      <p class="sec-sub" style="margin:0 auto">
-        <span class="lang-pl">Zacznij za darmo, rozbuduj gdy potrzebujesz.</span>
-        <span class="lang-ua" style="display:none">Починайте безкоштовно, розширюйте коли потрібно.</span>
-        <span class="lang-ru" style="display:none">Начните бесплатно, расширяйте когда нужно.</span>
-        <span class="lang-en" style="display:none">Start for free, upgrade when you need.</span>
-        <span class="lang-lt" style="display:none">Pradėkite nemokamai, tobulinkite kai reikia.</span>
-      </p>
+      <div class="sec-label" data-i18n="nav_pricing">Cennik</div>
+      <h2 class="sec-title" data-i18n="feat_h2" style="font-size:clamp(28px,4vw,42px)">Prosty, uczciwy cennik</h2>
 
       <!-- Billing toggle -->
       <div style="display:inline-flex;align-items:center;gap:12px;margin-top:28px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:5px">
-        <button id="btn-monthly" onclick="setBilling('monthly')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--accent);color:#111">
-          <span class="lang-pl">Miesięcznie</span>
-          <span class="lang-ua" style="display:none">Щомісяця</span>
-          <span class="lang-ru" style="display:none">Ежемесячно</span>
-          <span class="lang-en" style="display:none">Monthly</span>
-          <span class="lang-lt" style="display:none">Kas mėnesį</span>
+        <button id="btn-monthly" onclick="setBilling('monthly')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+          <span data-i18n="billing_monthly">Miesięcznie</span>
         </button>
-        <button id="btn-annual" onclick="setBilling('annual')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text2)">
-          <span class="lang-pl">Rocznie</span>
-          <span class="lang-ua" style="display:none">Щороку</span>
-          <span class="lang-ru" style="display:none">Ежегодно</span>
-          <span class="lang-en" style="display:none">Annual</span>
-          <span class="lang-lt" style="display:none">Kasmet</span>
+        <button id="btn-annual" onclick="setBilling('annual')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
+          <span data-i18n="billing_annual">Rocznie</span>
           <span style="background:rgba(74,222,128,.15);color:var(--green);padding:2px 7px;border-radius:20px;font-size:11px;margin-left:4px">-15%</span>
         </button>
       </div>
@@ -619,96 +543,40 @@
       <div class="plan-card">
         <div class="plan-name">Start</div>
         <div class="plan-price">0 <sub>$</sub></div>
-        <div class="plan-desc">
-          <span class="lang-pl">Na zawsze darmowy</span>
-          <span class="lang-ua" style="display:none">Назавжди безкоштовний</span>
-          <span class="lang-ru" style="display:none">Навсегда бесплатный</span>
-          <span class="lang-en" style="display:none">Free forever</span>
-          <span class="lang-lt" style="display:none">Amžinai nemokamas</span>
-        </div>
+        <div class="plan-desc" data-i18n="plan_free_desc">Na zawsze darmowy</div>
         <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>10</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span><span class="lang-ru" style="display:none">жильцов</span><span class="lang-en" style="display:none">residents</span><span class="lang-lt" style="display:none">gyventojų</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>3</strong> <span class="lang-pl">obiekty</span><span class="lang-ua" style="display:none">об'єкти</span><span class="lang-ru" style="display:none">объекта</span><span class="lang-en" style="display:none">properties</span><span class="lang-lt" style="display:none">objektai</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Raporty PDF/Excel</span><span class="lang-ua" style="display:none">Звіти PDF/Excel</span><span class="lang-ru" style="display:none">Отчёты PDF/Excel</span><span class="lang-en" style="display:none">PDF/Excel reports</span><span class="lang-lt" style="display:none">PDF/Excel ataskaitos</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Aplikacja mobilna</span><span class="lang-ua" style="display:none">Мобільний додаток</span><span class="lang-ru" style="display:none">Мобильное приложение</span><span class="lang-en" style="display:none">Mobile app</span><span class="lang-lt" style="display:none">Mobilioji programa</span></span>
-          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>10</strong> <span data-i18n="plan_residents">mieszkańców</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>3</strong> <span data-i18n="plan_props">obiekty</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_reports">Raporty PDF/Excel</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_mobile">Aplikacja mobilna</span></li>
         </ul>
-        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
-          <span class="lang-pl">Zacznij za darmo</span>
-          <span class="lang-ua" style="display:none">Почати безкоштовно</span>
-          <span class="lang-ru" style="display:none">Начать бесплатно</span>
-          <span class="lang-en" style="display:none">Start for free</span>
-          <span class="lang-lt" style="display:none">Pradėti nemokamai</span>
-        </a>
+        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px" data-i18n="cta_free">Zacznij za darmo</a>
       </div>
 
       <!-- Pro -->
       <div class="plan-card featured">
-        <div class="plan-badge">
-          <span class="lang-pl">Najpopularniejszy</span>
-          <span class="lang-ua" style="display:none">Найпопулярніший</span>
-          <span class="lang-ru" style="display:none">Самый популярный</span>
-          <span class="lang-en" style="display:none">Most popular</span>
-          <span class="lang-lt" style="display:none">Populiariausias</span>
-        </div>
+        <div class="plan-badge" data-i18n="plan_popular">Najpopularniejszy</div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price">
-          <span id="price-val">19.99</span> <sub>$</sub>
-          <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span><span class="lang-ru" style="display:none">мес.</span><span class="lang-en" style="display:none">mo.</span><span class="lang-lt" style="display:none">mėn.</span></span>
-        </div>
-        <div class="plan-desc" id="price-desc">
-          <span class="lang-pl">14 dni próbnych gratis</span>
-          <span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span>
-          <span class="lang-ru" style="display:none">14 дней пробных бесплатно</span>
-          <span class="lang-en" style="display:none">14-day free trial</span>
-          <span class="lang-lt" style="display:none">14 dienų nemokamas bandymas</span>
-        </div>
+        <div class="plan-price"><span id="price-val">19.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
+        <div class="plan-desc" data-i18n="plan_trial">14 dni próbnych gratis</div>
         <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Nieograniczeni mieszkańcy</span><span class="lang-ua" style="display:none">Необмежені мешканці</span><span class="lang-ru" style="display:none">Неограниченные жильцы</span><span class="lang-en" style="display:none">Unlimited residents</span><span class="lang-lt" style="display:none">Neriboti gyventojai</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span><span class="lang-ru" style="display:none">Неограниченные объекты</span><span class="lang-en" style="display:none">Unlimited properties</span><span class="lang-lt" style="display:none">Neriboti objektai</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Finanse + Rezerwacje</span><span class="lang-ua" style="display:none">Фінанси + Бронювання</span><span class="lang-ru" style="display:none">Финансы + Бронирования</span><span class="lang-en" style="display:none">Finance + Bookings</span><span class="lang-lt" style="display:none">Finansai + Rezervacijos</span></span>
-          </li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><span class="lang-pl">Wsparcie priorytetowe</span><span class="lang-ua" style="display:none">Пріоритетна підтримка</span><span class="lang-ru" style="display:none">Приоритетная поддержка</span><span class="lang-en" style="display:none">Priority support</span><span class="lang-lt" style="display:none">Prioritetinė pagalba</span></span>
-          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_res">Nieograniczeni mieszkańcy</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_props">Nieograniczone obiekty</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_finance">Finanse + Rezerwacje</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_support">Wsparcie priorytetowe</span></li>
         </ul>
-        <a href="app.html" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
-          <span class="lang-pl">Wypróbuj 14 dni gratis</span>
-          <span class="lang-ua" style="display:none">Спробуй 14 днів безкоштовно</span>
-          <span class="lang-ru" style="display:none">Попробуй 14 дней бесплатно</span>
-          <span class="lang-en" style="display:none">Try free for 14 days</span>
-          <span class="lang-lt" style="display:none">Išbandyk 14 dienų nemokamai</span>
-        </a>
+        <a href="app.html" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:12px" data-i18n="cta_trial">Wypróbuj 14 dni gratis</a>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
   <section class="cta-section">
-    <h2>
-      <span class="lang-pl">Gotowy na zmianę?</span>
-      <span class="lang-ua" style="display:none">Готові до змін?</span>
-    </h2>
-    <p>
-      <span class="lang-pl">Zacznij zarządzać kwaterami w minutę. Karta kredytowa nie jest wymagana.</span>
-      <span class="lang-ua" style="display:none">Почніть управляти житлом за хвилину. Кредитна картка не потрібна.</span>
-    </p>
+    <h2 data-i18n="cta_h2">Gotowy na zmianę?</h2>
+    <p data-i18n="cta_p">Zacznij zarządzać kwaterami w minutę. Karta kredytowa nie jest wymagana.</p>
     <a href="app.html" class="btn-primary" style="font-size:16px;padding:14px 32px">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      <span class="lang-pl">Wypróbuj Lokum</span>
-      <span class="lang-ua" style="display:none">Спробувати Lokum</span>
+      <span data-i18n="cta_btn">Wypróbuj Lokum</span>
     </a>
   </section>
 
@@ -719,78 +587,58 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Lokum
       </a>
-      <div class="footer-right">© 2026 Lokum. <span class="lang-pl">Wszelkie prawa zastrzeżone.</span><span class="lang-ua" style="display:none">Всі права захищені.</span></div>
+      <div class="footer-right">© 2026 Lokum. <span data-i18n="footer_copy">Wszelkie prawa zastrzeżone.</span></div>
     </footer>
   </div>
 
   <script>
-    // ── LANG ──
+    const I18N = {"nav_pricing": {"pl": "Cennik", "ua": "Ціни", "ru": "Цены", "en": "Pricing", "lt": "Kainos"}, "nav_login": {"pl": "Zaloguj się", "ua": "Увійти", "ru": "Войти", "en": "Sign in", "lt": "Prisijungti"}, "hero_badge": {"pl": "Darmowy plan dostępny", "ua": "Безкоштовний план доступний", "ru": "Бесплатный план доступен", "en": "Free plan available", "lt": "Nemokamas planas prieinamas"}, "hero_h1": {"pl": "Zarządzaj kwaterami<br><span>bez arkuszy Excel</span>", "ua": "Керуйте житлом<br><span>без таблиць Excel</span>", "ru": "Управляйте жильём<br><span>без таблиц Excel</span>", "en": "Manage housing<br><span>without Excel sheets</span>", "lt": "Valdykite būstą<br><span>be Excel lentelių</span>"}, "hero_p": {"pl": "Mieszkańcy, płatności, raporty — wszystko w jednym miejscu. Sprawdź kto ile jest winien w kilka sekund.", "ua": "Мешканці, платежі, звіти — все в одному місці. Дізнайтесь хто скільки заборгував.", "ru": "Жильцы, платежи, отчёты — всё в одном месте. Узнайте кто сколько должен.", "en": "Residents, payments, reports — all in one place. See who owes what in seconds.", "lt": "Gyventojai, mokėjimai, ataskaitos — viskas vienoje vietoje."}, "hero_cta1": {"pl": "Zacznij za darmo", "ua": "Почати безкоштовно", "ru": "Начать бесплатно", "en": "Start for free", "lt": "Pradėti nemokamai"}, "hero_cta2": {"pl": "Zobacz demo", "ua": "Дивитись демо", "ru": "Смотреть демо", "en": "Watch demo", "lt": "Žiūrėti demo"}, "banner_lbl1": {"pl": "Pracowników w bazie", "ua": "Працівників у базі", "ru": "Работников в базе", "en": "Workers in database", "lt": "Darbuotojų bazėje"}, "banner_note1": {"pl": "* z beta testu", "ua": "* з бета-тесту", "ru": "* из бета-теста", "en": "* from beta test", "lt": "* iš beta testo"}, "banner_lbl2": {"pl": "Onboarding lokatora", "ua": "Онбординг мешканця", "ru": "Онбординг жильца", "en": "Resident onboarding", "lt": "Gyventojo įvedimas"}, "banner_lbl3": {"pl": "Za start", "ua": "За старт", "ru": "За старт", "en": "To start", "lt": "Pradžiai"}, "feat_label": {"pl": "Funkcje", "ua": "Можливості", "ru": "Функции", "en": "Features", "lt": "Funkcijos"}, "feat_h2": {"pl": "Wszystko czego potrzebujesz", "ua": "Все що вам потрібно", "ru": "Всё что вам нужно", "en": "Everything you need", "lt": "Viskas ko reikia"}, "feat_sub": {"pl": "Prosty system do zarządzania kwaterami pracowniczymi.", "ua": "Проста система управління житлом для працівників.", "ru": "Простая система управления жильём для работников.", "en": "Simple system for managing worker housing.", "lt": "Paprasta sistema darbuotojų būsto valdymui."}, "feat1_h": {"pl": "Baza mieszkańców", "ua": "База мешканців", "ru": "База жильцов", "en": "Resident database", "lt": "Gyventojų bazė"}, "feat1_p": {"pl": "Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika.", "ua": "Відстежуйте заїзди, виїзди та час перебування кожного працівника.", "ru": "Отслеживайте заселения, выселения и точное время пребывания каждого работника.", "en": "Track check-ins, check-outs and exact stay of every worker.", "lt": "Sekite įsiregistravimus ir išsiregistravimus."}, "feat2_h": {"pl": "Automatyczne płatności", "ua": "Автоматичні платежі", "ru": "Автоматические платежи", "en": "Automatic payments", "lt": "Automatiniai mokėjimai"}, "feat2_p": {"pl": "System przelicza należności na podstawie stawki miesięcznej. Zero ręcznych obliczeń.", "ua": "Система розраховує заборгованість. Нуль ручних обчислень.", "ru": "Система рассчитывает задолженность. Ноль ручных вычислений.", "en": "System calculates amounts due. Zero manual calculations.", "lt": "Sistema skaičiuoja mokėtinas sumas."}, "feat3_h": {"pl": "Raporty finansowe", "ua": "Фінансові звіти", "ru": "Финансовые отчёты", "en": "Financial reports", "lt": "Finansinės ataskaitos"}, "feat3_p": {"pl": "Prognoza, faktyczny dochód, wydatki i zysk netto — wszystko w czytelnych wykresach.", "ua": "Прогноз, дохід, витрати і чистий прибуток.", "ru": "Прогноз, доход, расходы и чистая прибыль.", "en": "Forecast, income, expenses and net profit.", "lt": "Prognozė, pajamos, išlaidos ir grynasis pelnas."}, "feat4_h": {"pl": "Eksport PDF / Excel", "ua": "Експорт PDF / Excel", "ru": "Экспорт PDF / Excel", "en": "PDF / Excel export", "lt": "PDF / Excel eksportas"}, "feat4_p": {"pl": "Generuj przejrzyste raporty dla firm i księgowości jednym kliknięciem.", "ua": "Генеруйте звіти для компаній та бухгалтерії в один клік.", "ru": "Генерируйте отчёты для компаний одним кликом.", "en": "Generate clear reports for accounting with one click.", "lt": "Generuokite ataskaitas vienu paspaudimu."}, "feat5_h": {"pl": "Działa na telefonie", "ua": "Працює на телефоні", "ru": "Работает на телефоне", "en": "Works on mobile", "lt": "Veikia telefone"}, "feat5_p": {"pl": "PWA — instalujesz jak aplikację na iPhone i Android. Działa też offline.", "ua": "PWA — як додаток на iPhone та Android. Офлайн режим.", "ru": "PWA — как приложение на iPhone и Android. Работает офлайн.", "en": "PWA — install like an app on iPhone and Android. Works offline.", "lt": "PWA — įdiekite kaip programą. Veikia be interneto."}, "feat6_h": {"pl": "Współdzielenie", "ua": "Спільний доступ", "ru": "Совместный доступ", "en": "Shared access", "lt": "Bendras priėjimas"}, "feat6_p": {"pl": "Zaproś menedżerów i właścicieli obiektów do podglądu danych w czasie rzeczywistym.", "ua": "Запросіть менеджерів для перегляду даних у реальному часі.", "ru": "Пригласите менеджеров для просмотра данных в реальном времени.", "en": "Invite managers to view data in real time.", "lt": "Pakvieskite vadovus peržiūrėti duomenis."}, "cta_h2": {"pl": "Gotowy na zmianę?", "ua": "Готові до змін?", "ru": "Готовы к переменам?", "en": "Ready for a change?", "lt": "Pasiruošę pokyčiams?"}, "cta_p": {"pl": "Zacznij zarządzać kwaterami w minutę. Karta kredytowa nie jest wymagana.", "ua": "Почніть управляти житлом за хвилину. Кредитна картка не потрібна.", "ru": "Начните управлять жильём за минуту. Кредитная карта не требуется.", "en": "Start managing housing in a minute. No credit card required.", "lt": "Pradėkite valdyti būstą per minutę. Kortelė nereikalinga."}, "cta_btn": {"pl": "Wypróbuj Lokum", "ua": "Спробувати Lokum", "ru": "Попробовать Lokum", "en": "Try Lokum", "lt": "Išbandyti Lokum"}, "footer_copy": {"pl": "Wszelkie prawa zastrzeżone.", "ua": "Всі права захищені.", "ru": "Все права защищены.", "en": "All rights reserved.", "lt": "Visos teisės saugomos."}, "billing_monthly": {"pl": "Miesięcznie", "ua": "Щомісяця", "ru": "Ежемесячно", "en": "Monthly", "lt": "Kas mėnesį"}, "billing_annual": {"pl": "Rocznie", "ua": "Щороку", "ru": "Ежегодно", "en": "Annual", "lt": "Kasmet"}, "plan_free_desc": {"pl": "Na zawsze darmowy", "ua": "Назавжди безкоштовний", "ru": "Навсегда бесплатный", "en": "Free forever", "lt": "Amžinai nemokamas"}, "plan_residents": {"pl": "mieszkańców", "ua": "мешканців", "ru": "жильцов", "en": "residents", "lt": "gyventojų"}, "plan_props": {"pl": "obiekty", "ua": "об'єкти", "ru": "объекта", "en": "properties", "lt": "objektai"}, "plan_reports": {"pl": "Raporty PDF/Excel", "ua": "Звіти PDF/Excel", "ru": "Отчёты PDF/Excel", "en": "PDF/Excel reports", "lt": "PDF/Excel ataskaitos"}, "plan_mobile": {"pl": "Aplikacja mobilna", "ua": "Мобільний додаток", "ru": "Мобильное приложение", "en": "Mobile app", "lt": "Mobilioji programa"}, "cta_free": {"pl": "Zacznij za darmo", "ua": "Почати безкоштовно", "ru": "Начать бесплатно", "en": "Start for free", "lt": "Pradėti nemokamai"}, "plan_popular": {"pl": "Najpopularniejszy", "ua": "Найпопулярніший", "ru": "Самый популярный", "en": "Most popular", "lt": "Populiariausias"}, "plan_mo": {"pl": "mies.", "ua": "міс.", "ru": "мес.", "en": "mo.", "lt": "mėn."}, "plan_trial": {"pl": "14 dni próbnych gratis", "ua": "14 днів пробних безкоштовно", "ru": "14 дней пробных бесплатно", "en": "14-day free trial", "lt": "14 dienų bandymas"}, "plan_unlimited_res": {"pl": "Nieograniczeni mieszkańcy", "ua": "Необмежені мешканці", "ru": "Неограниченные жильцы", "en": "Unlimited residents", "lt": "Neriboti gyventojai"}, "plan_unlimited_props": {"pl": "Nieograniczone obiekty", "ua": "Необмежені об'єкти", "ru": "Неограниченные объекты", "en": "Unlimited properties", "lt": "Neriboti objektai"}, "plan_finance": {"pl": "Finanse + Rezerwacje", "ua": "Фінанси + Бронювання", "ru": "Финансы + Бронирования", "en": "Finance + Bookings", "lt": "Finansai + Rezervacijos"}, "plan_support": {"pl": "Wsparcie priorytetowe", "ua": "Пріоритетна підтримка", "ru": "Приоритетная поддержка", "en": "Priority support", "lt": "Prioritetinė pagalba"}, "cta_trial": {"pl": "Wypróbuj 14 dni gratis", "ua": "Спробуй 14 днів безкоштовно", "ru": "Попробуй 14 дней бесплатно", "en": "Try free for 14 days", "lt": "Išbandyk 14 dienų nemokamai"}};
     const LANGS = ['pl','ua','ru','en','lt'];
+    const LANG_FLAGS = {pl:'🇵🇱', ua:'🇺🇦', ru:'🇷🇺', en:'🇬🇧', lt:'🇱🇹'};
+    const LANG_NEXT  = {pl:'ua', ua:'ru', ru:'en', en:'lt', lt:'pl'};
     let currentLang = 'pl';
 
     function applyLang() {
-      LANGS.forEach(l => {
-        document.querySelectorAll('.lang-' + l).forEach(el => {
-          el.style.display = l === currentLang ? '' : 'none';
-        });
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const val = I18N[key] && I18N[key][currentLang];
+        if (val !== undefined) el.innerHTML = val;
       });
+      const btn = document.getElementById('lang-btn');
+      if (btn) {
+        const next = LANG_NEXT[currentLang];
+        btn.textContent = LANG_FLAGS[next] + ' ' + next.toUpperCase();
+      }
     }
 
     function toggleLang() {
-      const idx = LANGS.indexOf(currentLang);
-      currentLang = LANGS[(idx + 1) % LANGS.length];
-      localStorage.setItem('lokum-landing-lang', currentLang);
-      // Update toggle button text
-      updateLangBtn();
+      currentLang = LANG_NEXT[currentLang];
+      localStorage.setItem('lokum-lang', currentLang);
       applyLang();
     }
 
-    function updateLangBtn() {
-      const labels = {pl:'🇺🇦 UA', ua:'🇷🇺 RU', ru:'🇬🇧 EN', en:'🇱🇹 LT', lt:'🇵🇱 PL'};
-      const btn = document.querySelector('[onclick="toggleLang()"]');
-      if (btn) btn.innerHTML = labels[currentLang] || '🌐';
-    }
-
-    const saved = localStorage.getItem('lokum-landing-lang');
-    const nav = navigator.language.slice(0,2).toLowerCase();
+    const saved = localStorage.getItem('lokum-lang');
+    const nav = (navigator.language || '').slice(0,2).toLowerCase();
     if (saved && LANGS.includes(saved)) currentLang = saved;
     else if (nav === 'uk') currentLang = 'ua';
     else if (nav === 'ru') currentLang = 'ru';
     else if (nav === 'lt') currentLang = 'lt';
     else if (nav === 'en') currentLang = 'en';
-
     applyLang();
-    updateLangBtn();
 
-    // ── BILLING TOGGLE ──
-    let billing = 'monthly';
-
+    // Billing toggle
     function setBilling(type) {
-      billing = type;
-      const priceEl = document.getElementById('price-val');
-      const monthlyBtn = document.getElementById('btn-monthly');
-      const annualBtn = document.getElementById('btn-annual');
-
-      if (type === 'annual') {
-        priceEl.textContent = '17';
-        monthlyBtn.style.background = 'transparent';
-        monthlyBtn.style.color = 'var(--text2)';
-        annualBtn.style.background = 'var(--accent)';
-        annualBtn.style.color = '#111';
-      } else {
-        priceEl.textContent = '19.99';
-        monthlyBtn.style.background = 'var(--accent)';
-        monthlyBtn.style.color = '#111';
-        annualBtn.style.background = 'transparent';
-        annualBtn.style.color = 'var(--text2)';
-      }
+      document.getElementById('price-val').textContent = type === 'annual' ? '17' : '19.99';
+      const active = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--accent);color:#111';
+      const inactive = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text2)';
+      document.getElementById('btn-monthly').style.cssText = type === 'monthly' ? active : inactive;
+      document.getElementById('btn-annual').style.cssText = type === 'annual' ? active : inactive;
     }
 
-    // ── SCROLL ANIMATIONS ──
+    // Scroll animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.15 });
-
     document.querySelectorAll('.banner-stat, .feat-card').forEach(el => observer.observe(el));
   </script>
 </body>
