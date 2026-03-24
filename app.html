@@ -753,6 +753,84 @@
       }
     });
   </script>
+
+  <!-- ===== FAQ SECTION ===== -->
+  <div id="faq-section" style="display:none;max-width:780px;margin:0 auto;padding:32px 20px 48px">
+    <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Najczęstsze pytania</h2>
+    <p style="text-align:center;color:var(--text3);font-size:14px;margin-bottom:28px">Odpowiedzi na pytania, które słyszymy najczęściej</p>
+    <div id="faq-list"></div>
+  </div>
+
+  <style>
+    .faq-item { border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+    .faq-q { display:flex; justify-content:space-between; align-items:center; padding:16px 18px; cursor:pointer; font-weight:600; font-size:14px; gap:12px; width:100%; background:none; border:none; color:inherit; font-family:inherit; text-align:left; }
+    .faq-q:hover { background:var(--surface); }
+    .faq-q svg { flex-shrink:0; transition:transform .25s; color:var(--text3); }
+    .faq-item.open .faq-q svg { transform:rotate(180deg); }
+    .faq-a { padding:0 18px; max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s; font-size:13px; color:var(--text2); line-height:1.7; }
+    .faq-item.open .faq-a { max-height:400px; padding:0 18px 16px; }
+  </style>
+
+  <script>
+    (function() {
+      const FAQS = [
+        { q: "Jak dodać nowego mieszkańca?", a: "Przejdź do sekcji <strong>Mieszkańcy</strong> i kliknij przycisk <strong>+ Zamelduj</strong> w prawym górnym rogu. Wypełnij formularz: imię, nazwisko, datę zameldowania, stawkę miesięczną oraz przypisz obiekt. Kliknij <strong>Zapisz</strong> — mieszkaniec pojawi się na liście natychmiast." },
+        { q: "Jak zmienić stawkę czynszu dla mieszkańca?", a: "Kliknij kartę mieszkańca, by otworzyć formularz edycji. Przewiń do sekcji <strong>Nowa stawka</strong>, wpisz nową kwotę i datę obowiązywania. System automatycznie zapisze historię wszystkich zmian stawek — możesz ją przeglądać w zakładce <strong>Historia stawek</strong>." },
+        { q: "Jak wygenerować raport finansowy?", a: "Kliknij przycisk <strong>Raport</strong> w nagłówku aplikacji. Wybierz okres (tydzień, miesiąc, rok lub niestandardowy), opcjonalnie zawęź do konkretnego obiektu, a następnie kliknij <strong>Generuj</strong>. Raport możesz pobrać jako PDF lub Excel jednym kliknięciem." },
+        { q: "Jak wymeldować mieszkańca?", a: "Na karcie mieszkańca kliknij ikonę <strong>wymeldowania</strong> (strzałka w prawo). Potwierdź akcję w oknie dialogowym. Mieszkaniec zostanie przeniesiony do sekcji <strong>Wymeldowani</strong> — jego historia i dane pozostają w systemie." },
+        { q: "Jak dodać obiekt (hostel, mieszkanie, dom)?", a: "Przejdź do sekcji <strong>Obiekty</strong> i kliknij <strong>+ Dodaj</strong>. Wpisz miasto, adres, wybierz typ obiektu i liczbę miejsc. Możesz też dodać strukturę pokoi z podziałem na piętra. Po zapisaniu obiekt będzie dostępny przy dodawaniu mieszkańców." },
+        { q: "Jak zaprosić współpracownika do zarządzania?", a: "Wejdź w <strong>Ustawienia</strong> (ikona koła zębatego) i przejdź do zakładki <strong>Współdzielone</strong>. Kliknij <strong>Zaproś użytkownika</strong>, wpisz email i wyślij link zaproszenia. Zaproszony użytkownik po akceptacji będzie miał dostęp do tych samych danych w czasie rzeczywistym." },
+        { q: "Jak importować mieszkańców z pliku CSV?", a: "Kliknij przycisk <strong>Import CSV</strong> w sekcji Mieszkańcy. Pobierz szablon CSV, uzupełnij go danymi (imię, nazwisko, data zameldowania, stawka) i wgraj z powrotem. System zaimportuje wszystkich mieszkańców automatycznie." },
+        { q: "Czy aplikacja działa na telefonie?", a: "Tak! Lokum to aplikacja PWA (Progressive Web App) — działa w przeglądarce mobilnej jak natywna aplikacja. Na iOS kliknij <strong>Udostępnij → Dodaj do ekranu głównego</strong>, na Android — <strong>Menu → Dodaj do ekranu głównego</strong>. Aplikacja działa płynnie na każdym urządzeniu." },
+        { q: "Jak zmienić walutę i język aplikacji?", a: "Wejdź w <strong>Ustawienia</strong> i w zakładce głównej znajdziesz wybór waluty (PLN, EUR, USD) oraz języka (Polski, Українська, Русский, English, Lietuvių). Zmiana jest natychmiastowa i synchronizuje się z chmurą." },
+        { q: "Czy moje dane są bezpieczne?", a: "Tak. Wszystkie dane są szyfrowane i przechowywane w <strong>Google Firebase</strong> — bezpiecznej infrastrukturze chmurowej. Dostęp do danych mają tylko zalogowani użytkownicy Twojego workspace'u. Nie przechowujemy haseł — uwierzytelnianie obsługuje Google Auth." }
+      ];
+
+      window.renderFAQ = function() {
+        const list = document.getElementById('faq-list');
+        if (!list) return;
+        list.innerHTML = FAQS.map((item, i) => {
+          const panelId = 'faq-panel-' + i;
+          return '<div class="faq-item" id="faq-' + i + '">' +
+            '<button type="button" class="faq-q" onclick="window.toggleFAQ(' + i + ')" aria-expanded="false" aria-controls="' + panelId + '">' +
+            '<span>' + item.q + '</span>' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '</button>' +
+            '<div class="faq-a" id="' + panelId + '" role="region">' + item.a + '</div>' +
+            '</div>';
+        }).join('');
+      };
+
+      window.toggleFAQ = function(i) {
+        const el = document.getElementById('faq-' + i);
+        if (!el) return;
+        el.classList.toggle('open');
+        const btn = el.querySelector('.faq-q');
+        if (btn) btn.setAttribute('aria-expanded', el.classList.contains('open'));
+      };
+
+      // Show FAQ once user is logged in (hook into window.render)
+      const _origRender = window.render;
+      window._faqInit = function() {
+        const sec = document.getElementById('faq-section');
+        if (sec && document.getElementById('main-app') &&
+            !document.getElementById('main-app').classList.contains('hidden') &&
+            document.getElementById('main-app').style.display !== 'none') {
+          sec.style.display = 'block';
+          window.renderFAQ();
+        }
+      };
+      // Poll until main-app is visible (fires after login)
+      (function poll() {
+        const app = document.getElementById('main-app');
+        if (app && app.style.display !== 'none') {
+          window._faqInit();
+        } else {
+          setTimeout(poll, 500);
+        }
+      })();
+    })();
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 
