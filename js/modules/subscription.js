@@ -206,7 +206,7 @@ export function showUpgradeModal(reason) {
 
 // ===== STRIPE PAYMENT LINK =====
 // Вставь свой Payment Link от Stripe сюда:
-const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00';
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/bJedR28I19XYdUPg5Y0Fi01';
 
 export function openSubscription() {
   const email = window._currentUser?.email || '';
