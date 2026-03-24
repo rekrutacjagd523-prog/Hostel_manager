@@ -219,6 +219,7 @@ export function openBookingForm(id) {
         document.getElementById('bk-room-row').style.display = 'none';
         document.getElementById('bk-start').value = todayStr();
         document.getElementById('bk-end').value = '';
+        const errEl2 = document.getElementById('bk-error'); if (errEl2) errEl2.style.display = 'none';
         document.getElementById('bk-amount').value = '';
         document.getElementById('bk-notes').value = '';
         document.getElementById('bk-status').value = 'pending';
@@ -255,7 +256,12 @@ export async function saveBooking() {
     const status = document.getElementById('bk-status').value;
     const errEl = document.getElementById('bk-error');
     if (!guestName || !startDate || !endDate) {
-        if (errEl) { errEl.textContent = t('guestName') + ', ' + t('startDate') + ', ' + t('endDate') + '!'; errEl.style.display = 'block'; }
+        const missing = [];
+        if (!guestName) missing.push(t('guestName'));
+        if (!startDate) missing.push(t('startDate'));
+        if (!endDate) missing.push(t('endDate'));
+        if (errEl) { errEl.textContent = missing.join(', ') + '!'; errEl.style.display = 'block'; }
+        if (!endDate) { const el = document.getElementById('bk-end'); if (el) { el.style.borderColor = 'var(--red)'; setTimeout(() => el.style.borderColor = '', 2000); } }
         return;
     }
     if (endDate < startDate) {
