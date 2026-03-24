@@ -1125,13 +1125,7 @@
 window._paidMap = {};
 
 function openStatModal(type) {
-  const body = document.getElementById('stat-modal-body');
-  const title = document.getElementById('stat-modal-title');
-  const overlay = document.getElementById('stat-modal-overlay');
-  if (!body || !title || !overlay) {
-    alert("MISSING: body=" + !!body + " title=" + !!title + " overlay=" + !!overlay);
-    return;
-  }
+  alert("SM: b=" + !!document.getElementById('stat-modal-body') + " t=" + !!document.getElementById('stat-modal-title') + " o=" + !!document.getElementById('stat-modal-overlay'));
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const cur = (window._settings && window._settings.currency) || 'PLN';
