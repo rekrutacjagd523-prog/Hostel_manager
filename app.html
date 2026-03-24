@@ -1125,8 +1125,8 @@
 window._paidMap = {};
 
 function openStatModal(type) {
-  alert("start");
-  try {
+  const title = document.getElementById('stat-modal-title');
+  const body = document.getElementById('stat-modal-body');
   const all = window._residents || [];
   const active = all.filter(r => !r.checkOutDate);
   const cur = (window._settings && window._settings.currency) || 'PLN';
@@ -1244,8 +1244,6 @@ function openStatModal(type) {
   body.innerHTML = html;
   const ov = document.getElementById('stat-modal-overlay');
   ov.classList.remove('hidden');
-  const d = getComputedStyle(ov).display; alert(d);
-  } catch(e) { alert('ERR2: ' + e.message); }
 }
 
 function togglePaid(resId, checked) {
