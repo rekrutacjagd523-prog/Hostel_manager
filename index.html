@@ -432,10 +432,7 @@
       <span class="nav-logo-name">Lokum</span>
     </a>
     <div class="nav-right">
-      <button class="nav-link hide-mob" onclick="toggleLang()">
-        <span class="lang-pl">🇺🇦 UA</span>
-        <span class="lang-ua" style="display:none">🇵🇱 PL</span>
-      </button>
+<button class="nav-link hide-mob" onclick="toggleLang()">🇺🇦 UA</button>
       <a href="#pricing" class="nav-link hide-mob">
         <span class="lang-pl">Cennik</span>
         <span class="lang-ua" style="display:none">Ціни</span>
@@ -578,32 +575,77 @@
       <div class="sec-label">
         <span class="lang-pl">Cennik</span>
         <span class="lang-ua" style="display:none">Ціни</span>
+        <span class="lang-ru" style="display:none">Тарифы</span>
+        <span class="lang-en" style="display:none">Pricing</span>
+        <span class="lang-lt" style="display:none">Kainos</span>
       </div>
       <h2 class="sec-title">
         <span class="lang-pl">Prosty, uczciwy cennik</span>
         <span class="lang-ua" style="display:none">Простий, чесний прайс</span>
+        <span class="lang-ru" style="display:none">Простой, честный прайс</span>
+        <span class="lang-en" style="display:none">Simple, honest pricing</span>
+        <span class="lang-lt" style="display:none">Paprasta kainodara</span>
       </h2>
       <p class="sec-sub" style="margin:0 auto">
         <span class="lang-pl">Zacznij za darmo, rozbuduj gdy potrzebujesz.</span>
         <span class="lang-ua" style="display:none">Починайте безкоштовно, розширюйте коли потрібно.</span>
+        <span class="lang-ru" style="display:none">Начните бесплатно, расширяйте когда нужно.</span>
+        <span class="lang-en" style="display:none">Start for free, upgrade when you need.</span>
+        <span class="lang-lt" style="display:none">Pradėkite nemokamai, tobulinkite kai reikia.</span>
       </p>
+
+      <!-- Billing toggle -->
+      <div style="display:inline-flex;align-items:center;gap:12px;margin-top:28px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:5px">
+        <button id="btn-monthly" onclick="setBilling('monthly')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--accent);color:#111">
+          <span class="lang-pl">Miesięcznie</span>
+          <span class="lang-ua" style="display:none">Щомісяця</span>
+          <span class="lang-ru" style="display:none">Ежемесячно</span>
+          <span class="lang-en" style="display:none">Monthly</span>
+          <span class="lang-lt" style="display:none">Kas mėnesį</span>
+        </button>
+        <button id="btn-annual" onclick="setBilling('annual')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text2)">
+          <span class="lang-pl">Rocznie</span>
+          <span class="lang-ua" style="display:none">Щороку</span>
+          <span class="lang-ru" style="display:none">Ежегодно</span>
+          <span class="lang-en" style="display:none">Annual</span>
+          <span class="lang-lt" style="display:none">Kasmet</span>
+          <span style="background:rgba(74,222,128,.15);color:var(--green);padding:2px 7px;border-radius:20px;font-size:11px;margin-left:4px">-15%</span>
+        </button>
+      </div>
     </div>
 
-    <div class="pricing-grid">
+    <div class="pricing-grid" style="max-width:720px">
       <!-- Free -->
       <div class="plan-card">
         <div class="plan-name">Start</div>
-        <div class="plan-price">0 <sub>zł</sub></div>
-        <div class="plan-desc"><span class="lang-pl">Na zawsze darmowy</span><span class="lang-ua" style="display:none">Назавжди безкоштовний</span></div>
+        <div class="plan-price">0 <sub>$</sub></div>
+        <div class="plan-desc">
+          <span class="lang-pl">Na zawsze darmowy</span>
+          <span class="lang-ua" style="display:none">Назавжди безкоштовний</span>
+          <span class="lang-ru" style="display:none">Навсегда бесплатный</span>
+          <span class="lang-en" style="display:none">Free forever</span>
+          <span class="lang-lt" style="display:none">Amžinai nemokamas</span>
+        </div>
         <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>10</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>2</strong> <span class="lang-pl">obiekty</span><span class="lang-ua" style="display:none">об'єкти</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Raporty PDF/Excel</span><span class="lang-ua" style="display:none">Звіти PDF/Excel</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Aplikacja mobilna</span><span class="lang-ua" style="display:none">Мобільний додаток</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>10</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span><span class="lang-ru" style="display:none">жильцов</span><span class="lang-en" style="display:none">residents</span><span class="lang-lt" style="display:none">gyventojų</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>3</strong> <span class="lang-pl">obiekty</span><span class="lang-ua" style="display:none">об'єкти</span><span class="lang-ru" style="display:none">объекта</span><span class="lang-en" style="display:none">properties</span><span class="lang-lt" style="display:none">objektai</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Raporty PDF/Excel</span><span class="lang-ua" style="display:none">Звіти PDF/Excel</span><span class="lang-ru" style="display:none">Отчёты PDF/Excel</span><span class="lang-en" style="display:none">PDF/Excel reports</span><span class="lang-lt" style="display:none">PDF/Excel ataskaitos</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Aplikacja mobilna</span><span class="lang-ua" style="display:none">Мобільний додаток</span><span class="lang-ru" style="display:none">Мобильное приложение</span><span class="lang-en" style="display:none">Mobile app</span><span class="lang-lt" style="display:none">Mobilioji programa</span></span>
+          </li>
         </ul>
         <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
           <span class="lang-pl">Zacznij za darmo</span>
           <span class="lang-ua" style="display:none">Почати безкоштовно</span>
+          <span class="lang-ru" style="display:none">Начать бесплатно</span>
+          <span class="lang-en" style="display:none">Start for free</span>
+          <span class="lang-lt" style="display:none">Pradėti nemokamai</span>
         </a>
       </div>
 
@@ -612,38 +654,42 @@
         <div class="plan-badge">
           <span class="lang-pl">Najpopularniejszy</span>
           <span class="lang-ua" style="display:none">Найпопулярніший</span>
+          <span class="lang-ru" style="display:none">Самый популярный</span>
+          <span class="lang-en" style="display:none">Most popular</span>
+          <span class="lang-lt" style="display:none">Populiariausias</span>
         </div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price">12 <sub>zł</sub> <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span></span></div>
-        <div class="plan-desc"><span class="lang-pl">14 dni próbnych gratis</span><span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span></div>
+        <div class="plan-price">
+          <span id="price-val">19.99</span> <sub>$</sub>
+          <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span><span class="lang-ru" style="display:none">мес.</span><span class="lang-en" style="display:none">mo.</span><span class="lang-lt" style="display:none">mėn.</span></span>
+        </div>
+        <div class="plan-desc" id="price-desc">
+          <span class="lang-pl">14 dni próbnych gratis</span>
+          <span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span>
+          <span class="lang-ru" style="display:none">14 дней пробных бесплатно</span>
+          <span class="lang-en" style="display:none">14-day free trial</span>
+          <span class="lang-lt" style="display:none">14 dienų nemokamas bandymas</span>
+        </div>
         <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>100</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>5</strong> <span class="lang-pl">użytkowników</span><span class="lang-ua" style="display:none">користувачів</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Finanse + Rezerwacje</span><span class="lang-ua" style="display:none">Фінанси + Бронювання</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Wsparcie priorytetowe</span><span class="lang-ua" style="display:none">Пріоритетна підтримка</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Nieograniczeni mieszkańcy</span><span class="lang-ua" style="display:none">Необмежені мешканці</span><span class="lang-ru" style="display:none">Неограниченные жильцы</span><span class="lang-en" style="display:none">Unlimited residents</span><span class="lang-lt" style="display:none">Neriboti gyventojai</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span><span class="lang-ru" style="display:none">Неограниченные объекты</span><span class="lang-en" style="display:none">Unlimited properties</span><span class="lang-lt" style="display:none">Neriboti objektai</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Finanse + Rezerwacje</span><span class="lang-ua" style="display:none">Фінанси + Бронювання</span><span class="lang-ru" style="display:none">Финансы + Бронирования</span><span class="lang-en" style="display:none">Finance + Bookings</span><span class="lang-lt" style="display:none">Finansai + Rezervacijos</span></span>
+          </li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><span class="lang-pl">Wsparcie priorytetowe</span><span class="lang-ua" style="display:none">Пріоритетна підтримка</span><span class="lang-ru" style="display:none">Приоритетная поддержка</span><span class="lang-en" style="display:none">Priority support</span><span class="lang-lt" style="display:none">Prioritetinė pagalba</span></span>
+          </li>
         </ul>
         <a href="app.html" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
           <span class="lang-pl">Wypróbuj 14 dni gratis</span>
           <span class="lang-ua" style="display:none">Спробуй 14 днів безкоштовно</span>
-        </a>
-      </div>
-
-      <!-- Premium -->
-      <div class="plan-card">
-        <div class="plan-name">Premium</div>
-        <div class="plan-price">29 <sub>zł</sub> <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span></span></div>
-        <div class="plan-desc"><span class="lang-pl">14 dni próbnych gratis</span><span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span></div>
-        <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczeni mieszkańcy</span><span class="lang-ua" style="display:none">Необмежені мешканці</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczeni użytkownicy</span><span class="lang-ua" style="display:none">Необмежені користувачі</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">API dostęp</span><span class="lang-ua" style="display:none">API доступ</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Dedykowane wsparcie</span><span class="lang-ua" style="display:none">Виділена підтримка</span></span></li>
-        </ul>
-        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
-          <span class="lang-pl">Wybierz Premium</span>
-          <span class="lang-ua" style="display:none">Обрати Premium</span>
+          <span class="lang-ru" style="display:none">Попробуй 14 дней бесплатно</span>
+          <span class="lang-en" style="display:none">Try free for 14 days</span>
+          <span class="lang-lt" style="display:none">Išbandyk 14 dienų nemokamai</span>
         </a>
       </div>
     </div>
@@ -678,29 +724,69 @@
   </div>
 
   <script>
-    // Lang toggle
-    const langEls = document.querySelectorAll('.lang-pl, .lang-ua');
-    let isUA = false;
+    // ── LANG ──
+    const LANGS = ['pl','ua','ru','en','lt'];
+    let currentLang = 'pl';
 
     function applyLang() {
-      langEls.forEach(el => {
-        if (el.classList.contains('lang-pl')) el.style.display = isUA ? 'none' : '';
-        if (el.classList.contains('lang-ua')) el.style.display = isUA ? '' : 'none';
+      LANGS.forEach(l => {
+        document.querySelectorAll('.lang-' + l).forEach(el => {
+          el.style.display = l === currentLang ? '' : 'none';
+        });
       });
     }
 
     function toggleLang() {
-      isUA = !isUA;
-      localStorage.setItem('lokum-landing-lang', isUA ? 'ua' : 'pl');
+      const idx = LANGS.indexOf(currentLang);
+      currentLang = LANGS[(idx + 1) % LANGS.length];
+      localStorage.setItem('lokum-landing-lang', currentLang);
+      // Update toggle button text
+      updateLangBtn();
       applyLang();
     }
 
-    if (localStorage.getItem('lokum-landing-lang') === 'ua' || navigator.language.startsWith('uk')) {
-      isUA = true;
+    function updateLangBtn() {
+      const labels = {pl:'🇺🇦 UA', ua:'🇷🇺 RU', ru:'🇬🇧 EN', en:'🇱🇹 LT', lt:'🇵🇱 PL'};
+      const btn = document.querySelector('[onclick="toggleLang()"]');
+      if (btn) btn.innerHTML = labels[currentLang] || '🌐';
     }
-    applyLang();
 
-    // Intersection observer for animations
+    const saved = localStorage.getItem('lokum-landing-lang');
+    const nav = navigator.language.slice(0,2).toLowerCase();
+    if (saved && LANGS.includes(saved)) currentLang = saved;
+    else if (nav === 'uk') currentLang = 'ua';
+    else if (nav === 'ru') currentLang = 'ru';
+    else if (nav === 'lt') currentLang = 'lt';
+    else if (nav === 'en') currentLang = 'en';
+
+    applyLang();
+    updateLangBtn();
+
+    // ── BILLING TOGGLE ──
+    let billing = 'monthly';
+
+    function setBilling(type) {
+      billing = type;
+      const priceEl = document.getElementById('price-val');
+      const monthlyBtn = document.getElementById('btn-monthly');
+      const annualBtn = document.getElementById('btn-annual');
+
+      if (type === 'annual') {
+        priceEl.textContent = '17';
+        monthlyBtn.style.background = 'transparent';
+        monthlyBtn.style.color = 'var(--text2)';
+        annualBtn.style.background = 'var(--accent)';
+        annualBtn.style.color = '#111';
+      } else {
+        priceEl.textContent = '19.99';
+        monthlyBtn.style.background = 'var(--accent)';
+        monthlyBtn.style.color = '#111';
+        annualBtn.style.background = 'transparent';
+        annualBtn.style.color = 'var(--text2)';
+      }
+    }
+
+    // ── SCROLL ANIMATIONS ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.15 });
