@@ -188,11 +188,12 @@ export function render() {
     if (window._resLoaded && window._propsLoaded && !window._onboardingDone) {
         window._onboardingDone = true;
         const seenStr = 'hostel-onboarding-' + (window._workspaceUid || 'local');
-        if (properties().length === 0 && residents().length === 0 && !localStorage.getItem(seenStr)) {
+        if (properties().length === 0 && residents().length === 0) {
             const overlay = document.getElementById('onboarding-overlay');
             if (overlay) {
                 overlay.classList.remove('hidden');
-                localStorage.setItem(seenStr, '1');
+                // Save seen flag only when user explicitly closes
+                window._onboardingSeenKey = seenStr;
                 if (window.lucide) window.lucide.createIcons();
             }
         }

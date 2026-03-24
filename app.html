@@ -778,6 +778,9 @@
   <script>
     window.closeOnboarding = function () {
       document.getElementById('onboarding-overlay').classList.add('hidden');
+      if (window._onboardingSeenKey) {
+        localStorage.setItem(window._onboardingSeenKey, '1');
+      }
     };
 
     window.obNext = function(step) {
