@@ -1586,6 +1586,159 @@ function openNetProfitDash() {
 
   </script>
   <script type="module" src="js/main.js?v=4"></script>
+  <script>
+  (function() {
+    function fmtN(n) {
+      if (typeof n !== 'number') n = parseFloat(n) || 0;
+      var sym = window._settings && window._settings.currency ? ({PLN:'zł',EUR:'€',USD:'$'})[window._settings.currency]||'zł' : 'zł';
+      var parts = n.toFixed(2).split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      return parts.join('.') + ' ' + sym;
+    }
+    function fmtD(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'}); }
+    function T(k) { return window.t ? window.t(k) : k; }
+    function Esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function getLang() { return (window._settings && window._settings.lang) || 'PL'; }
+    function getExps() { return window._expenses || []; }
+    function closeMod(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+    var XSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    function showFinDashModal(title, stats, secTitle, secContent) {
+      var el = document.createElement('div');
+      el.className = 'overlay';
+      el.onclick = function(e) { if (e.target === el) closeMod(el); };
+      var statsHtml = stats.map(function(s, i) {
+        var b = i < stats.length-1 ? 'border-right:1px solid var(--border);' : '';
+        return '<div style="padding:14px 8px;text-align:center;'+b+'"><div style="font-size:18px;font-weight:800;color:'+s.color+';font-family:Plus Jakarta Sans,sans-serif">'+s.value+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+s.label+'</div></div>';
+      }).join('');
+      el.innerHTML = '<div class="modal" style="max-width:580px;padding:0;overflow:hidden">'
+        +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><div style="font-family:Plus Jakarta Sans,sans-serif;font-size:18px;font-weight:700">'+title+'</div>'
+        +'<button class="modal-close" onclick="this.closest(\'.overlay\').remove()">'+XSVG+'</button></div>'
+        +'<div style="display:grid;grid-template-columns:repeat('+stats.length+',1fr);border-bottom:1px solid var(--border)">'+statsHtml+'</div>'
+        +'<div style="padding:14px 18px;max-height:420px;overflow-y:auto"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+secTitle+'</div>'+secContent+'</div></div>';
+      document.body.appendChild(el);
+    }
+    window.showFinDashModal = showFinDashModal;
+
+    function openPaymentsDashboard() {
+      var res = (window._residents||[]).filter(function(r){return !r.checkOutDate;});
+      var props = window._properties||[];
+      var totalOwed = 0, debtors = [], byProp = {};
+      res.forEach(function(r) {
+        var pay = window.calcCurrentPayment ? window.calcCurrentPayment(r) : Math.round((r.monthlyRate||0)/30*Math.max(0,Math.ceil((new Date()-new Date(r.checkInDate))/86400000))*100)/100;
+        totalOwed += pay;
+        var propId = (props.find(function(p){return p.city===r.city&&p.address===r.address;})||{}).id || r.propertyId || 'other';
+        if (!byProp[propId]) byProp[propId] = {total:0,count:0,propId:propId};
+        byProp[propId].total += pay; byProp[propId].count++;
+        debtors.push({id:r.id, name:(r.firstName||r.fullName||'')+(r.lastName?' '+r.lastName:''), owed:pay, propId:propId});
+      });
+      debtors.sort(function(a,b){return b.owed-a.owed;});
+      var lang = getLang();
+      var debtorLabel = {PL:'Najwięcej do zapłaty',RU:'Больше всего к оплате',UA:'Найбільше до оплати',EN:'Top amounts owed'};
+      var countLabel = {PL:'osób z zaległością',RU:'чел. с задолженностью',UA:'осіб із заборгованістю',EN:'residents'};
+      var debtorRows = debtors.slice(0,8).map(function(r) {
+        var prop = props.find(function(p){return p.id===r.propId;});
+        var pName = prop ? Esc(prop.city)+' · '+Esc(prop.address) : '—';
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-size:13px;font-weight:600">'+Esc(r.name)+'</div><div style="font-size:11px;color:var(--text3)">'+pName+'</div></div><div style="font-weight:700;font-size:14px;color:var(--red)">'+fmtN(r.owed)+'</div></div>';
+      }).join('') || '<div style="text-align:center;padding:20px;color:var(--text4)">—</div>';
+      var propList = Object.keys(byProp).map(function(k){
+        var d=byProp[k]; var prop=props.find(function(p){return p.id===d.propId;});
+        d.city=prop?prop.city:'—'; d.addr=prop?prop.address:''; return d;
+      }).sort(function(a,b){return b.total-a.total;});
+      var propRows = propList.map(function(p){
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div style="font-size:13px"><span style="font-weight:600">'+Esc(p.city)+'</span> · '+Esc(p.addr)+'<span style="color:var(--text3);margin-left:8px;font-size:11px">'+p.count+' os.</span></div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtN(p.total)+'</div></div>';
+      }).join('');
+      var el = document.createElement('div');
+      el.className = 'overlay'; el.onclick = function(e){if(e.target===el)closeMod(el);};
+      el.innerHTML = '<div class="modal" style="max-width:560px;padding:0;overflow:hidden">'
+        +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><div style="font-family:Plus Jakarta Sans,sans-serif;font-size:18px;font-weight:700">'+T('owed')+'</div><button class="modal-close" onclick="this.closest(\'.overlay\').remove()">'+XSVG+'</button></div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">'
+        +'<div style="padding:16px;text-align:center;border-right:1px solid var(--border)"><div style="font-size:22px;font-weight:800;color:var(--accent)">'+fmtN(totalOwed)+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+T('owed')+'</div></div>'
+        +'<div style="padding:16px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--text)">'+res.length+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+(countLabel[lang]||'residents')+'</div></div></div>'
+        +'<div style="padding:12px 18px;max-height:420px;overflow-y:auto">'
+        +'<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+(debtorLabel[lang]||'Top')+'</div>'+debtorRows
+        +'<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">'+T('properties')+'</div>'+propRows+'</div></div>';
+      document.body.appendChild(el);
+    }
+    window.openPaymentsDashboard = openPaymentsDashboard;
+
+    function openProjectedIncomeDash() {
+      var res=(window._residents||[]).filter(function(r){return !r.checkOutDate;});
+      var props=window._properties||[], lang=getLang(), total=0, potential=0;
+      total = res.reduce(function(s,r){return s+(r.monthlyRate||0);},0);
+      var propData = props.map(function(p){
+        var pRes=res.filter(function(r){return r.propertyId===p.id||(r.city===p.city&&r.address===p.address);});
+        var income=pRes.reduce(function(s,r){return s+(r.monthlyRate||0);},0);
+        var avgRate=pRes.length>0?Math.round(income/pRes.length):0;
+        var pot=avgRate*(p.spots||0); potential+=pot;
+        return {city:p.city,addr:p.address,count:pRes.length,spots:p.spots||0,income:income,id:p.id};
+      }).sort(function(a,b){return b.income-a.income;});
+      var avgRate=res.length>0?Math.round(total/res.length):0;
+      var lostIncome=potential-total;
+      var propRows=propData.map(function(p){
+        var barW=potential>0?Math.round(p.income/potential*100):0;
+        return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+Esc(p.city)+' · '+Esc(p.addr)+'</div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtN(p.income)+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+barW+'%;background:var(--green);border-radius:2px"></div></div><span style="font-size:11px;color:var(--text3)">'+p.count+'/'+p.spots+'</span></div></div>';
+      }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4)">—</div>';
+      var lbls={PL:['Prognoza miesięczna','Potencjał 100%','Strata z pustostanów','Śr. stawka'],RU:['Прогноз за месяц','Потенциал 100%','Потери от пустых','Ср. ставка'],UA:['Прогноз за місяць','Потенціал 100%','Втрати від порожніх','Сер. ставка'],EN:['Monthly forecast','100% potential','Vacancy loss','Avg rate']};
+      var l=lbls[lang]||lbls.EN;
+      showFinDashModal(T('projectedIncome'),[{value:fmtN(total),label:l[0],color:'var(--green)'},{value:fmtN(potential),label:l[1],color:'var(--text)'},{value:fmtN(lostIncome),label:l[2],color:'var(--red)'},{value:fmtN(avgRate),label:l[3],color:'var(--accent)'}],T('properties'),propRows);
+    }
+    window.openProjectedIncomeDash = openProjectedIncomeDash;
+
+    function openActualIncomeDash() {
+      var exps=getExps().filter(function(e){return e.type==='income';}), props=window._properties||[];
+      var total=exps.reduce(function(s,e){return s+(e.amount||0);},0);
+      var projected=window.calcProjectedIncome?window.calcProjectedIncome():0;
+      var collRate=projected>0?Math.round(total/projected*100):0, lang=getLang();
+      var rows=exps.slice(0,8).map(function(e){
+        var prop=props.find(function(p){return p.id===e.propertyId;});
+        var pName=prop?Esc(prop.city)+' · '+Esc(prop.address):'—';
+        return '<div style="display:flex;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-size:13px;font-weight:600">'+Esc(e.description||'—')+'</div><div style="font-size:11px;color:var(--text3)">'+fmtD(e.date)+' · '+pName+'</div></div><div style="font-weight:700;font-size:14px;color:var(--green)">+'+fmtN(e.amount||0)+'</div></div>';
+      }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4)">'+T('noExpenses')+'</div>';
+      var lbls={PL:['Zebrano','Prognoza','Ściągalność','Wpisów'],RU:['Собрано','Прогноз','Сбор','Записей'],UA:['Зібрано','Прогноз','Збір','Записів'],EN:['Collected','Forecast','Collection','Entries']};
+      var l=lbls[lang]||lbls.EN;
+      var lblR={PL:'Ostatnie wpływy',RU:'Последние поступления',UA:'Останні надходження',EN:'Recent income'};
+      showFinDashModal(T('actualIncome'),[{value:fmtN(total),label:l[0],color:'var(--green)'},{value:fmtN(projected),label:l[1],color:'var(--text)'},{value:collRate+'%',label:l[2],color:collRate>=70?'var(--green)':collRate>=40?'var(--accent)':'var(--red)'},{value:String(exps.length),label:l[3],color:'var(--text)'}],lblR[lang]||'Recent',rows);
+    }
+    window.openActualIncomeDash = openActualIncomeDash;
+
+    function openExpensesDash() {
+      var exps=getExps().filter(function(e){return e.type==='expense';});
+      var total=exps.reduce(function(s,e){return s+(e.amount||0);},0), lang=getLang();
+      var catNames={utilities:T('utilities'),supplies:T('supplies'),repairs:T('repairs'),salary:T('salary'),other:T('otherCat')};
+      var catColors={utilities:'var(--accent)',supplies:'var(--green)',repairs:'var(--red)',salary:'var(--purple)',other:'var(--text2)'};
+      var byCat={};
+      exps.forEach(function(e){var c=e.category||'other';if(!byCat[c])byCat[c]={total:0,count:0,cat:c};byCat[c].total+=e.amount||0;byCat[c].count++;});
+      var catList=Object.keys(byCat).map(function(k){return byCat[k];}).sort(function(a,b){return b.total-a.total;});
+      var catRows=catList.map(function(c){
+        var pct=total>0?Math.round(c.total/total*100):0;
+        return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+(catNames[c.cat]||c.cat)+'</div><div style="font-weight:700;font-size:14px;color:'+(catColors[c.cat]||'var(--red)')+'">'+fmtN(c.total)+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(catColors[c.cat]||'var(--red)')+';border-radius:2px"></div></div><span style="font-size:11px;color:var(--text3)">'+pct+'%</span></div></div>';
+      }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4)">'+T('noExpenses')+'</div>';
+      var avg=exps.length>0?Math.round(total/exps.length):0;
+      var lbls={PL:['Wydatki ogółem','Kategorie','Śr. wpis','Wpisów'],RU:['Расходы всего','Категории','Ср. запись','Записей'],UA:['Видатки загалом','Категорії','Сер. запис','Записів'],EN:['Total expenses','Categories','Avg entry','Entries']};
+      var l=lbls[lang]||lbls.EN;
+      var lblC={PL:'Kategorie wydatków',RU:'Категории расходов',UA:'Категорії видатків',EN:'Expense categories'};
+      showFinDashModal(T('totalExpenses'),[{value:fmtN(total),label:l[0],color:'var(--red)'},{value:String(catList.length),label:l[1],color:'var(--text)'},{value:fmtN(avg),label:l[2],color:'var(--accent)'},{value:String(exps.length),label:l[3],color:'var(--text)'}],lblC[lang]||'Categories',catRows);
+    }
+    window.openExpensesDash = openExpensesDash;
+
+    function openNetProfitDash() {
+      var income=window.calcActualIncome?window.calcActualIncome():0;
+      var expense=window.calcTotalExpenses?window.calcTotalExpenses():0;
+      var net=income-expense, projected=window.calcProjectedIncome?window.calcProjectedIncome():0;
+      var props=window._properties||[], lang=getLang(), byProp={};
+      getExps().forEach(function(e){var k=e.propertyId||'other';if(!byProp[k])byProp[k]={income:0,expense:0,id:k};if(e.type==='income')byProp[k].income+=e.amount||0;else byProp[k].expense+=e.amount||0;});
+      var propList=Object.keys(byProp).map(function(k){var d=byProp[k];var prop=props.find(function(p){return p.id===d.id;});d.city=prop?prop.city:'—';d.addr=prop?prop.address:'';d.net=d.income-d.expense;return d;}).sort(function(a,b){return b.net-a.net;});
+      var propRows=propList.map(function(p){var nc=p.net>=0?'var(--green)':'var(--red)';var sign=p.net>=0?'+':'';return '<div style="display:flex;justify-content:space-between;padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-weight:600;font-size:13px">'+Esc(p.city)+' · '+Esc(p.addr)+'</div><div style="font-size:11px;color:var(--text3)"><span style="color:var(--green)">+'+fmtN(p.income)+'</span> / <span style="color:var(--red)">-'+fmtN(p.expense)+'</span></div></div><div style="font-weight:700;font-size:14px;color:'+nc+'">'+sign+fmtN(p.net)+'</div></div>';}).join('')||'<div style="text-align:center;padding:20px;color:var(--text4)">'+T('noExpenses')+'</div>';
+      var lbls={PL:['Zysk netto','Przychody','Wydatki','Prognoza'],RU:['Чистая прибыль','Доходы','Расходы','Прогноз'],UA:['Чистий прибуток','Доходи','Видатки','Прогноз'],EN:['Net profit','Income','Expenses','Forecast']};
+      var l=lbls[lang]||lbls.EN;
+      var lblP={PL:'Zysk po obiektach',RU:'Прибыль по объектам',UA:'Прибуток за обʼєктами',EN:'Profit by property'};
+      showFinDashModal(T('netProfit'),[{value:(net>=0?'+':'')+fmtN(net),label:l[0],color:net>=0?'var(--green)':'var(--red)'},{value:'+'+fmtN(income),label:l[1],color:'var(--green)'},{value:'-'+fmtN(expense),label:l[2],color:'var(--red)'},{value:fmtN(projected),label:l[3],color:'var(--accent)'}],lblP[lang]||'Profit',propRows);
+    }
+    window.openNetProfitDash = openNetProfitDash;
+  })();
+  </script>
+
 </body>
 
 </html>
