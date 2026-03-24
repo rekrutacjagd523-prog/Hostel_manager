@@ -86,6 +86,7 @@ export async function saveSettings() {
         closeSettings();
         if (window.updateUI) window.updateUI();
         if (window.render) window.render();
+        if (window.renderFAQ) window.renderFAQ();
     } catch (e) { alert('Error: ' + e.message); }
 }
 
