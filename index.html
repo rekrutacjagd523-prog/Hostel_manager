@@ -159,13 +159,15 @@
             border-radius: 16px;
             border: 1px solid var(--border);
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-            background: var(--bg2);
-            height: 500px;
-            /* Placeholder for actual screenshot */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #0f1117;
             overflow: hidden;
+            position: relative;
+        }
+        .hero-img video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
         }
 
         .hero-img img {
@@ -413,95 +415,14 @@
             <span class="lang-ua">Почати безкоштовно</span>
         </a>
 
-        <div class="hero-img-wrap">
-            <div class="hero-img" style="padding:0;overflow:hidden;background:#0f1117">
-                <div style="font-family:'Inter',sans-serif;height:100%;display:flex;flex-direction:column">
-
-                    <!-- Header -->
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #1e2130;background:#13161f">
-                        <div style="display:flex;align-items:center;gap:10px">
-                            <div style="width:32px;height:32px;background:linear-gradient(135deg,#f5a623,#e8920f);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🏠</div>
-                            <span style="font-weight:700;font-size:16px;color:#fff">Lokum</span>
-                        </div>
-                        <div style="background:#f5a623;color:#000;font-size:12px;font-weight:700;padding:7px 16px;border-radius:8px">+ Zamelduj</div>
-                    </div>
-
-                    <!-- Stat cards -->
-                    <div style="display:flex;gap:10px;padding:14px 16px 0">
-                        <div class="stat-mini" style="flex:1;background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 12px">
-                            <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Mieszkańcy</div>
-                            <div style="font-size:28px;font-weight:800;color:#fff;line-height:1">24</div>
-                        </div>
-                        <div class="stat-mini" style="flex:1;background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 12px">
-                            <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Do zapłaty</div>
-                            <div style="font-size:22px;font-weight:800;color:#f5a623;line-height:1">14 400</div>
-                            <div style="font-size:14px;font-weight:800;color:#f5a623">zł</div>
-                        </div>
-                        <div class="stat-mini" style="flex:1;background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 12px">
-                            <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Łącznie</div>
-                            <div style="font-size:28px;font-weight:800;color:#fff;line-height:1">31</div>
-                        </div>
-                    </div>
-
-                    <!-- Resident cards -->
-                    <div style="padding:10px 16px;display:flex;flex-direction:column;gap:8px">
-
-                        <div class="res-card" style="background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">PK</div>
-                            <div style="flex:1">
-                                <div style="font-weight:700;font-size:14px;color:#fff">Petro Kovalenko</div>
-                                <div style="font-size:12px;color:#6b7280;margin-top:1px">Wrocław · ul. Różana 12</div>
-                                <div style="display:flex;gap:6px;margin-top:7px;align-items:center">
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">01.03.2026 →</span>
-                                    <span style="background:rgba(212,136,58,.15);color:#f5a623;font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px">12 dni</span>
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">Hostel</span>
-                                </div>
-                            </div>
-                            <div style="text-align:right;flex-shrink:0">
-                                <div style="font-weight:700;color:#f5a623;font-size:15px">600 zł</div>
-                                <div style="font-size:10px;color:#6b7280;margin-top:2px">DO ZAPŁATY</div>
-                            </div>
-                        </div>
-
-                        <div class="res-card" style="background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">AM</div>
-                            <div style="flex:1">
-                                <div style="font-weight:700;font-size:14px;color:#fff">Anna Mazur</div>
-                                <div style="font-size:12px;color:#6b7280;margin-top:1px">Wrocław · ul. Kwiatowa 5</div>
-                                <div style="display:flex;gap:6px;margin-top:7px;align-items:center">
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">15.02.2026 →</span>
-                                    <span style="background:rgba(212,136,58,.15);color:#f5a623;font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px">26 dni</span>
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">Mieszkanie</span>
-                                </div>
-                            </div>
-                            <div style="text-align:right;flex-shrink:0">
-                                <div style="font-weight:700;color:#f5a623;font-size:15px">1 200 zł</div>
-                                <div style="font-size:10px;color:#6b7280;margin-top:2px">DO ZAPŁATY</div>
-                            </div>
-                        </div>
-
-                        <div class="res-card" style="background:#1a1d2b;border:1px solid #252838;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
-                            <div style="width:40px;height:40px;border-radius:50%;background:#f5a623;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;flex-shrink:0">MS</div>
-                            <div style="flex:1">
-                                <div style="font-weight:700;font-size:14px;color:#fff">Mykola Shevchenko</div>
-                                <div style="font-size:12px;color:#6b7280;margin-top:1px">Wrocław · ul. Różana 12</div>
-                                <div style="display:flex;gap:6px;margin-top:7px;align-items:center">
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">10.02.2026 →</span>
-                                    <span style="background:rgba(212,136,58,.15);color:#f5a623;font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px">24 dni</span>
-                                    <span style="background:#1e2130;color:#9ca3af;font-size:11px;padding:2px 7px;border-radius:5px">Mieszkanie</span>
-                                </div>
-                            </div>
-                            <div style="text-align:right;flex-shrink:0">
-                                <div style="font-weight:700;color:#f5a623;font-size:15px">480 zł</div>
-                                <div style="font-size:10px;color:#6b7280;margin-top:2px">DO ZAPŁATY</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+                <div class="hero-img-wrap">
+            <div class="hero-img">
+                <video autoplay muted loop playsinline preload="auto"
+                    style="width:100%;height:auto;display:block;border-radius:16px">
+                    <source src="promo.mp4" type="video/mp4">
+                </video>
             </div>
-        </div>
-    </section>
+        </section>
 
     <div class="banner" id="stats-banner">
         <div class="stat">
