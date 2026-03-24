@@ -108,7 +108,7 @@ function renderBookingList() {
             (b.status === 'pending' ? '<button class="btn-sm" style="color:var(--green)" onclick="setBookingStatus(\'' + b.id + '\',\'confirmed\')" title="' + t('confirmBooking') + '">✓</button>' : '') +
             (b.status === 'confirmed' ? '<button class="btn-sm" style="color:var(--accent)" onclick="checkInBooking(\'' + b.id + '\')" title="' + t('checkInBooking') + '"></button>' : '') +
             ((b.status === 'pending' || b.status === 'confirmed') ? '<button class="btn-sm" style="color:var(--red)" onclick="setBookingStatus(\'' + b.id + '\',\'cancelled\')" title="' + t('cancelBooking') + '">✕</button>' : '') +
-            '<button class="btn-sm danger" onclick="deleteBooking(\'' + b.id + '\')"><i data-lucide=\"trash-2\" style=\"width:14px;height:14px\"></i></button>' +
+            '<button class="btn-sm danger" onclick="deleteBooking(\'' + b.id + '\')"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div></div>';
     }).join('');
     list.innerHTML = h;

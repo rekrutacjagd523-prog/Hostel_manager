@@ -125,7 +125,7 @@ export function renderExpenses() {
             '</div></div>' +
             '<div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openExpenseForm(\'' + e.id + '\')">✏️</button>' +
-            '<button class="btn-sm danger" onclick="deleteExpense(\'' + e.id + '\')"><i data-lucide=\"trash-2\" style=\"width:14px;height:14px\"></i></button>' +
+            '<button class="btn-sm danger" onclick="deleteExpense(\'' + e.id + '\')"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div></div>';
     }).join('');
 

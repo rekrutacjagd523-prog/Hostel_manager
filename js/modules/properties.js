@@ -51,7 +51,7 @@ export function renderProperties() {
             '<span class="prop-spot-tag ' + (isFull ? 'full' : 'free') + '">' + free + ' ' + t('freeSpots') + '</span>' +
             '</div><div class="prop-actions" onclick="event.stopPropagation()">' +
             '<button class="btn-sm" onclick="openPropForm(\'' + p.id + '\')">✏️</button>' +
-            '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')"><i data-lucide=\"trash-2\" style=\"width:14px;height:14px\"></i></button>' +
+            '<button class="btn-sm danger" onclick="deleteProp(\'' + p.id + '\')"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div>' + // close prop-actions
             // Room mini-list
             (p.rooms && p.rooms.length ?
