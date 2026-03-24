@@ -830,6 +830,185 @@
 
   </div>
   <script>
+// ===== PAYMENTS DASHBOARD =====
+function openPaymentsDashboard() {
+  var res = (window._residents||[]).filter(function(r){return !r.checkOutDate});
+  var props = window._properties||[];
+  var totalOwed = 0, debtors = [], byProp = {};
+  var fmtN = window.fmtNum || function(n){return n.toFixed(2)+' zł';};
+  var escFn = window.esc || function(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+  var fmtD = window.fmtDate || function(d){return d||'—';};
+  var tFn = window.t || function(k){return k;};
+
+  res.forEach(function(r){
+    var days = Math.max(0,Math.ceil((new Date()-new Date(r.checkInDate))/86400000));
+    var owed = Math.round((r.monthlyRate||0)/30*days*100)/100;
+    totalOwed += owed;
+    var propId = r.propertyId||'other';
+    if(!byProp[propId]) byProp[propId]={total:0,count:0,propId:propId};
+    byProp[propId].total+=owed; byProp[propId].count++;
+    var nm = ((r.firstName||r.fullName||'')+(r.lastName?' '+r.lastName:'')).trim()||'—';
+    debtors.push({id:r.id,name:nm,owed:owed,rate:r.monthlyRate||0,propId:propId,days:days});
+  });
+
+  debtors.sort(function(a,b){return b.owed-a.owed});
+  var lang = (window._settings&&window._settings.lang)||'PL';
+  var debtorLabel={PL:'Najwięcej do zapłaty',RU:'Больше всего к оплате',UA:'Найбільше до оплати',EN:'Top amounts owed'};
+  var countLabel={PL:'osób z zaległością',RU:'чел. с задолженностью',UA:'осіб із заборгованістю',EN:'residents with debt'};
+
+  var debtorRows = debtors.slice(0,8).map(function(r){
+    var prop=props.find(function(p){return p.id===r.propId});
+    var pn=prop?escFn(prop.city)+' · '+escFn(prop.address):'—';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-size:13px;font-weight:600">'+escFn(r.name)+'</div><div style="font-size:11px;color:var(--text3)">'+pn+'</div></div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtN(r.owed)+'</div></div>';
+  }).join('');
+
+  var propRows = Object.keys(byProp).map(function(k){
+    var d=byProp[k],prop=props.find(function(p){return p.id===d.propId});
+    d.city=prop?prop.city:'—'; d.addr=prop?prop.address:''; return d;
+  }).sort(function(a,b){return b.total-a.total}).map(function(p){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div style="font-size:13px"><span style="font-weight:600">'+escFn(p.city)+'</span> · '+escFn(p.addr)+'<span style="color:var(--text3);margin-left:8px;font-size:11px">'+p.count+' os.</span></div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtN(p.total)+'</div></div>';
+  }).join('');
+
+  _showFinModal(tFn('owed'), [
+    {v:fmtN(totalOwed), l:tFn('owed'), c:'var(--accent)'},
+    {v:String(res.length), l:(countLabel[lang]||'residents'), c:'var(--text)'}
+  ], (debtorLabel[lang]||'Top owed'), debtorRows + '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 8px">'+tFn('properties')+'</div>' + propRows);
+}
+
+function openProjectedIncomeDash() {
+  var res=(window._residents||[]).filter(function(r){return !r.checkOutDate});
+  var props=window._properties||[];
+  var fmtN=window.fmtNum||function(n){return n.toFixed(2)+' zł';};
+  var escFn=window.esc||function(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+  var tFn=window.t||function(k){return k;};
+  var lang=(window._settings&&window._settings.lang)||'PL';
+  var total=res.reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+  var potential=0;
+  var propData=props.map(function(p){
+    var pRes=res.filter(function(r){return r.propertyId===p.id});
+    var inc=pRes.reduce(function(s,r){return s+(r.monthlyRate||0)},0);
+    var avgR=pRes.length>0?Math.round(inc/pRes.length):0;
+    var pot=avgR*(p.spots||0); potential+=pot;
+    var occ=(p.spots||0)>0?Math.round(pRes.length/(p.spots||1)*100):0;
+    return {city:p.city,addr:p.address,count:pRes.length,spots:p.spots||0,income:inc,potential:pot,occ:occ,id:p.id};
+  }).sort(function(a,b){return b.income-a.income});
+  var lost=potential-total;
+  var avgR=res.length>0?Math.round(total/res.length):0;
+  var lbls={PL:['Prognoza mies.','Potencjał 100%','Strata z pustostanów','Śr. stawka'],RU:['Прогноз мес.','Потенциал 100%','Потери от пустых','Ср. ставка'],UA:['Прогноз міс.','Потенціал 100%','Втрати від порожніх','Сер. ставка'],EN:['Monthly forecast','100% potential','Vacancy loss','Avg rate']};
+  var l=lbls[lang]||lbls.EN;
+  var propRows=propData.map(function(p){
+    var bw=potential>0?Math.round(p.income/potential*100):0;
+    return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+escFn(p.city)+' · '+escFn(p.addr)+'</div><div style="font-weight:700;font-size:14px;color:var(--accent)">'+fmtN(p.income)+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+bw+'%;background:var(--green);border-radius:2px"></div></div><span style="font-size:11px;color:var(--text3)">'+p.count+'/'+p.spots+'</span></div></div>';
+  }).join('');
+  _showFinModal(tFn('projectedIncome'),[
+    {v:fmtN(total),l:l[0],c:'var(--green)'},{v:fmtN(potential),l:l[1],c:'var(--text)'},
+    {v:fmtN(lost),l:l[2],c:'var(--red)'},{v:fmtN(avgR),l:l[3],c:'var(--accent)'}
+  ],tFn('properties'),propRows);
+}
+
+function openActualIncomeDash() {
+  var exps=(window.expenses&&window.expenses()||[]).filter(function(e){return e.type==='income'});
+  var props=window._properties||[];
+  var fmtN=window.fmtNum||function(n){return n.toFixed(2)+' zł';};
+  var escFn=window.esc||function(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+  var fmtD=window.fmtDate||function(d){return d||'—';};
+  var tFn=window.t||function(k){return k;};
+  var lang=(window._settings&&window._settings.lang)||'PL';
+  var total=exps.reduce(function(s,e){return s+(e.amount||0)},0);
+  var projected=window.calcProjectedIncome?window.calcProjectedIncome():0;
+  var cr=projected>0?Math.round(total/projected*100):0;
+  var lbls={PL:['Zebrano','Prognoza','Ściągalność','Wpisów'],RU:['Собрано','Прогноз','Сбор','Записей'],UA:['Зібрано','Прогноз','Збір','Записів'],EN:['Collected','Forecast','Collection rate','Entries']};
+  var l=lbls[lang]||lbls.EN;
+  var recentRows=exps.slice(0,8).map(function(e){
+    var prop=props.find(function(p){return p.id===e.propertyId});
+    var pn=prop?escFn(prop.city)+' · '+escFn(prop.address):'—';
+    return '<div style="display:flex;justify-content:space-between;padding:8px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-size:13px;font-weight:600">'+escFn(e.description||'—')+'</div><div style="font-size:11px;color:var(--text3)">'+fmtD(e.date)+' · '+pn+'</div></div><div style="font-weight:700;font-size:14px;color:var(--green)">+'+fmtN(e.amount||0)+'</div></div>';
+  }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+tFn('noExpenses')+'</div>';
+  var lblR={PL:'Ostatnie wpływy',RU:'Последние поступления',UA:'Останні надходження',EN:'Recent income'};
+  _showFinModal(tFn('actualIncome'),[
+    {v:fmtN(total),l:l[0],c:'var(--green)'},{v:fmtN(projected),l:l[1],c:'var(--text)'},
+    {v:cr+'%',l:l[2],c:cr>=70?'var(--green)':cr>=40?'var(--accent)':'var(--red)'},{v:String(exps.length),l:l[3],c:'var(--text)'}
+  ],lblR[lang]||'Recent income',recentRows);
+}
+
+function openExpensesDash() {
+  var exps=(window.expenses&&window.expenses()||[]).filter(function(e){return e.type==='expense'});
+  var fmtN=window.fmtNum||function(n){return n.toFixed(2)+' zł';};
+  var tFn=window.t||function(k){return k;};
+  var lang=(window._settings&&window._settings.lang)||'PL';
+  var total=exps.reduce(function(s,e){return s+(e.amount||0)},0);
+  var byCat={};
+  var catColors={utilities:'var(--accent)',supplies:'var(--green)',repairs:'var(--red)',salary:'var(--purple)',other:'var(--text2)'};
+  exps.forEach(function(e){var c=e.category||'other';if(!byCat[c])byCat[c]={total:0,count:0,cat:c};byCat[c].total+=e.amount||0;byCat[c].count++;});
+  var catList=Object.keys(byCat).map(function(k){return byCat[k]}).sort(function(a,b){return b.total-a.total});
+  var catRows=catList.map(function(c){
+    var pct=total>0?Math.round(c.total/total*100):0;
+    var name={utilities:tFn('utilities'),supplies:tFn('supplies'),repairs:tFn('repairs'),salary:tFn('salary'),other:tFn('otherCat')}[c.cat]||c.cat;
+    var col=catColors[c.cat]||'var(--red)';
+    return '<div style="padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:600;font-size:13px">'+name+'<span style="color:var(--text3);font-weight:400;margin-left:6px;font-size:11px">'+c.count+'</span></div><div style="font-weight:700;font-size:14px;color:'+col+'">'+fmtN(c.total)+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;border-radius:2px;background:var(--border2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:2px"></div></div><span style="font-size:11px;color:var(--text3)">'+pct+'%</span></div></div>';
+  }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+tFn('noExpenses')+'</div>';
+  var lbls={PL:['Wydatki ogółem','Kategorie','Śr. wpis','Wpisów'],RU:['Расходы всего','Категории','Ср. запись','Записей'],UA:['Видатки загалом','Категорії','Сер. запис','Записів'],EN:['Total expenses','Categories','Avg entry','Entries']};
+  var l=lbls[lang]||lbls.EN;
+  var avg=exps.length>0?Math.round(total/exps.length):0;
+  var lblC={PL:'Kategorie wydatków',RU:'Категории расходов',UA:'Категорії видатків',EN:'Expense categories'};
+  _showFinModal(tFn('totalExpenses'),[
+    {v:fmtN(total),l:l[0],c:'var(--red)'},{v:String(catList.length),l:l[1],c:'var(--text)'},
+    {v:fmtN(avg),l:l[2],c:'var(--accent)'},{v:String(exps.length),l:l[3],c:'var(--text)'}
+  ],lblC[lang]||'Expense categories',catRows);
+}
+
+function openNetProfitDash() {
+  var income=window.calcActualIncome?window.calcActualIncome():0;
+  var expense=window.calcTotalExpenses?window.calcTotalExpenses():0;
+  var net=income-expense;
+  var projected=window.calcProjectedIncome?window.calcProjectedIncome():0;
+  var fmtN=window.fmtNum||function(n){return n.toFixed(2)+' zł';};
+  var escFn=window.esc||function(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+  var tFn=window.t||function(k){return k;};
+  var lang=(window._settings&&window._settings.lang)||'PL';
+  var props=window._properties||[];
+  var byProp={};
+  (window.expenses&&window.expenses()||[]).forEach(function(e){
+    var k=e.propertyId||'other';
+    if(!byProp[k])byProp[k]={income:0,expense:0,id:k};
+    if(e.type==='income')byProp[k].income+=e.amount||0;else byProp[k].expense+=e.amount||0;
+  });
+  var propRows=Object.keys(byProp).map(function(k){
+    var d=byProp[k],prop=props.find(function(p){return p.id===d.id});
+    d.city=prop?prop.city:'—';d.addr=prop?prop.address:'';d.net=d.income-d.expense;return d;
+  }).sort(function(a,b){return b.net-a.net}).map(function(p){
+    var nc=p.net>=0?'var(--green)':'var(--red)';
+    return '<div style="display:flex;justify-content:space-between;padding:10px 14px;border-radius:8px;background:var(--surface2);margin-bottom:4px"><div><div style="font-weight:600;font-size:13px">'+escFn(p.city)+' · '+escFn(p.addr)+'</div><div style="font-size:11px;color:var(--text3)"><span style="color:var(--green)">+'+fmtN(p.income)+'</span> / <span style="color:var(--red)">-'+fmtN(p.expense)+'</span></div></div><div style="font-weight:700;font-size:14px;color:'+nc+'">'+(p.net>=0?'+':'')+fmtN(p.net)+'</div></div>';
+  }).join('')||'<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">'+tFn('noExpenses')+'</div>';
+  var lbls={PL:['Zysk netto','Przychody','Wydatki','Prognoza mies.'],RU:['Чистая прибыль','Доходы','Расходы','Прогноз мес.'],UA:['Чистий прибуток','Доходи','Видатки','Прогноз міс.'],EN:['Net profit','Income','Expenses','Forecast']};
+  var l=lbls[lang]||lbls.EN;
+  var lblP={PL:'Zysk po obiektach',RU:'Прибыль по объектам',UA:'Прибуток за обʼєктами',EN:'Profit by property'};
+  _showFinModal(tFn('netProfit'),[
+    {v:(net>=0?'+':'')+fmtN(net),l:l[0],c:net>=0?'var(--green)':'var(--red)'},
+    {v:'+'+fmtN(income),l:l[1],c:'var(--green)'},{v:'-'+fmtN(expense),l:l[2],c:'var(--red)'},
+    {v:fmtN(projected),l:l[3],c:'var(--accent)'}
+  ],lblP[lang]||'Profit by property',propRows);
+}
+
+function _showFinModal(title, stats, sectionTitle, sectionContent) {
+  var el=document.createElement('div');
+  el.className='overlay';
+  el.onclick=function(e){if(e.target===el)el.remove();};
+  var statsHtml=stats.map(function(s,i){
+    var border=i<stats.length-1?'border-right:1px solid var(--border);':'';
+    return '<div style="padding:14px 8px;text-align:center;'+border+'"><div style="font-size:18px;font-weight:800;color:'+s.c+';font-family:Plus Jakarta Sans,sans-serif">'+s.v+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+s.l+'</div></div>';
+  }).join('');
+  el.innerHTML='<div class="modal" style="max-width:580px;padding:0;overflow:hidden">'+
+    '<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'+
+    '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:18px;font-weight:700">'+title+'</div>'+
+    '<button onclick="this.closest(\'.overlay\').remove()" style="background:var(--surface);border:none;cursor:pointer;color:var(--text2);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'+
+    '<div style="display:grid;grid-template-columns:repeat('+stats.length+',1fr);gap:0;border-bottom:1px solid var(--border)">'+statsHtml+'</div>'+
+    '<div style="padding:14px 18px;max-height:420px;overflow-y:auto">'+
+    '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sectionTitle+'</div>'+
+    sectionContent+'</div></div>';
+  document.body.appendChild(el);
+}
+
     window.closeOnboarding = function () {
       document.getElementById('onboarding-overlay').classList.add('hidden');
       if (window._onboardingSeenKey) {
