@@ -158,7 +158,7 @@ function renderGrouped() {
             h += `<div class=\"longpress-card\" data-id=\"${r.id}\" style=\"display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2);${selectMode ? 'cursor:pointer' : ''}\" ${selectMode ? `onclick="if(event.target.type!=='checkbox'){const cb=this.querySelector('.sel-check');if(cb){cb.checked=!cb.checked;toggleSelectItem('${r.id}',cb);}}"` : ''}>`;
             if (selectMode) h += `<input type="checkbox" class="sel-check item-check" data-id="${r.id}" ${selectedIds.has(r.id) ? 'checked' : ''} onchange="toggleSelectItem('${r.id}',this)" style="margin-right:8px;flex-shrink:0">`;
             h += `<div style=\"display:flex;align-items:center;gap:6px;font-size:13px\">${r.isSenior ? '<span style=\"color:#f59e0b\">⭐</span>' : ''}<span>${esc(name)}</span>${r.plannedCheckOut ? '<span style=\"font-size:11px;color:var(--accent)\">🚪 ' + (window.fmtDate ? window.fmtDate(r.plannedCheckOut) : r.plannedCheckOut) + '</span>' : ''}</div>`;
-            h += `<div style=\"display:flex;align-items:center;gap:10px\" onclick=\"event.stopPropagation()\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\">${r.isSenior ? '⭐' : '✏️'}</button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\"></button></div>`;
+            h += `<div style=\"display:flex;align-items:center;gap:10px\" onclick=\"event.stopPropagation()\"><span style=\"font-weight:700;font-size:13px\">${fmtUi(pay)}</span><button class=\"btn-sm\" onclick=\"editResident('${r.id}')\"><i data-lucide=\"pencil\" style=\"width:14px;height:14px\"></i></button><button class=\"btn-sm warn\" onclick=\"checkOut('${r.id}')\"><i data-lucide=\"log-out\" style=\"width:14px;height:14px\"></i></button></div>`;
             h += `</div>`;
         });
         h += `</div></div>`;
@@ -274,8 +274,8 @@ export function render() {
             })() : '') +
             '</div><div class="card-actions" onclick="event.stopPropagation()">' +
             (hasMulti ? '<button class="btn-sm info" onclick="showHistory(\'' + r.id + '\')" title="' + t('rateHist') + '"><i data-lucide="clipboard-list" style="width:14px;height:14px"></i></button>' : '') +
-            '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '⭐' : '✏️') + '</button>' +
-            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')">' + '' + '</button>' : '') +
+            '<button class="btn-sm" onclick="editResident(\'' + r.id + '\')">' + (r.isSenior ? '<i data-lucide="star" style="width:14px;height:14px"></i>' : '<i data-lucide="pencil" style="width:14px;height:14px"></i>') + '</button>' +
+            (isA ? '<button class="btn-sm warn" onclick="checkOut(\'' + r.id + '\')" title="Wymelduj"><i data-lucide="log-out" style="width:14px;height:14px"></i></button>' : '') +
             '<button class="btn-sm danger" onclick="deleteResident(\'' + r.id + '\')">' + '<i data-lucide="trash-2" style="width:14px;height:14px"></i></button>' +
             '</div></div></div></div>';
     }).join('');

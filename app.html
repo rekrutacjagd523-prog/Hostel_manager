@@ -210,8 +210,8 @@
     <div class="section-title" id="booking-section-title" onclick="toggleSection('bookings')">
       <span><i data-lucide="calendar" style="width:16px;height:16px;display:inline;vertical-align:middle"></i> <span id="lbl-bookings">Бронирования</span> <span class="section-toggle" id="toggle-bookings"><i data-lucide="chevron-down" style="width:14px;height:14px"></i></span></span>
       <span onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center">
-        <button class="tab book-view-btn" id="btn-book-list" onclick="setBookViewMode('list')" style="padding:4px 10px;font-size:11px;background:var(--accent);color:#fff">📋</button>
-        <button class="tab book-view-btn" id="btn-book-cal" onclick="setBookViewMode('calendar')" style="padding:4px 10px;font-size:11px">📅</button>
+        <button class="tab book-view-btn active" id="btn-book-list" onclick="setBookViewMode('list')" style="padding:4px 10px;font-size:11px"><i data-lucide="list" style="width:14px;height:14px"></i></button>
+        <button class="tab book-view-btn" id="btn-book-cal" onclick="setBookViewMode('calendar')" style="padding:4px 10px;font-size:11px"><i data-lucide="calendar" style="width:14px;height:14px"></i></button>
         <button class="btn btn-primary" onclick="openBookingForm()" style="padding:6px 14px;font-size:12px" id="btn-add-booking">+ Бронь</button>
       </span>
     </div>
