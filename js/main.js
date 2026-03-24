@@ -470,15 +470,18 @@ if ('serviceWorker' in navigator) {
         '<td style="padding:10px 8px;text-align:right">' + renderPaidCell(r) + '</td>' +
         '<td style="padding:10px 20px 10px 8px;text-align:right">' +
           '<button onclick="closeArchiveModal();window.editResident && window.editResident(\'' + r.id + '\')" style="background:none;border:1px solid var(--border2);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:inherit">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Редагувати</button>' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ' + (window._archiveI18n||{edit:'Edit'}).edit + '</button>' +
         '</td>' +
       '</tr>';
     }).join('');
 
+    const ai = window._archiveI18n || {records:'записів', edit:'Редагувати', noData:'Немає записів'};
     const countEl = document.getElementById('archive-count');
     const sumEl = document.getElementById('archive-total-sum');
-    if (countEl) countEl.textContent = list.length + ' записів';
+    const emptyEl = document.getElementById('archive-empty');
+    if (countEl) countEl.textContent = list.length + ' ' + ai.records;
     if (sumEl) sumEl.textContent = list.length ? totalSum.toFixed(2) + ' ' + s : '';
+    if (emptyEl) emptyEl.textContent = ai.noData;
     if (window.lucide) window.lucide.createIcons();
   };
 })();

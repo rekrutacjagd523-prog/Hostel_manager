@@ -330,6 +330,21 @@ export function updateUI() {
     setText('lbl-total', t('total'));
     const archiveLbls = {PL:'Archiwum',UA:'Архів',RU:'Архив',EN:'Archive',LT:'Archyvas'};
     setText('lbl-archive', archiveLbls[lang] || 'Archive');
+    // Archive modal labels
+    const archI18n = {
+      PL: { title:'Archiwum', all:'Wszyscy', active:'Aktywni', out:'Wymeldowani', records:'zapisów', name:'Imię', obj:'Obiekt', checkin:'Zameldowanie', checkout:'Wymeldowanie', days:'Dni', sum:'Suma', paid:'Opłacono', edit:'Edytuj', noData:'Brak wpisów' },
+      UA: { title:'Архів', all:'Усі', active:'Активні', out:'Виселені', records:'записів', name:'Ім'я', obj:'Об'єкт', checkin:'Заселення', checkout:'Виселення', days:'Днів', sum:'Сума', paid:'Оплачено', edit:'Редагувати', noData:'Немає записів' },
+      RU: { title:'Архив', all:'Все', active:'Активные', out:'Выселенные', records:'записей', name:'Имя', obj:'Объект', checkin:'Заселение', checkout:'Выселение', days:'Дней', sum:'Сумма', paid:'Оплачено', edit:'Редактировать', noData:'Нет записей' },
+      EN: { title:'Archive', all:'All', active:'Active', out:'Checked out', records:'records', name:'Name', obj:'Property', checkin:'Check-in', checkout:'Check-out', days:'Days', sum:'Amount', paid:'Paid', edit:'Edit', noData:'No records' },
+      LT: { title:'Archyvas', all:'Visi', active:'Aktyvūs', out:'Iškelti', records:'įrašų', name:'Vardas', obj:'Objektas', checkin:'Apgyvendinimas', checkout:'Iškėlimas', days:'Dienų', sum:'Suma', paid:'Sumokėta', edit:'Redaguoti', noData:'Nėra įrašų' }
+    };
+    const ai = archI18n[lang] || archI18n['EN'];
+    setText('archive-title', ai.title);
+    const archAll = document.getElementById('arch-tab-all'); if(archAll) archAll.textContent = ai.all;
+    const archActive = document.getElementById('arch-tab-active'); if(archActive) archActive.textContent = ai.active;
+    const archOut = document.getElementById('arch-tab-out'); if(archOut) archOut.textContent = ai.out;
+    window._archiveI18n = ai;
+    if (window.renderArchive && document.getElementById('archive-overlay') && !document.getElementById('archive-overlay').classList.contains('hidden')) window.renderArchive();
     setText('tab-active', t('active'));
     setText('tab-out', t('out'));
     setText('tab-all', t('all'));
