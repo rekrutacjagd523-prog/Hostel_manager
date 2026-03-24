@@ -2034,9 +2034,9 @@
       .header-right {
         flex: 0 0 auto;
         gap: 4px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: flex-end;
-        max-width: 60%;
+        align-items: center;
       }
 
       .header-right .btn {
@@ -2048,6 +2048,11 @@
       .header-right .btn .btn-label {
         display: none;
       }
+
+      /* Hide report text label on mobile */
+      #btn-report-lbl { display: none; }
+      /* Hide user name on mobile */
+      #user-name { display: none; }
 
       .user-badge {
         padding: 4px 6px;
