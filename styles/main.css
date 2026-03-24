@@ -247,7 +247,20 @@ body {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, border-color 0.25s;
   position: relative;
   overflow: hidden;
+  color: var(--text);
+  -webkit-appearance: none;
+  appearance: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
+
+.stat-card .stat-value { color: var(--text); }
+.stat-card .stat-label { color: var(--text3); }
 
 .stat-card::before {
   content: '';
