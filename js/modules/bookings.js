@@ -255,16 +255,14 @@ export async function saveBooking() {
     const notes = document.getElementById('bk-notes').value.trim();
     const status = document.getElementById('bk-status').value;
     const errEl = document.getElementById('bk-error');
-    if (!guestName || !startDate || !endDate) {
+    if (!guestName || !startDate) {
         const missing = [];
         if (!guestName) missing.push(t('guestName'));
         if (!startDate) missing.push(t('startDate'));
-        if (!endDate) missing.push(t('endDate'));
         if (errEl) { errEl.textContent = missing.join(', ') + '!'; errEl.style.display = 'block'; }
-        if (!endDate) { const el = document.getElementById('bk-end'); if (el) { el.style.borderColor = 'var(--red)'; setTimeout(() => el.style.borderColor = '', 2000); } }
         return;
     }
-    if (endDate < startDate) {
+    if (endDate && endDate < startDate) {
         if (errEl) { errEl.textContent = t('endDate') + ' < ' + t('startDate'); errEl.style.display = 'block'; }
         return;
     }
