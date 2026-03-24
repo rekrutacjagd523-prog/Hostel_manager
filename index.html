@@ -2,542 +2,710 @@
 <html lang="pl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lokum — System zarządzania kwaterami</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0d0d14;
-            --bg2: #161625;
-            --text: #e0e0ea;
-            --text2: #8a8a9a;
-            --accent: #d4883a;
-            --accent-hover: #f1b954;
-            --border: rgba(255, 255, 255, .08);
-            --surface: rgba(255, 255, 255, .03);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1b1e">
+  <meta name="description" content="Lokum — system zarządzania kwaterami pracowniczymi. Mieszkańcy, płatności, raporty — wszystko w jednym miejscu.">
+  <title>Lokum — Zarządzanie kwaterami pracowniczymi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1a1b1e;
+      --bg2: #212226;
+      --bg3: #1e1f23;
+      --text: #f0f0f2;
+      --text2: #a8a8b4;
+      --text3: #6e6e7a;
+      --border: rgba(255,255,255,.10);
+      --border2: rgba(255,255,255,.06);
+      --surface: rgba(255,255,255,.07);
+      --surface2: rgba(255,255,255,.04);
+      --accent: #f59e0b;
+      --accent2: #d97706;
+      --green: #4ade80;
+      --red: #f87171;
+      --purple: #c084fc;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        /* Lang toggler */
-        .lang-ua {
-            display: none;
-        }
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 0 40px;
+      height: 64px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(26,27,30,.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border2);
+      z-index: 100;
+    }
 
-        body.show-ua .lang-pl {
-            display: none;
-        }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text);
+    }
 
-        body.show-ua .lang-ua {
-            display: inline;
-        }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(13, 13, 20, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-        }
+    .nav-logo-icon svg { width: 20px; height: 20px; }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .nav-logo-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18px; font-weight: 800;
+      letter-spacing: -0.02em;
+    }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), #d4883a);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-        }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
 
-        .nav-links {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-        }
+    .nav-link {
+      color: var(--text2); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: color .2s;
+      cursor: pointer;
+      background: none; border: none; font-family: inherit;
+    }
+    .nav-link:hover { color: var(--text); }
 
-        .nav-links a {
-            color: var(--text2);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #111116;
+      padding: 9px 20px; border-radius: 8px;
+      font-weight: 700; font-size: 14px;
+      text-decoration: none;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
+      border: none; cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(245,158,11,.25);
+    }
+    .btn-primary:active { transform: scale(.98); }
 
-        .nav-links a:hover {
-            color: var(--text);
-        }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface); color: var(--text);
+      padding: 9px 20px; border-radius: 8px;
+      font-weight: 600; font-size: 14px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: all .2s; cursor: pointer; font-family: inherit;
+    }
+    .btn-secondary:hover { background: var(--surface); border-color: rgba(255,255,255,.2); }
 
-        /* Перебиває сірий колір nav-links для кнопки */
-        .nav-links a.btn-primary {
-            color: #000 !important;
-        }
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 20px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .btn-primary {
-            background: var(--accent);
-            color: #000;
-            padding: 10px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 136, 58, 0.25);
-        }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(245,158,11,.1);
+      border: 1px solid rgba(245,158,11,.2);
+      color: var(--accent);
+      padding: 5px 14px; border-radius: 100px;
+      font-size: 12px; font-weight: 600;
+      margin-bottom: 28px;
+      opacity: 0; animation: fadeUp .5s ease .1s both;
+    }
 
-        /* Hero */
-        .hero {
-            padding: 160px 20px 100px;
-            text-align: center;
-            background: radial-gradient(circle at 50% -20%, rgba(212, 136, 58, 0.15), transparent 60%);
-        }
+    .hero h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 820px;
+      margin: 0 auto 24px;
+      opacity: 0; animation: fadeUp .6s ease .2s both;
+    }
 
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -0.03em;
-            max-width: 800px;
-            margin-inline: auto;
-        }
+    .hero h1 span { color: var(--accent); }
 
-        .hero p {
-            font-size: 18px;
-            color: var(--text2);
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
+    .hero p {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text2);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      opacity: 0; animation: fadeUp .6s ease .35s both;
+    }
 
-        .hero-img-wrap {
-            max-width: 1000px;
-            margin: 60px auto 0;
-            position: relative;
-        }
+    .hero-cta {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 80px;
+      opacity: 0; animation: fadeUp .6s ease .45s both;
+    }
 
-        .hero-img {
-            width: 100%;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-            background: #0f1117;
-            overflow: hidden;
-            position: relative;
-        }
-        .hero-img video {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 16px;
-        }
+    .hero-video-wrap {
+      max-width: 1000px; margin: 0 auto;
+      position: relative;
+      opacity: 0; animation: fadeUp .8s ease .55s both;
+    }
 
-        .hero-img img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+    .hero-video-frame {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(245,158,11,.06);
+      animation: glowPulse 4s ease-in-out 1.5s infinite;
+    }
 
-        /* Stats banner */
-        .banner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 60px;
-            padding: 60px 20px;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
-        }
+    .hero-video-frame video {
+      width: 100%; height: auto; display: block;
+    }
 
-        .stat {
-            text-align: center;
-            min-width: 140px;
-            /* Початковий стан — схований і зсунутий вниз */
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
+    /* ── STATS BANNER ── */
+    .banner {
+      display: flex; justify-content: center; align-items: center;
+      flex-wrap: wrap; gap: 0;
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      background: var(--bg2);
+      padding: 0 20px;
+    }
 
-        /* Клас який додається JS коли секція стає видимою */
-        .stat.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .banner-stat {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px 60px;
+      border-right: 1px solid var(--border2);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .banner-stat:last-child { border-right: none; }
+    .banner-stat.visible { opacity: 1; transform: translateY(0); }
+    .banner-stat:nth-child(2) { transition-delay: .15s; }
+    .banner-stat:nth-child(3) { transition-delay: .3s; }
 
-        /* Затримка для кожної картки — щоб виїжджали по черзі */
-        .stat:nth-child(1) { transition-delay: 0s; }
-        .stat:nth-child(2) { transition-delay: 0.15s; }
-        .stat:nth-child(3) { transition-delay: 0.3s; }
+    .banner-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 40px; font-weight: 800;
+      color: var(--accent);
+      line-height: 1; margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
 
-        .stat-val {
-            font-size: 42px;
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
+    .banner-lbl {
+      font-size: 13px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
 
-        .stat-note {
-            font-size: 11px;
-            color: var(--accent);
-            opacity: 0.7;
-            margin-top: 4px;
-        }
+    .banner-note {
+      font-size: 10px; color: var(--accent);
+      opacity: .6; margin-top: 3px;
+    }
 
-        .stat-lbl {
-            font-size: 13px;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+    /* ── FEATURES ── */
+    .section {
+      padding: 100px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        /* Features */
-        .section {
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .sec-label {
+      display: inline-block;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
 
-        .sec-title {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 60px;
-        }
+    .sec-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-        }
+    .sec-sub {
+      font-size: 16px; color: var(--text2);
+      max-width: 560px; margin-bottom: 60px; line-height: 1.7;
+    }
 
-        .card {
-            background: var(--bg2);
-            padding: 32px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: transform 0.3s, border-color 0.3s;
-        }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
+    .feat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color .2s, transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s;
+      opacity: 0; transform: translateY(24px);
+    }
+    .feat-card.visible { opacity: 1; transform: translateY(0); }
+    .feat-card:nth-child(2) { transition-delay: .08s; }
+    .feat-card:nth-child(3) { transition-delay: .16s; }
+    .feat-card:nth-child(4) { transition-delay: .24s; }
+    .feat-card:nth-child(5) { transition-delay: .32s; }
+    .feat-card:nth-child(6) { transition-delay: .4s; }
 
-        .card i {
-            color: var(--accent);
-            margin-bottom: 20px;
-            width: 32px;
-            height: 32px;
-        }
+    .feat-card:hover {
+      border-color: rgba(245,158,11,.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.2);
+    }
 
-        .card h3 {
-            font-size: 20px;
-            margin-bottom: 12px;
-        }
+    .feat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
 
-        .card p {
-            color: var(--text2);
-            font-size: 15px;
-        }
+    .feat-card h3 {
+      font-size: 16px; font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-        /* CTA */
-        .cta-sec {
-            text-align: center;
-            padding: 100px 20px;
-            background: linear-gradient(0deg, var(--bg), var(--bg2));
-        }
+    .feat-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
 
-        .cta-sec h2 {
-            font-size: 40px;
-            margin-bottom: 24px;
-        }
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
 
-        /* Footer */
-        footer {
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--text2);
-            border-top: 1px solid var(--border);
-            font-size: 14px;
-        }
+    .plan-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      transition: transform .3s, border-color .2s;
+    }
 
-        @media(max-width: 768px) {
-            .hero h1 {
-                font-size: 40px;
-            }
+    .plan-card:hover { transform: translateY(-4px); }
 
-            .nav-links a.hide-mob {
-                display: none;
-            }
+    .plan-card.featured {
+      border-color: rgba(245,158,11,.4);
+      background: linear-gradient(135deg, rgba(245,158,11,.06), var(--bg2));
+    }
 
-            nav {
-                padding: 16px 20px;
-            }
-        }
+    .plan-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #111;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 12px; border-radius: 100px;
+      white-space: nowrap;
+    }
 
-        /* ── CARD & HERO ANIMATIONS ── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(40px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 24px 64px rgba(0,0,0,.4), 0 0 0 1px rgba(245,166,35,.1); }
-            50%       { box-shadow: 0 24px 64px rgba(0,0,0,.4), 0 0 40px rgba(245,166,35,.2); }
-        }
+    .plan-name {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text3); margin-bottom: 12px;
+    }
 
-        /* Hero text */
-        .hero h1 { animation: fadeUp .6s ease .05s both; }
-        .hero p   { animation: fadeUp .6s ease .2s both; }
-        .hero > a { animation: fadeUp .6s ease .35s both; }
+    .plan-price {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 42px; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1;
+      margin-bottom: 4px;
+    }
 
-        /* Mockup container */
-        .hero-img-wrap {
-            animation: fadeUp .8s ease .5s both;
-        }
-        .hero-img {
-            animation: glowPulse 3s ease-in-out 1.3s infinite;
-        }
+    .plan-price sub { font-size: 16px; font-weight: 500; color: var(--text2); }
+    .plan-price .period { font-size: 15px; font-weight: 500; color: var(--text3); }
 
-        /* Resident cards — slide in */
-        .res-card {
-            opacity: 0;
-            transform: translateX(40px);
-        }
-        .res-card.animated {
-            animation: slideIn .5s cubic-bezier(.16,1,.3,1) forwards;
-        }
-        .res-card:nth-child(1).animated { animation-delay: .9s; }
-        .res-card:nth-child(2).animated { animation-delay: 1.1s; }
-        .res-card:nth-child(3).animated { animation-delay: 1.3s; }
+    .plan-desc { font-size: 13px; color: var(--text3); margin-bottom: 24px; margin-top: 6px; }
 
-        /* Stat cards in mockup */
-        .stat-mini {
-            opacity: 0;
-            animation: fadeUp .4s ease forwards;
-        }
-        .stat-mini:nth-child(1) { animation-delay: .7s; }
-        .stat-mini:nth-child(2) { animation-delay: .85s; }
-        .stat-mini:nth-child(3) { animation-delay: 1s; }
+    .plan-features { list-style: none; margin-bottom: 28px; }
 
-        /* Feature cards */
-        .card {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity .5s ease, transform .5s ease, border-color .3s;
-        }
-        .card.visible { opacity: 1; transform: translateY(0); }
-        .card:nth-child(2) { transition-delay: .1s; }
-        .card:nth-child(3) { transition-delay: .2s; }
-        .card:nth-child(4) { transition-delay: .3s; }
+    .plan-features li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--text2);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border2);
+    }
+    .plan-features li:last-child { border-bottom: none; }
 
-    </style>
+    .check-icon { color: var(--green); flex-shrink: 0; }
+    .plan-features li strong { color: var(--text); }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 100px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, transparent, rgba(245,158,11,.04));
+    }
+
+    .cta-section h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .cta-section p { font-size: 16px; color: var(--text2); margin-bottom: 40px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 20px;
+      border-top: 1px solid var(--border2);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .footer-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 15px; color: var(--text2);
+      text-decoration: none;
+    }
+
+    .footer-right { font-size: 13px; color: var(--text3); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(245,158,11,.06); }
+      50%       { box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 60px rgba(245,158,11,.12); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 16px; }
+      .banner-stat { padding: 32px 28px; }
+      .banner-lbl { font-size: 11px; }
+      .banner-val { font-size: 32px; }
+      .section { padding: 64px 16px; }
+      .nav-link.hide-mob { display: none; }
+      footer { justify-content: center; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .banner { flex-direction: column; }
+      .banner-stat { border-right: none; border-bottom: 1px solid var(--border2); width: 100%; }
+      .banner-stat:last-child { border-bottom: none; }
+    }
+  </style>
 </head>
 
 <body>
 
-    <nav>
-        <div class="logo">
-            <div class="logo-icon"><i data-lucide="building-2"></i></div>
-            Lokum
-        </div>
-        <div class="nav-links">
-            <a onclick="toggleLang()" title="Zmień język / Змінити мову">
-                <span class="lang-pl">🇵🇱 PL / UA</span>
-                <span class="lang-ua">🇺🇦 UA / PL</span>
-            </a>
-            <a href="#features" class="hide-mob">
-                <span class="lang-pl">Funkcje</span><span class="lang-ua">Функції</span>
-            </a>
-            <a href="app.html" class="btn-primary">
-                <i data-lucide="arrow-right"></i>
-                <span class="lang-pl">Zaloguj się</span><span class="lang-ua">Увійти</span>
-            </a>
-        </div>
-    </nav>
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-logo-name">Lokum</span>
+    </a>
+    <div class="nav-right">
+      <button class="nav-link hide-mob" onclick="toggleLang()">
+        <span class="lang-pl">🇺🇦 UA</span>
+        <span class="lang-ua" style="display:none">🇵🇱 PL</span>
+      </button>
+      <a href="#pricing" class="nav-link hide-mob">
+        <span class="lang-pl">Cennik</span>
+        <span class="lang-ua" style="display:none">Ціни</span>
+      </a>
+      <a href="app.html" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span class="lang-pl">Zaloguj się</span>
+        <span class="lang-ua" style="display:none">Увійти</span>
+      </a>
+    </div>
+  </nav>
 
-    <section class="hero">
-        <h1>
-            <span class="lang-pl">Zarządzaj kwaterami pracowniczymi bez stresu</span>
-            <span class="lang-ua">Керуйте житлом для працівників без стресу</span>
-        </h1>
-        <p>
-            <span class="lang-pl">Pożegnaj się z chaotycznymi arkuszami Excel. Lokum to prosty system do monitorowania
-                mieszkańców, płatności, i wolnych miejsc w Twoich obiektach.</span>
-            <span class="lang-ua">Попрощайтеся з хаотичними таблицями Excel. Lokum — це проста система для моніторингу
-                мешканців, платежів та вільних місць у ваших об'єктах.</span>
-        </p>
-        <a href="app.html" class="btn-primary" style="font-size: 18px; padding: 16px 32px">
-            <span class="lang-pl">Rozpocznij za darmo</span>
-            <span class="lang-ua">Почати безкоштовно</span>
-        </a>
-
-                <div class="hero-img-wrap">
-            <div class="hero-img">
-                <video autoplay muted loop playsinline preload="auto"
-                    style="width:100%;height:auto;display:block;border-radius:16px">
-                    <source src="promo.mp4" type="video/mp4">
-                </video>
-            </div>
-        </section>
-
-    <div class="banner" id="stats-banner">
-        <div class="stat">
-            <div class="stat-val">500+</div>
-            <div class="stat-lbl"><span class="lang-pl">Pracowników w bazie</span><span class="lang-ua">Працівників у базі</span></div>
-            <div class="stat-note">* z beta testu</div>
-        </div>
-        <div class="stat">
-            <div class="stat-val">15 min</div>
-            <div class="stat-lbl"><span class="lang-pl">Onboarding nowego lokatora</span><span class="lang-ua">Онбординг нового мешканця</span></div>
-        </div>
-        <div class="stat">
-            <div class="stat-val">0 zł</div>
-            <div class="stat-lbl"><span class="lang-pl">Za start (free trial)</span><span class="lang-ua">За старт (безкоштовно)</span></div>
-        </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="lang-pl">Darmowy plan dostępny</span>
+      <span class="lang-ua" style="display:none">Безкоштовний план доступний</span>
     </div>
 
-    <section class="section" id="features">
-        <h2 class="sec-title">
-            <span class="lang-pl">Dlaczego Lokum?</span>
-            <span class="lang-ua">Чому Lokum?</span>
-        </h2>
-        <div class="grid">
-            <div class="card">
-                <i data-lucide="users"></i>
-                <h3><span class="lang-pl">Baza Lokatorów</span><span class="lang-ua">База Мешканців</span></h3>
-                <p><span class="lang-pl">Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego
-                        pracownika.</span><span class="lang-ua">Відстежуйте заїзди, виїзди та точний час перебування
-                        кожного працівника.</span></p>
-            </div>
-            <div class="card">
-                <i data-lucide="calculator"></i>
-                <h3><span class="lang-pl">Automatyczne Płatności</span><span class="lang-ua">Автоматичні Платежі</span>
-                </h3>
-                <p><span class="lang-pl">System automatycznie przelicza należności na podstawie stawki dziennej lub
-                        miesięcznej.</span><span class="lang-ua">Система автоматично розраховує заборгованість на основі
-                        денної або місячної ставки.</span></p>
-            </div>
-            <div class="card">
-                <i data-lucide="file-spreadsheet"></i>
-                <h3><span class="lang-pl">Export do Excel/PDF</span><span class="lang-ua">Експорт у Excel/PDF</span>
-                </h3>
-                <p><span class="lang-pl">Generuj przejrzyste raporty dla firm i księgowości jednym
-                        kliknięciem.</span><span class="lang-ua">Генеруйте чіткі звіти для компаній та бухгалтерії в
-                        один клік.</span></p>
-            </div>
-            <div class="card">
-                <i data-lucide="share-2"></i>
-                <h3><span class="lang-pl">Współdzielenie</span><span class="lang-ua">Спільний доступ</span></h3>
-                <p><span class="lang-pl">Zaproś menedżerów lub właścicieli obiektów do podglądu danych w czasie
-                        rzeczywistym.</span><span class="lang-ua">Запросіть менеджерів або власників об'єктів для
-                        перегляду даних у реальному часі.</span></p>
-            </div>
+    <h1>
+      <span class="lang-pl">Zarządzaj kwaterami<br><span>bez arkuszy Excel</span></span>
+      <span class="lang-ua" style="display:none">Керуйте житлом<br><span>без таблиць Excel</span></span>
+    </h1>
+
+    <p>
+      <span class="lang-pl">Mieszkańcy, płatności, raporty — wszystko w jednym miejscu. Sprawdź kto ile jest winien w kilka sekund.</span>
+      <span class="lang-ua" style="display:none">Мешканці, платежі, звіти — все в одному місці. Дізнайтесь хто скільки заборгував за кілька секунд.</span>
+    </p>
+
+    <div class="hero-cta">
+      <a href="app.html" class="btn-primary" style="font-size:16px;padding:13px 28px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+        <span class="lang-pl">Zacznij za darmo</span>
+        <span class="lang-ua" style="display:none">Почати безкоштовно</span>
+      </a>
+      <a href="#features" class="btn-secondary" style="font-size:16px;padding:13px 28px">
+        <span class="lang-pl">Zobacz demo</span>
+        <span class="lang-ua" style="display:none">Дивитись демо</span>
+      </a>
+    </div>
+
+    <div class="hero-video-wrap">
+      <div class="hero-video-frame">
+        <video autoplay muted loop playsinline preload="auto">
+          <source src="promo.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BANNER -->
+  <div class="banner" id="stats-banner">
+    <div class="banner-stat">
+      <div class="banner-val">500+</div>
+      <div class="banner-lbl"><span class="lang-pl">Pracowników w bazie</span><span class="lang-ua" style="display:none">Працівників у базі</span></div>
+      <div class="banner-note">* z beta testu</div>
+    </div>
+    <div class="banner-stat">
+      <div class="banner-val">15 min</div>
+      <div class="banner-lbl"><span class="lang-pl">Onboarding lokatora</span><span class="lang-ua" style="display:none">Онбординг мешканця</span></div>
+    </div>
+    <div class="banner-stat">
+      <div class="banner-val">0 zł</div>
+      <div class="banner-lbl"><span class="lang-pl">Za start</span><span class="lang-ua" style="display:none">За старт</span></div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div>
+      <div class="sec-label">
+        <span class="lang-pl">Funkcje</span>
+        <span class="lang-ua" style="display:none">Можливості</span>
+      </div>
+      <h2 class="sec-title">
+        <span class="lang-pl">Wszystko czego potrzebujesz</span>
+        <span class="lang-ua" style="display:none">Все що вам потрібно</span>
+      </h2>
+      <p class="sec-sub">
+        <span class="lang-pl">Prosty system do zarządzania kwaterami pracowniczymi — bez zbędnej komplikacji.</span>
+        <span class="lang-ua" style="display:none">Проста система для управління житлом для працівників — без зайвих ускладнень.</span>
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(74,222,128,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-    </section>
+        <h3><span class="lang-pl">Baza mieszkańców</span><span class="lang-ua" style="display:none">База мешканців</span></h3>
+        <p><span class="lang-pl">Śledź zameldowania, wymeldowania i dokładny czas pobytu każdego pracownika.</span><span class="lang-ua" style="display:none">Відстежуйте заїзди, виїзди та час перебування кожного працівника.</span></p>
+      </div>
 
-    <section class="cta-sec">
-        <h2>
-            <span class="lang-pl">Gotowy na optymalizację swojej pracy?</span>
-            <span class="lang-ua">Готові оптимізувати свою роботу?</span>
-        </h2>
-        <a href="app.html" class="btn-primary" style="font-size:16px;padding:14px 32px">
-            <i data-lucide="zap"></i>
-            <span class="lang-pl">Wypróbuj Lokum</span>
-            <span class="lang-ua">Спробувати Lokum</span>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+        </div>
+        <h3><span class="lang-pl">Automatyczne płatności</span><span class="lang-ua" style="display:none">Автоматичні платежі</span></h3>
+        <p><span class="lang-pl">System przelicza należności na podstawie stawki miesięcznej. Zero ręcznych obliczeń.</span><span class="lang-ua" style="display:none">Система розраховує заборгованість на основі місячної ставки. Нуль ручних обчислень.</span></p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(192,132,252,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </div>
+        <h3><span class="lang-pl">Raporty finansowe</span><span class="lang-ua" style="display:none">Фінансові звіти</span></h3>
+        <p><span class="lang-pl">Prognoza, faktyczny dochód, wydatki i zysk netto — wszystko w czytelnych wykresach.</span><span class="lang-ua" style="display:none">Прогноз, фактичний дохід, витрати і чистий прибуток — все у зрозумілих графіках.</span></p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(248,113,113,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3><span class="lang-pl">Eksport PDF / Excel</span><span class="lang-ua" style="display:none">Експорт PDF / Excel</span></h3>
+        <p><span class="lang-pl">Generuj przejrzyste raporty dla firm i księgowości jednym kliknięciem.</span><span class="lang-ua" style="display:none">Генеруйте чіткі звіти для компаній та бухгалтерії в один клік.</span></p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(74,222,128,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3><span class="lang-pl">Działa na telefonie</span><span class="lang-ua" style="display:none">Працює на телефоні</span></h3>
+        <p><span class="lang-pl">PWA — instalujesz jak aplikację na iPhone i Android. Działa też offline.</span><span class="lang-ua" style="display:none">PWA — встановлюєш як додаток на iPhone та Android. Працює також офлайн.</span></p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3><span class="lang-pl">Współdzielenie</span><span class="lang-ua" style="display:none">Спільний доступ</span></h3>
+        <p><span class="lang-pl">Zaproś menedżerów i właścicieli obiektów do podglądu danych w czasie rzeczywistym.</span><span class="lang-ua" style="display:none">Запросіть менеджерів та власників для перегляду даних у реальному часі.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing" style="padding-top:20px">
+    <div style="text-align:center;margin-bottom:60px">
+      <div class="sec-label">
+        <span class="lang-pl">Cennik</span>
+        <span class="lang-ua" style="display:none">Ціни</span>
+      </div>
+      <h2 class="sec-title">
+        <span class="lang-pl">Prosty, uczciwy cennik</span>
+        <span class="lang-ua" style="display:none">Простий, чесний прайс</span>
+      </h2>
+      <p class="sec-sub" style="margin:0 auto">
+        <span class="lang-pl">Zacznij za darmo, rozbuduj gdy potrzebujesz.</span>
+        <span class="lang-ua" style="display:none">Починайте безкоштовно, розширюйте коли потрібно.</span>
+      </p>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="plan-card">
+        <div class="plan-name">Start</div>
+        <div class="plan-price">0 <sub>zł</sub></div>
+        <div class="plan-desc"><span class="lang-pl">Na zawsze darmowy</span><span class="lang-ua" style="display:none">Назавжди безкоштовний</span></div>
+        <ul class="plan-features">
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>10</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>2</strong> <span class="lang-pl">obiekty</span><span class="lang-ua" style="display:none">об'єкти</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Raporty PDF/Excel</span><span class="lang-ua" style="display:none">Звіти PDF/Excel</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Aplikacja mobilna</span><span class="lang-ua" style="display:none">Мобільний додаток</span></span></li>
+        </ul>
+        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
+          <span class="lang-pl">Zacznij za darmo</span>
+          <span class="lang-ua" style="display:none">Почати безкоштовно</span>
         </a>
-    </section>
+      </div>
 
+      <!-- Pro -->
+      <div class="plan-card featured">
+        <div class="plan-badge">
+          <span class="lang-pl">Najpopularniejszy</span>
+          <span class="lang-ua" style="display:none">Найпопулярніший</span>
+        </div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">12 <sub>zł</sub> <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span></span></div>
+        <div class="plan-desc"><span class="lang-pl">14 dni próbnych gratis</span><span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span></div>
+        <ul class="plan-features">
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>100</strong> <span class="lang-pl">mieszkańców</span><span class="lang-ua" style="display:none">мешканців</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>5</strong> <span class="lang-pl">użytkowników</span><span class="lang-ua" style="display:none">користувачів</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Finanse + Rezerwacje</span><span class="lang-ua" style="display:none">Фінанси + Бронювання</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Wsparcie priorytetowe</span><span class="lang-ua" style="display:none">Пріоритетна підтримка</span></span></li>
+        </ul>
+        <a href="app.html" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
+          <span class="lang-pl">Wypróbuj 14 dni gratis</span>
+          <span class="lang-ua" style="display:none">Спробуй 14 днів безкоштовно</span>
+        </a>
+      </div>
+
+      <!-- Premium -->
+      <div class="plan-card">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">29 <sub>zł</sub> <span class="period">/<span class="lang-pl">mies.</span><span class="lang-ua" style="display:none">міс.</span></span></div>
+        <div class="plan-desc"><span class="lang-pl">14 dni próbnych gratis</span><span class="lang-ua" style="display:none">14 днів пробних безкоштовно</span></div>
+        <ul class="plan-features">
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczeni mieszkańcy</span><span class="lang-ua" style="display:none">Необмежені мешканці</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczone obiekty</span><span class="lang-ua" style="display:none">Необмежені об'єкти</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Nieograniczeni użytkownicy</span><span class="lang-ua" style="display:none">Необмежені користувачі</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">API dostęp</span><span class="lang-ua" style="display:none">API доступ</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span><span class="lang-pl">Dedykowane wsparcie</span><span class="lang-ua" style="display:none">Виділена підтримка</span></span></li>
+        </ul>
+        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px">
+          <span class="lang-pl">Wybierz Premium</span>
+          <span class="lang-ua" style="display:none">Обрати Premium</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>
+      <span class="lang-pl">Gotowy na zmianę?</span>
+      <span class="lang-ua" style="display:none">Готові до змін?</span>
+    </h2>
+    <p>
+      <span class="lang-pl">Zacznij zarządzać kwaterami w minutę. Karta kredytowa nie jest wymagana.</span>
+      <span class="lang-ua" style="display:none">Почніть управляти житлом за хвилину. Кредитна картка не потрібна.</span>
+    </p>
+    <a href="app.html" class="btn-primary" style="font-size:16px;padding:14px 32px">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span class="lang-pl">Wypróbuj Lokum</span>
+      <span class="lang-ua" style="display:none">Спробувати Lokum</span>
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid var(--border2)">
     <footer>
-        © 2026 Lokum — Hostel & Property Manager. Wszelkie prawa zastrzeżone.
+      <a href="#" class="footer-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Lokum
+      </a>
+      <div class="footer-right">© 2026 Lokum. <span class="lang-pl">Wszelkie prawa zastrzeżone.</span><span class="lang-ua" style="display:none">Всі права захищені.</span></div>
     </footer>
+  </div>
 
-    <script>
-        lucide.createIcons();
+  <script>
+    // Lang toggle
+    const langEls = document.querySelectorAll('.lang-pl, .lang-ua');
+    let isUA = false;
 
-        function toggleLang() {
-            document.body.classList.toggle('show-ua');
-            localStorage.setItem('lokum-landing-lang', document.body.classList.contains('show-ua') ? 'ua' : 'pl');
-        }
+    function applyLang() {
+      langEls.forEach(el => {
+        if (el.classList.contains('lang-pl')) el.style.display = isUA ? 'none' : '';
+        if (el.classList.contains('lang-ua')) el.style.display = isUA ? '' : 'none';
+      });
+    }
 
-        if (localStorage.getItem('lokum-landing-lang') === 'ua' || navigator.language.startsWith('uk')) {
-            document.body.classList.add('show-ua');
-        }
+    function toggleLang() {
+      isUA = !isUA;
+      localStorage.setItem('lokum-landing-lang', isUA ? 'ua' : 'pl');
+      applyLang();
+    }
 
-        // Intersection Observer — стежить коли stats-banner стає видимим на екрані
-        const banner = document.getElementById('stats-banner');
-        const stats = banner.querySelectorAll('.stat'); // всі три картки
+    if (localStorage.getItem('lokum-landing-lang') === 'ua' || navigator.language.startsWith('uk')) {
+      isUA = true;
+    }
+    applyLang();
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Коли секція з'явилась — додаємо клас .visible до кожної картки
-                    stats.forEach(stat => stat.classList.add('visible'));
-                    observer.disconnect(); // спостерігаємо тільки один раз
-                }
-            });
-        }, {
-            threshold: 0.3 // спрацьовує коли 30% секції видно
-        });
+    // Intersection observer for animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
 
-        observer.observe(banner);
-
-        // ── RESIDENT CARDS — fire on load (hero is immediately visible) ──
-        setTimeout(() => {
-            document.querySelectorAll('.res-card').forEach(c => c.classList.add('animated'));
-        }, 100);
-
-        // ── FEATURE CARDS — scroll triggered ──
-        const featObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.card').forEach(c => featObserver.observe(c));
-    </script>
+    document.querySelectorAll('.banner-stat, .feat-card').forEach(el => observer.observe(el));
+  </script>
 </body>
-
 </html>
