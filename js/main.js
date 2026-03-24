@@ -11,58 +11,58 @@
 })();
 
 // Import Firebase API first (handles auth state changes)
-import './modules/firebase-api.js';
+import './modules/firebase-api.js?v=3';
 
-import { CURRENCIES, HTYPES, t } from './modules/constants.js';
+import { CURRENCIES, HTYPES, t } from './modules/constants.js?v=3';
 window.t = t;
 import {
     settings, residents, properties, cur,
     fmtUi, fmtPdf, fmtDate, todayStr, esc, daysBetween, daysLabel,
     genId, resName, showConfirm, cleanForFirebase, resDoc, propDoc
-} from './modules/utils.js';
-import { buildRateHistory, calcPaymentWithHistory, calcCurrentPayment } from './modules/rate-history.js';
-import { render, updateUI, setFilter, goPage, changePageSize, toggleSection, restoreCollapsed, toggleGroupByProp, renderCheckoutForecast, setFilterType, clearFilters } from './modules/ui.js';
+} from './modules/utils.js?v=3';
+import { buildRateHistory, calcPaymentWithHistory, calcCurrentPayment } from './modules/rate-history.js?v=3';
+import { render, updateUI, setFilter, goPage, changePageSize, toggleSection, restoreCollapsed, toggleGroupByProp, renderCheckoutForecast, setFilterType, clearFilters } from './modules/ui.js?v=3';
 import {
     openForm, closeForm, editResident, saveResident, checkOut, deleteResident,
     showHistory, removeRateSeg, onPropSelect, selectMode, selectedIds,
     toggleSelectMode, cancelSelect, toggleSelectItem, toggleSelectAll,
     deleteSelected, checkoutSelected, getFreeSpots, onRoomSelect
-} from './modules/residents.js';
+} from './modules/residents.js?v=3';
 import {
     renderProperties, openPropForm, closePropForm, saveProp, deleteProp,
     propSelectMode, togglePropSelect, cancelPropSelect, togglePropItem, toggleSelectAllProps,
     deleteSelectedProps, goPropPage, changePropPageSize,
     openRoomForm, closeRoomForm, saveRoom, deleteRoom
-} from './modules/properties.js';
+} from './modules/properties.js?v=3';
 import {
     applyTheme, getThemePref, toggleTheme, setThemeOption, initTheme,
     openSettings, closeSettings, previewCurrency, applyLangImmediate, saveSettings,
     renderFieldManager, deleteFieldValue, renderMembers, removeMember,
     inviteUser, confirmExitOverlay, initMouseTrack
-} from './modules/settings.js';
+} from './modules/settings.js?v=3';
 import {
     openReport, closeReport, refreshReport, setPeriod,
     showExportDialog, selectExportOpt, doExport,
     importCSV, downloadCSVTemplate
-} from './modules/report-export.js';
+} from './modules/report-export.js?v=3';
 import {
     switchAuthLang, togglePassVis, switchAuthTab, doLogin, doRegister,
     doGoogle, doForgotPass, toggleUserMenu, doLogout, doSwitchAccount,
     onUserLoggedIn, onUserLoggedOut, initAuthEvents
-} from './modules/auth.js';
-import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode, checkStripeReturn } from './modules/subscription.js';
+} from './modules/auth.js?v=3';
+import { isPro, canAddResident, canAddProperty, showUpgradeModal, openSubscription, getPlanLabel, getPlanStyle, applyReferralCode, checkStripeReturn } from './modules/subscription.js?v=3';
 import {
     expSelectMode, renderFinSummary, renderExpenses, openExpenseForm, closeExpenseForm,
     saveExpense, deleteExpense, setFinCategoryFilter, setFinPropFilter,
     goFinPage, changeFinPageSize, toggleExpSelect, cancelExpSelect,
     toggleExpItem, toggleSelectAllExp, deleteSelectedExp
-} from './modules/finance.js';
+} from './modules/finance.js?v=3';
 import {
     renderBookings, openBookingForm, closeBookingForm, saveBooking, deleteBooking,
     setBookingStatus, checkInBooking, onBookPropSelect, setBookStatusFilter,
     setBookViewMode, goCalMonth, goBookPage, changeBookPageSize,
     toggleBookSelect, cancelBookSelect, toggleBookItem, toggleSelectAllBooks, deleteSelectedBooks
-} from './modules/bookings.js';
+} from './modules/bookings.js?v=3';
 
 // ===== LONG PRESS SELECTION LOGIC =====
 let _pressTimer = null;
