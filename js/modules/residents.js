@@ -321,6 +321,7 @@ export function showHistory(id) {
 // ===== SELECTION MODE =====
 export function toggleSelectMode(autoSelectId) {
     selectMode = !selectMode;
+    window._selectMode = selectMode;
     selectedIds.clear();
     document.getElementById('select-bar').classList.toggle('active', selectMode);
     document.getElementById('sel-all').checked = false;
@@ -338,7 +339,7 @@ export function toggleSelectMode(autoSelectId) {
 }
 
 export function cancelSelect() {
-    selectMode = false; selectedIds.clear();
+    selectMode = false; window._selectMode = false; selectedIds.clear();
     document.getElementById('select-bar').classList.remove('active');
     document.getElementById('sel-all').checked = false;
     if (window.render) window.render();
