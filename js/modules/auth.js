@@ -179,11 +179,6 @@ export function onUserLoggedOut() {
 }
 
 export function initAuthEvents() {
-    // Check URL param for lang (from landing page)
-    const urlLang = new URLSearchParams(window.location.search).get('lang');
-    if (urlLang && ['RU', 'PL', 'UA', 'EN', 'LT'].includes(urlLang.toUpperCase())) {
-        localStorage.setItem('hostel-auth-lang', urlLang.toUpperCase());
-    }
     // Restore auth lang from localStorage, default to PL
     const saved = localStorage.getItem('hostel-auth-lang');
     const el = document.getElementById('auth-lang');

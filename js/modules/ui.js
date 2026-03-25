@@ -490,13 +490,6 @@ export function updateUI() {
     setText('lbl-bk-phone', t('guestPhone'));
     setText('lbl-bk-prop', t('selectProp'));
     setText('lbl-bk-room', t('assignRoom'));
-    setText('lbl-select-prop', t('selectPropLabel'));
-    setText('lbl-lang', t('langLabel'));
-    // Update currency dropdown options
-    const sCur = document.getElementById('s-currency');
-    if (sCur) { sCur.options[0].textContent = t('plnName'); sCur.options[1].textContent = t('eurName'); sCur.options[2].textContent = t('usdName'); }
-    // Update page title
-    document.title = t('pageTitle');
     setText('lbl-bk-start', t('startDate'));
     setText('lbl-bk-end', t('endDate'));
     setText('lbl-bk-amount', t('bookingAmount'));
