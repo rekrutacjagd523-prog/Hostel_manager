@@ -221,13 +221,13 @@ export function openRoomForm(propId, roomId) {
         const p = properties().find(x => x.id === propId);
         const room = p && p.rooms ? p.rooms.find(r => r.id === roomId) : null;
         if (!room) return;
-        document.getElementById('room-form-title').textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + t('editRoom');
+        document.getElementById('room-form-title').textContent = t('editRoom');
         document.getElementById('room-edit-id').value = roomId;
         document.getElementById('r-name').value = room.name || '';
         document.getElementById('r-floor').value = room.floor || 1;
         document.getElementById('r-beds').value = room.beds || 1;
     } else {
-        document.getElementById('room-form-title').textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4l-6 16"/></svg> ' + t('addRoom');
+        document.getElementById('room-form-title').textContent = t('addRoom');
         document.getElementById('room-edit-id').value = '';
         document.getElementById('r-name').value = '';
         document.getElementById('r-floor').value = 1;
