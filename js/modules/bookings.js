@@ -147,7 +147,7 @@ function renderCalendar() {
     // Get bookings for this month
     const monthStart = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-01';
     const monthEnd = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(daysInMonth).padStart(2, '0');
-    const monthBookings = bookings().filter(b => b.status !== 'cancelled' && (!filterStatus || b.status === filterStatus) && b.startDate <= monthEnd && b.endDate >= monthStart);
+    const monthBookings = bookings().filter(b => b.status !== 'cancelled' && b.startDate <= monthEnd && b.endDate >= monthStart);
 
     let h = '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;margin-bottom:4px">' +
         '<button class="btn btn-secondary" onclick="goCalMonth(-1)" style="padding:4px 12px;font-size:14px">' + t('prevMonth') + '</button>' +
@@ -219,7 +219,6 @@ export function openBookingForm(id) {
         document.getElementById('bk-room-row').style.display = 'none';
         document.getElementById('bk-start').value = todayStr();
         document.getElementById('bk-end').value = '';
-        const errEl2 = document.getElementById('bk-error'); if (errEl2) errEl2.style.display = 'none';
         document.getElementById('bk-amount').value = '';
         document.getElementById('bk-notes').value = '';
         document.getElementById('bk-status').value = 'pending';
@@ -254,19 +253,8 @@ export async function saveBooking() {
     const amount = parseFloat(document.getElementById('bk-amount').value) || 0;
     const notes = document.getElementById('bk-notes').value.trim();
     const status = document.getElementById('bk-status').value;
-    const errEl = document.getElementById('bk-error');
-    if (!guestName || !startDate) {
-        const missing = [];
-        if (!guestName) missing.push(t('guestName'));
-        if (!startDate) missing.push(t('startDate'));
-        if (errEl) { errEl.textContent = missing.join(', ') + '!'; errEl.style.display = 'block'; }
-        return;
-    }
-    if (endDate && endDate < startDate) {
-        if (errEl) { errEl.textContent = t('endDate') + ' < ' + t('startDate'); errEl.style.display = 'block'; }
-        return;
-    }
-    if (errEl) errEl.style.display = 'none';
+    if (!guestName || !startDate || !endDate) return alert(t('guestName') + ', ' + t('startDate') + ', ' + t('endDate') + '!');
+    if (endDate < startDate) return alert(t('endDate') + ' < ' + t('startDate'));
     const editId = document.getElementById('bk-edit-id').value;
     if (!editId && !canAddBooking()) return showUpgradeModal('bookings');
     const data = { guestName, phone, propId, roomId, startDate, endDate, amount, notes, status };
