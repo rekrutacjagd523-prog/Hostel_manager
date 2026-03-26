@@ -2066,7 +2066,7 @@
       .header-sub { display: none !important; }
       .header p { display: none; }
       /* Hide settings button */
-      .header-right > .btn.btn-secondary:not(#btn-report) { display: none; }
+      /* settings button kept visible */
       /* Compact */
       #plan-badge { padding: 3px 7px; font-size: 10px; }
       .conn-status { display: none; }
