@@ -2065,8 +2065,7 @@
       #user-name { display: none; }
       .header-sub { display: none !important; }
       .header p { display: none; }
-      /* Hide settings button */
-      /* settings button kept visible */
+      #btn-settings { display: inline-flex !important; }
       /* Compact */
       #plan-badge { padding: 3px 7px; font-size: 10px; }
       .conn-status { display: none; }
