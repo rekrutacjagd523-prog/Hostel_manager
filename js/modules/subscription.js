@@ -212,7 +212,7 @@ export function showUpgradeModal(reason) {
 
 // ===== STRIPE PAYMENT LINKS =====
 const STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00';
-const STRIPE_ANNUAL_LINK = 'https://buy.stripe.com/ANNUAL_LINK_HERE'; // TODO: создай годовой Payment Link в Stripe ($204/год) и вставь сюда
+const STRIPE_ANNUAL_LINK = 'https://buy.stripe.com/7sY3co3nH4DE6sn5rk0Fi03';
 
 export function openSubscription() {
   const email = window._currentUser?.email || '';
