@@ -36,6 +36,7 @@ function startListening(uid) {
 
     const u1 = onSnapshot(query(resCol, orderBy("createdAt", "desc")), s => {
         window._residents = []; s.forEach(d => window._residents.push({ id: d.id, ...d.data() }));
+        window._resLoaded = true;
         if (window.render) window.render();
     });
     const u2 = onSnapshot(settDoc, d => {
@@ -46,6 +47,7 @@ function startListening(uid) {
     });
     const u3 = onSnapshot(query(propCol, orderBy("createdAt", "desc")), s => {
         window._properties = []; s.forEach(d => window._properties.push({ id: d.id, ...d.data() }));
+        window._propsLoaded = true;
         if (window.render) window.render();
     });
     // Listen for workspace members
@@ -75,6 +77,7 @@ function stopListening() {
     window._unsubs.forEach(u => u()); window._unsubs = [];
     window._residents = []; window._settings = { currency: 'PLN', lang: 'RU' };
     window._members = []; window._subscription = { plan: 'free' };
+    window._resLoaded = false; window._propsLoaded = false; window._onboardingDone = false;
     window._expenses = []; window._bookings = [];
 }
 
