@@ -191,7 +191,7 @@ export function inviteUser() {
         const status = el.querySelector('#invite-status');
         if (!email) { status.textContent = 'Email!'; status.style.color = 'var(--red)'; return; }
         const uid = window._workspaceUid || window._currentUser.uid;
-        const link = window.location.origin + '?invite=' + uid;
+        const link = window.location.origin + '/app.html?invite=' + uid;
         try { await navigator.clipboard.writeText(link); } catch (e) { }
         status.innerHTML = '' + t('inviteCopied') + '<br><code style="font-size:10px;word-break:break-all;color:var(--accent)">' + link + '</code>';
         status.style.color = 'var(--green)';

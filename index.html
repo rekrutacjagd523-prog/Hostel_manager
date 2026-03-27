@@ -638,6 +638,16 @@
       document.getElementById('btn-annual').style.cssText = type === 'annual' ? active : inactive;
     }
 
+    // Forward ?invite= param to app.html links
+    (function() {
+      const inv = new URLSearchParams(window.location.search).get('invite');
+      if (inv) {
+        document.querySelectorAll('a[href="app.html"]').forEach(a => {
+          a.href = 'app.html?invite=' + encodeURIComponent(inv);
+        });
+      }
+    })();
+
     // Scroll animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
