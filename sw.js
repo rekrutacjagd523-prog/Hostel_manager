@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lokum-v4';
+const CACHE_NAME = 'lokum-v5';
 const PRECACHE = [
   '/',
   '/index.html'
@@ -13,11 +13,11 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate — delete ALL old caches immediately
+// Activate — delete old caches, keep current
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });

@@ -333,46 +333,46 @@ export function openSubscription() {
 
 // ===== HANDLE RETURN FROM STRIPE =====
 // Call this on app load to check if user just paid
+// Pro activation is handled server-side by Stripe webhook writing to Firestore.
+// This function only shows a UI notification — it does NOT activate Pro.
 export async function checkStripeReturn() {
   const params = new URLSearchParams(window.location.search);
   const payment = params.get('payment');
-  const sessionId = params.get('session_id');
 
   if (payment !== 'success') return;
 
   // Clean URL
   window.history.replaceState({}, '', window.location.pathname);
 
-  // Show "activating" toast
+  // Show "activating" toast — actual activation happens via Stripe webhook → Firestore
   showActivatingToast();
 
-  // Activate Pro in Firestore
+  // Wait for Firestore onSnapshot to pick up the server-side plan change
   try {
     const fb = window._fb;
     if (!fb || !fb.settingsDoc) {
-      // Wait for Firebase to initialize
       await new Promise(r => setTimeout(r, 2000));
     }
     if (!window._fb?.settingsDoc) return;
 
-    const validUntil = new Date();
-    validUntil.setFullYear(validUntil.getFullYear() + 1); // 1 year from now
+    // Poll settings for up to 15s waiting for webhook to activate Pro
+    let attempts = 0;
+    const maxAttempts = 15;
+    while (attempts < maxAttempts) {
+      if (window._settings?.plan === 'pro') break;
+      await new Promise(r => setTimeout(r, 1000));
+      attempts++;
+    }
 
-    await window._fb.setDoc(window._fb.settingsDoc, {
-      plan: 'pro',
-      validUntil: validUntil.toISOString(),
-      stripeSession: sessionId || 'direct',
-      upgradedAt: new Date().toISOString()
-    }, { merge: true });
-
-    window._settings = Object.assign({}, window._settings || {}, {
-      plan: 'pro',
-      validUntil: validUntil.toISOString()
-    });
-
-    showProActivatedModal();
-    if (window.render) window.render();
-    if (window.updatePlanBadge) window.updatePlanBadge();
+    if (window._settings?.plan === 'pro') {
+      showProActivatedModal();
+      if (window.render) window.render();
+      if (window.updatePlanBadge) window.updatePlanBadge();
+    } else {
+      // Webhook may be delayed — user will see Pro once Firestore updates
+      document.getElementById('pro-toast')?.remove();
+      console.info('Waiting for Stripe webhook to activate Pro...');
+    }
   } catch (e) {
     console.error('Stripe return error:', e);
   }
@@ -431,8 +431,10 @@ export function getPlanStyle() {
 }
 
 // ---- Referral Code ----
+// Referral codes are validated server-side via Firestore.
+// The client sends the code; a Cloud Function or Firestore rule validates it.
 export async function applyReferralCode(raw) {
-  const code = (raw || '').trim().toLowerCase();
+  const code = (raw || '').trim();
   const status = document.getElementById('ref-code-status');
   if (!status) return;
 
@@ -442,30 +444,46 @@ export async function applyReferralCode(raw) {
     return;
   }
 
-  // Expected: hostelmanager + current day of month (zero-padded, e.g. "09")
-  const day = String(new Date().getDate()).padStart(2, '0');
-  const expected = 'hostelmanager' + day;
-
-  if (code !== expected) {
-    status.style.color = 'var(--red)';
-    status.textContent = t('refCodeInvalid');
-    return;
-  }
-
   try {
     const fb = window._fb;
     if (!fb || !fb.settingsDoc) throw new Error('Not ready');
-    await fb.setDoc(fb.settingsDoc, { plan: 'pro', validUntil: null }, { merge: true });
-    window._settings = Object.assign({}, window._settings || {}, { plan: 'pro', validUntil: null });
-    status.style.color = 'var(--green)';
-    status.textContent = t('refCodeSuccess');
-    setTimeout(() => {
-      document.getElementById('upgrade-overlay')?.remove();
-      if (window.updatePlanBadge) window.updatePlanBadge();
-      if (window.render) window.render();
-    }, 1500);
+    const uid = window._workspaceUid || window._currentUser?.uid;
+    if (!uid) throw new Error('Not authenticated');
+
+    // Write the code to a pending redemption doc — server validates and activates
+    const redemptionDoc = fb.doc(fb.db, 'users', uid, 'referralRedemptions', Date.now().toString());
+    await fb.setDoc(redemptionDoc, {
+      code: code,
+      requestedAt: new Date().toISOString(),
+      status: 'pending'
+    });
+
+    status.style.color = 'var(--accent)';
+    status.textContent = t('refCodePending') || 'Verifying...';
+
+    // Wait for server-side validation (onSnapshot on settings will update _settings.plan)
+    let attempts = 0;
+    const maxAttempts = 10;
+    while (attempts < maxAttempts) {
+      if (window._settings?.plan === 'pro') break;
+      await new Promise(r => setTimeout(r, 1000));
+      attempts++;
+    }
+
+    if (window._settings?.plan === 'pro') {
+      status.style.color = 'var(--green)';
+      status.textContent = t('refCodeSuccess');
+      setTimeout(() => {
+        document.getElementById('upgrade-overlay')?.remove();
+        if (window.updatePlanBadge) window.updatePlanBadge();
+        if (window.render) window.render();
+      }, 1500);
+    } else {
+      status.style.color = 'var(--red)';
+      status.textContent = t('refCodeInvalid');
+    }
   } catch (e) {
     status.style.color = 'var(--red)';
-    status.textContent = t('refCodeError') + e.message;
+    status.textContent = (t('refCodeError') || 'Error: ') + e.message;
   }
 }

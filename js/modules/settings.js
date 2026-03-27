@@ -82,7 +82,7 @@ export async function saveSettings() {
         await window._fb.setDoc(window._fb.settingsDoc, {
             currency: document.getElementById('s-currency').value,
             lang: saveLang
-        });
+        }, { merge: true });
         closeSettings();
         if (window.updateUI) window.updateUI();
         if (window.render) window.render();
@@ -144,7 +144,7 @@ export function renderMembers() {
         const date = m.joinedAt ? new Date(m.joinedAt).toLocaleDateString() : '';
         return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--surface);border-radius:8px;margin-bottom:4px">' +
             '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (m.name || m.email || '?') + '</div>' +
+            '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(m.name || m.email || '?') + '</div>' +
             '<div style="font-size:11px;color:var(--text3)">' + esc(m.email || '') + ' · ' + date + '</div>' +
             '</div>' +
             (isOwner ? '<button class="btn-sm danger" onclick="removeMember(\'' + m.id + '\')" title="' + t('confirmDelete') + '">✕</button>' : '') +
