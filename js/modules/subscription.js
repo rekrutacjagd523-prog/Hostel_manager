@@ -36,7 +36,9 @@ export function canAddBooking() {
 }
 
 // ---- Upgrade Modal ----
+let _subBillingType = 'monthly';
 function subSetBilling(type) {
+  _subBillingType = type;
   const price = type === 'annual' ? '17' : '19.99';
   const pv = document.getElementById('sub-price-val');
   const pb = document.getElementById('sub-price-btn');
@@ -48,6 +50,9 @@ function subSetBilling(type) {
   const ab = document.getElementById('sub-btn-annual');
   if (mb) mb.style.cssText = type === 'monthly' ? active : inactive;
   if (ab) ab.style.cssText = type === 'annual' ? active : inactive;
+  // Update discount note
+  const dn = document.getElementById('sub-discount-note');
+  if (dn) dn.style.display = type === 'annual' ? 'block' : 'none';
 }
 window.subSetBilling = subSetBilling;
 
@@ -142,9 +147,10 @@ export function showUpgradeModal(reason) {
             padding:3px 28px;transform:rotate(45deg)
           ">HOT</div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">Pro</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:12px;color:var(--accent)">
+          <div style="font-size:22px;font-weight:800;margin-bottom:4px;color:var(--accent)">
             $<span id="sub-price-val">19.99</span><span style="font-size:12px;color:var(--text3)">${pm}</span>
           </div>
+          <div id="sub-discount-note" style="display:none;font-size:11px;color:var(--green);font-weight:600;margin-bottom:8px">${t('discount15') || '-15%'}</div>
           <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
@@ -204,16 +210,16 @@ export function showUpgradeModal(reason) {
 
 
 
-// ===== STRIPE PAYMENT LINK =====
-// Вставь свой Payment Link от Stripe сюда:
-const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00';
+// ===== STRIPE PAYMENT LINKS =====
+const STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00';
+const STRIPE_ANNUAL_LINK = 'https://buy.stripe.com/ANNUAL_LINK_HERE'; // TODO: создай годовой Payment Link в Stripe ($204/год) и вставь сюда
 
 export function openSubscription() {
   const email = window._currentUser?.email || '';
   const uid = window._workspaceUid || window._currentUser?.uid || '';
-
   const params = new URLSearchParams({ prefilled_email: email, client_reference_id: uid });
-  const stripeUrl = STRIPE_PAYMENT_LINK + '?' + params.toString();
+
+  let currentBilling = 'monthly';
 
   const el = document.createElement('div');
   el.className = 'confirm-overlay';
@@ -228,13 +234,25 @@ export function openSubscription() {
       <div style="background:linear-gradient(135deg,#1a1535,#0d1a2e);padding:24px 28px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
         <div style="font-size:36px;margin-bottom:8px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Upgrade to Pro</div>
-        <div style="font-size:22px;font-weight:800;color:var(--accent)">$19.99<span style="font-size:13px;color:rgba(255,255,255,.4)">/month</span></div>
+
+        <!-- Billing toggle -->
+        <div style="display:inline-flex;align-items:center;gap:0;margin:12px 0 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:3px">
+          <button id="pay-btn-monthly" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+            ${t('perMonth').replace('/','') || 'mies.'}
+          </button>
+          <button id="pay-btn-annual" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s">
+            ${t('annual') || 'Rok'} <span style="background:rgba(74,222,128,.15);color:#4ade80;padding:1px 6px;border-radius:20px;font-size:10px">-15%</span>
+          </button>
+        </div>
+
+        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:var(--accent)">$19.99<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
+        <div id="pay-discount-note" style="display:none;font-size:12px;color:#4ade80;margin-top:4px;font-weight:600">${t('discount15') || '-15%'}</div>
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
       </div>
 
-      <!-- Pay button (primary) — direct link works for Apple Pay / Google Pay -->
+      <!-- Pay button -->
       <div style="padding:20px 24px 4px">
-        <a id="inv-pay-link" href="${stripeUrl}" target="_blank" rel="noopener"
+        <a id="inv-pay-link" href="#" target="_blank" rel="noopener"
           style="
             display:block;width:100%;padding:14px;border-radius:10px;
             background:linear-gradient(135deg,#e8a838,#d4883a);
@@ -243,7 +261,7 @@ export function openSubscription() {
             transition:opacity .2s;box-sizing:border-box;
           "
           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          💳 Pay with Stripe
+          💳 Pay with Stripe — <span id="pay-btn-price">$19.99/${t('perMonth').replace('/','') || 'mo.'}</span>
         </a>
         <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px">
           Apple Pay · Google Pay · Card
@@ -302,6 +320,31 @@ export function openSubscription() {
       </div>
     </div>
   `;
+
+  const pm = t('perMonth').replace('/','') || 'mo.';
+  const activeStyle = 'padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
+  const inactiveStyle = 'padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s';
+
+  function updateBilling(type) {
+    currentBilling = type;
+    const isAnnual = type === 'annual';
+    const price = isAnnual ? '17' : '19.99';
+    const link = isAnnual ? STRIPE_ANNUAL_LINK : STRIPE_MONTHLY_LINK;
+
+    el.querySelector('#pay-price-line').innerHTML = `$${price}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${pm}</span>`;
+    el.querySelector('#pay-discount-note').style.display = isAnnual ? 'block' : 'none';
+    el.querySelector('#pay-btn-price').textContent = isAnnual ? `$204/${t('annual') || 'rok'}` : `$19.99/${pm}`;
+    el.querySelector('#inv-pay-link').href = link + '?' + params.toString();
+    el.querySelector('#pay-btn-monthly').style.cssText = isAnnual ? inactiveStyle : activeStyle;
+    el.querySelector('#pay-btn-annual').style.cssText = isAnnual ? activeStyle : inactiveStyle;
+  }
+
+  // Init with monthly
+  updateBilling('monthly');
+
+  // Billing toggle clicks
+  el.querySelector('#pay-btn-monthly').addEventListener('click', () => updateBilling('monthly'));
+  el.querySelector('#pay-btn-annual').addEventListener('click', () => updateBilling('annual'));
 
   // Toggle invoice fields
   el.querySelector('#inv-toggle').addEventListener('change', function () {
@@ -418,6 +461,32 @@ function showProActivatedModal() {
   document.body.appendChild(el);
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });
 }
+
+// ===== MANAGE SUBSCRIPTION (Stripe Customer Portal) =====
+const PORTAL_FUNCTION_URL = 'https://us-central1-hostel-manager-8d837.cloudfunctions.net/createPortalSession';
+
+export async function openManageSubscription() {
+  const uid = window._workspaceUid || window._currentUser?.uid || '';
+  if (!uid) return;
+
+  try {
+    const res = await fetch(PORTAL_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.open(data.url, '_blank');
+    } else {
+      alert(data.error || 'Error opening subscription portal');
+    }
+  } catch (e) {
+    console.error('Portal error:', e);
+    alert('Could not open subscription management');
+  }
+}
+window.openManageSubscription = openManageSubscription;
 
 // Plan badge text
 export function getPlanLabel() {
