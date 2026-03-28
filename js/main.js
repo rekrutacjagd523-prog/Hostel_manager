@@ -255,7 +255,7 @@ window.updatePlanBadge = function () {
     badge.textContent = getPlanLabel();
     badge.style.cssText = 'display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;' + getPlanStyle();
     if (pro) badge.onclick = () => openManageSubscription();
-    else badge.onclick = () => openSubscription();
+    else badge.onclick = () => showUpgradeModal();
 };
 
 // Bookings
