@@ -544,7 +544,7 @@
       </div>
     </div>
 
-    <div class="pricing-grid" style="max-width:720px">
+    <div class="pricing-grid" style="max-width:960px">
       <!-- Free -->
       <div class="plan-card">
         <div class="plan-name">Start</div>
@@ -553,8 +553,10 @@
         <ul class="plan-features">
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>10</strong> <span data-i18n="plan_residents">mieszkańców</span></span></li>
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>3</strong> <span data-i18n="plan_props">obiekty</span></span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_reports">Raporty PDF/Excel</span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_mobile">Aplikacja mobilna</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>1</strong> <span data-i18n="plan_user">użytkownik</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_reports_pdf">Raporty PDF</span></li>
+          <li style="color:var(--text4)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text4);flex-shrink:0"><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="plan_excel">Eksport Excel</span></li>
+          <li style="color:var(--text4)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text4);flex-shrink:0"><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="plan_collab">Wspólna praca</span></li>
         </ul>
         <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px" data-i18n="cta_free">Zacznij za darmo</a>
       </div>
@@ -563,15 +565,35 @@
       <div class="plan-card featured">
         <div class="plan-badge" data-i18n="plan_popular">Najpopularniejszy</div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price"><span id="price-val">19.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
-        <div class="plan-desc" data-i18n="plan_trial">14 dni próbnych gratis</div>
+        <div class="plan-price"><span id="price-pro">19.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
+        <div id="price-pro-annual" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-top:2px" data-i18n="plan_pro_annual">lub $204/rok <span style="background:rgba(74,222,128,.15);padding:1px 6px;border-radius:20px;font-size:11px">-15%</span></div>
+        <div class="plan-desc" data-i18n="plan_pro_desc">Dla firm z wieloma obiektami</div>
         <ul class="plan-features">
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_res">Nieograniczeni mieszkańcy</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>100</strong> <span data-i18n="plan_residents">mieszkańców</span></span></li>
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_props">Nieograniczone obiekty</span></li>
-          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_finance">Finanse + Rezerwacje</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>5</strong> <span data-i18n="plan_users">użytkowników</span></span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_reports">Raporty PDF + Excel</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_collab">Wspólna praca</span></li>
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_support">Wsparcie priorytetowe</span></li>
         </ul>
         <a href="app.html" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:12px" data-i18n="cta_trial">Wypróbuj 14 dni gratis</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="plan-card" style="border-color:rgba(139,92,246,.3)">
+        <div class="plan-name" style="color:#a78bfa">Premium</div>
+        <div class="plan-price"><span id="price-premium">24.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
+        <div id="price-premium-annual" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-top:2px" data-i18n="plan_prem_annual">lub $240/rok <span style="background:rgba(74,222,128,.15);padding:1px 6px;border-radius:20px;font-size:11px">-20%</span></div>
+        <div class="plan-desc" data-i18n="plan_prem_desc">Dla firm z wieloma obiektami i pracownikami</div>
+        <ul class="plan-features">
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_res">Nieograniczeni mieszkańcy</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_props">Nieograniczone obiekty</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_users">Bez limitu użytkowników</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_reports">Raporty PDF + Excel</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_collab">Wspólna praca</span></li>
+          <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_dedicated">Dedykowane wsparcie</span></li>
+        </ul>
+        <a href="app.html" class="btn-secondary" style="width:100%;justify-content:center;font-size:15px;padding:12px;border-color:rgba(139,92,246,.4);color:#a78bfa" data-i18n="cta_contact">Skontaktuj się</a>
       </div>
     </div>
   </section>
@@ -631,7 +653,11 @@
 
     // Billing toggle
     function setBilling(type) {
-      document.getElementById('price-val').textContent = type === 'annual' ? '17' : '19.99';
+      const isAnnual = type === 'annual';
+      document.getElementById('price-pro').textContent = isAnnual ? '17' : '19.99';
+      document.getElementById('price-premium').textContent = isAnnual ? '20' : '24.99';
+      document.getElementById('price-pro-annual').style.display = isAnnual ? 'block' : 'none';
+      document.getElementById('price-premium-annual').style.display = isAnnual ? 'block' : 'none';
       const active = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--accent);color:#111';
       const inactive = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text2)';
       document.getElementById('btn-monthly').style.cssText = type === 'monthly' ? active : inactive;

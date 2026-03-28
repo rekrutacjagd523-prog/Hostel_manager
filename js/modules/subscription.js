@@ -7,9 +7,8 @@ export const FREE_LIMITS = { residents: 10, properties: 3, expenses: 50, booking
 
 // Check plan
 export function isPro() {
-  // Plan is stored in _settings (Firestore users/{uid}/settings/main)
   const s = window._settings || {};
-  if (s.plan !== 'pro') return false;
+  if (s.plan !== 'pro' && s.plan !== 'premium') return false;
   if (s.validUntil && new Date(s.validUntil) < new Date()) return false;
   return true;
 }
@@ -39,20 +38,26 @@ export function canAddBooking() {
 let _subBillingType = 'monthly';
 function subSetBilling(type) {
   _subBillingType = type;
-  const price = type === 'annual' ? '17' : '19.99';
-  const pv = document.getElementById('sub-price-val');
-  const pb = document.getElementById('sub-price-btn');
-  if (pv) pv.textContent = price;
-  if (pb) pb.textContent = price;
+  const isA = type === 'annual';
+  // Pro prices
+  const ppv = document.getElementById('sub-price-pro-val');
+  const ppb = document.getElementById('sub-price-pro-btn');
+  if (ppv) ppv.textContent = isA ? '17' : '19.99';
+  if (ppb) ppb.textContent = isA ? '17' : '19.99';
+  // Premium prices
+  const rpv = document.getElementById('sub-price-prem-val');
+  const rpb = document.getElementById('sub-price-prem-btn');
+  if (rpv) rpv.textContent = isA ? '20' : '24.99';
+  if (rpb) rpb.textContent = isA ? '20' : '24.99';
+  // Toggle buttons
   const active = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
   const inactive = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s';
   const mb = document.getElementById('sub-btn-monthly');
   const ab = document.getElementById('sub-btn-annual');
   if (mb) mb.style.cssText = type === 'monthly' ? active : inactive;
   if (ab) ab.style.cssText = type === 'annual' ? active : inactive;
-  // Update discount note
-  const dn = document.getElementById('sub-discount-note');
-  if (dn) dn.style.display = type === 'annual' ? 'block' : 'none';
+  // Discount notes
+  document.querySelectorAll('.sub-discount-note').forEach(n => n.style.display = isA ? 'block' : 'none');
 }
 window.subSetBilling = subSetBilling;
 
@@ -76,7 +81,7 @@ export function showUpgradeModal(reason) {
       border-radius:20px;
       padding:0;
       width:100%;
-      max-width:520px;
+      max-width:700px;
       border:1px solid rgba(232,168,56,.2);
       overflow:hidden;
       box-shadow:0 24px 60px rgba(0,0,0,.5)
@@ -89,7 +94,7 @@ export function showUpgradeModal(reason) {
         border-bottom:1px solid rgba(255,255,255,.06)
       ">
         <div style="font-size:40px;margin-bottom:8px"></div>
-        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">${t('upgradeToPro')}</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">${t('choosePlan') || 'Choose your plan'}</div>
         <div style="font-size:13px;color:rgba(255,255,255,.5)">
           ${isResLimit
       ? `${t('limitResidents')} (${activeCount}/${FREE_LIMITS.residents})`
@@ -110,62 +115,50 @@ export function showUpgradeModal(reason) {
       </div>
 
       <!-- Plans -->
-      <div style="display:flex;gap:12px;padding:12px 20px 0">
+      <div style="display:flex;gap:10px;padding:12px 16px 0">
 
         <!-- Free card -->
-        <div style="
-          flex:1;padding:16px;border-radius:12px;
-          border:1px solid var(--border3);
-          background:var(--surface2)
-        ">
-          <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px">🆓 Standard</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:12px">$0<span style="font-size:12px;color:var(--text3)">${pm}</span></div>
-          <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div>${t('residents')}: <b style="color:var(--text)">${FREE_LIMITS.residents}</b></div>
-            <div>${t('properties')}: <b style="color:var(--text)">${FREE_LIMITS.properties}</b></div>
-            <div>${t('report')}</div>
-            <div style="color:var(--text4)">${t('unlimited')}</div>
+        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid var(--border3);background:var(--surface2)">
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">Start</div>
+          <div style="font-size:20px;font-weight:800;margin-bottom:10px">$0<span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+            <div><b style="color:var(--text)">${FREE_LIMITS.residents}</b> ${t('residents').toLowerCase()}</div>
+            <div><b style="color:var(--text)">${FREE_LIMITS.properties}</b> ${t('properties').toLowerCase()}</div>
+            <div>1 ${t('user') || 'user'}</div>
+            <div>PDF</div>
           </div>
-          <div style="
-            margin-top:14px;padding:8px;border-radius:8px;
-            background:var(--surface);text-align:center;
-            font-size:12px;font-weight:600;color:var(--text3)
-          ">${t('currentPlan')}</div>
+          <div style="margin-top:12px;padding:7px;border-radius:8px;background:var(--surface);text-align:center;font-size:11px;font-weight:600;color:var(--text3)">${t('currentPlan')}</div>
         </div>
 
         <!-- Pro card -->
-        <div style="
-          flex:1;padding:16px;border-radius:12px;
-          border:2px solid var(--accent);
-          background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));
-          position:relative;overflow:hidden
-        ">
-          <div style="
-            position:absolute;top:10px;right:-22px;
-            background:var(--accent);color:#000;
-            font-size:10px;font-weight:800;
-            padding:3px 28px;transform:rotate(45deg)
-          ">HOT</div>
-          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">Pro</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:4px;color:var(--accent)">
-            $<span id="sub-price-val">19.99</span><span style="font-size:12px;color:var(--text3)">${pm}</span>
-          </div>
-          <div id="sub-discount-note" style="display:none;font-size:11px;color:var(--green);font-weight:600;margin-bottom:8px">${t('discount15') || '-15%'}</div>
-          <div style="font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px">
-            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
+        <div style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));position:relative;overflow:hidden">
+          <div style="position:absolute;top:8px;right:-24px;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:2px 26px;transform:rotate(45deg)">HOT</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Pro</div>
+          <div style="font-size:20px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">19.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">-15%</div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+            <div><b style="color:var(--text)">100</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
-            <div>${t('report')}</div>
+            <div><b style="color:var(--text)">5</b> ${t('users') || 'users'}</div>
+            <div>PDF + Excel</div>
             <div>${t('prioritySupport')}</div>
           </div>
-          <button id="btn-subscribe" onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription();" style="
-            margin-top:14px;width:100%;padding:10px;border-radius:8px;
-            border:none;cursor:pointer;font-family:inherit;
-            font-size:13px;font-weight:700;
-            background:linear-gradient(135deg,#e8a838,#d4883a);
-            color:#0d0d14;transition:opacity .2s
-          " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            ${t('subscribe')} — $<span id="sub-price-btn">19.99</span>
-          </button>
+          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('pro');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#e8a838,#d4883a);color:#0d0d14;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-pro-btn">19.99</span></button>
+        </div>
+
+        <!-- Premium card -->
+        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface2))">
+          <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:6px">Premium</div>
+          <div style="font-size:20px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">24.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">-20%</div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('users') || 'users'}</div>
+            <div>PDF + Excel</div>
+            <div>${t('dedicatedSupport') || 'Dedicated support'}</div>
+          </div>
+          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('premium');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-prem-btn">24.99</span></button>
         </div>
       </div>
 
@@ -211,13 +204,25 @@ export function showUpgradeModal(reason) {
 
 
 // ===== STRIPE PAYMENT LINKS =====
-const STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00';
-const STRIPE_ANNUAL_LINK = 'https://buy.stripe.com/7sY3co3nH4DE6sn5rk0Fi03';
+const STRIPE_LINKS = {
+  pro:     { monthly: 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00', annual: 'https://buy.stripe.com/7sY3co3nH4DE6sn5rk0Fi03' },
+  premium: { monthly: 'TODO_PREMIUM_MONTHLY', annual: 'TODO_PREMIUM_ANNUAL' }
+};
+const PLAN_PRICES = {
+  pro:     { monthly: '19.99', annual: '17', annualTotal: '204' },
+  premium: { monthly: '24.99', annual: '20', annualTotal: '240' }
+};
 
-export function openSubscription() {
+export function openSubscription(planType = 'pro') {
   const email = window._currentUser?.email || '';
   const uid = window._workspaceUid || window._currentUser?.uid || '';
   const params = new URLSearchParams({ prefilled_email: email, client_reference_id: uid });
+  const prices = PLAN_PRICES[planType] || PLAN_PRICES.pro;
+  const isPrem = planType === 'premium';
+  const planLabel = isPrem ? 'Premium' : 'Pro';
+  const accentColor = isPrem ? '#a78bfa' : '#f59e0b';
+  const btnBg = isPrem ? 'linear-gradient(135deg,#8b5cf6,#7c3aed)' : 'linear-gradient(135deg,#e8a838,#d4883a)';
+  const btnColor = isPrem ? '#fff' : '#0d0d14';
 
   let currentBilling = 'monthly';
 
@@ -232,8 +237,8 @@ export function openSubscription() {
     ">
       <!-- Header -->
       <div style="background:linear-gradient(135deg,#1a1535,#0d1a2e);padding:24px 28px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:36px;margin-bottom:8px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Upgrade to Pro</div>
+        <div style="font-size:36px;margin-bottom:8px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${accentColor}" stroke="${accentColor}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Upgrade to ${planLabel}</div>
 
         <!-- Billing toggle -->
         <div style="display:inline-flex;align-items:center;gap:0;margin:12px 0 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:3px">
@@ -245,7 +250,7 @@ export function openSubscription() {
           </button>
         </div>
 
-        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:var(--accent)">$19.99<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
+        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:${accentColor}">$${prices.monthly}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
         <div id="pay-discount-note" style="display:none;font-size:12px;color:#4ade80;margin-top:4px;font-weight:600">${t('discount15') || '-15%'}</div>
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
       </div>
@@ -255,13 +260,13 @@ export function openSubscription() {
         <a id="inv-pay-link" href="#" target="_blank" rel="noopener"
           style="
             display:block;width:100%;padding:14px;border-radius:10px;
-            background:linear-gradient(135deg,#e8a838,#d4883a);
-            color:#0d0d14;font-weight:800;font-size:15px;
+            background:${btnBg};
+            color:${btnColor};font-weight:800;font-size:15px;
             text-decoration:none;text-align:center;
             transition:opacity .2s;box-sizing:border-box;
           "
           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          💳 Pay with Stripe — <span id="pay-btn-price">$19.99/${t('perMonth').replace('/','') || 'mo.'}</span>
+          💳 Pay with Stripe — <span id="pay-btn-price">$${prices.monthly}/${t('perMonth').replace('/','') || 'mo.'}</span>
         </a>
         <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px">
           Apple Pay · Google Pay · Card
@@ -325,15 +330,17 @@ export function openSubscription() {
   const activeStyle = 'padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
   const inactiveStyle = 'padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s';
 
+  const links = STRIPE_LINKS[planType] || STRIPE_LINKS.pro;
+
   function updateBilling(type) {
     currentBilling = type;
     const isAnnual = type === 'annual';
-    const price = isAnnual ? '17' : '19.99';
-    const link = isAnnual ? STRIPE_ANNUAL_LINK : STRIPE_MONTHLY_LINK;
+    const price = isAnnual ? prices.annual : prices.monthly;
+    const link = isAnnual ? links.annual : links.monthly;
 
     el.querySelector('#pay-price-line').innerHTML = `$${price}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${pm}</span>`;
     el.querySelector('#pay-discount-note').style.display = isAnnual ? 'block' : 'none';
-    el.querySelector('#pay-btn-price').textContent = isAnnual ? `$204/${t('annual') || 'rok'}` : `$19.99/${pm}`;
+    el.querySelector('#pay-btn-price').textContent = isAnnual ? `$${prices.annualTotal}/${t('annual') || 'rok'}` : `$${prices.monthly}/${pm}`;
     el.querySelector('#inv-pay-link').href = link + '?' + params.toString();
     el.querySelector('#pay-btn-monthly').style.cssText = isAnnual ? inactiveStyle : activeStyle;
     el.querySelector('#pay-btn-annual').style.cssText = isAnnual ? activeStyle : inactiveStyle;
@@ -402,12 +409,12 @@ export async function checkStripeReturn() {
     let attempts = 0;
     const maxAttempts = 15;
     while (attempts < maxAttempts) {
-      if (window._settings?.plan === 'pro') break;
+      if (isPro()) break;
       await new Promise(r => setTimeout(r, 1000));
       attempts++;
     }
 
-    if (window._settings?.plan === 'pro') {
+    if (isPro()) {
       showProActivatedModal();
       if (window.render) window.render();
       if (window.updatePlanBadge) window.updatePlanBadge();
@@ -490,10 +497,15 @@ window.openManageSubscription = openManageSubscription;
 
 // Plan badge text
 export function getPlanLabel() {
+  const s = window._settings || {};
+  if (s.plan === 'premium' && isPro()) return 'Premium';
   return isPro() ? 'Pro' : '🆓 Free';
 }
 
 export function getPlanStyle() {
+  const s = window._settings || {};
+  if (s.plan === 'premium' && isPro())
+    return 'background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.3)';
   return isPro()
     ? 'background:rgba(232,168,56,.12);color:var(--accent);border:1px solid rgba(232,168,56,.3)'
     : 'background:var(--surface);color:var(--text3);border:1px solid var(--border3)';
@@ -534,12 +546,12 @@ export async function applyReferralCode(raw) {
     let attempts = 0;
     const maxAttempts = 10;
     while (attempts < maxAttempts) {
-      if (window._settings?.plan === 'pro') break;
+      if (isPro()) break;
       await new Promise(r => setTimeout(r, 1000));
       attempts++;
     }
 
-    if (window._settings?.plan === 'pro') {
+    if (isPro()) {
       status.style.color = 'var(--green)';
       status.textContent = t('refCodeSuccess');
       setTimeout(() => {
