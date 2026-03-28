@@ -210,7 +210,7 @@ export function showUpgradeModal(reason) {
 // ===== STRIPE PAYMENT LINKS =====
 const STRIPE_LINKS = {
   pro:     { monthly: 'https://buy.stripe.com/3cIaEQ4rL6LM183bPI0Fi00', annual: 'https://buy.stripe.com/7sY3co3nH4DE6sn5rk0Fi03' },
-  premium: { monthly: 'TODO_PREMIUM_MONTHLY', annual: 'TODO_PREMIUM_ANNUAL' }
+  premium: { monthly: 'https://buy.stripe.com/cNiaEQ9M57PQ3gb0700Fi04', annual: 'https://buy.stripe.com/7sYeV6f6p1rsg2X9HA0Fi05' }
 };
 const PLAN_PRICES = {
   pro:     { monthly: '19.99', annual: '17', annualTotal: '204' },
