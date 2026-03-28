@@ -35,20 +35,25 @@ export function canAddBooking() {
 }
 
 // ---- Upgrade Modal ----
-let _subBillingType = 'monthly';
+let _subBillingType = 'annual';
 function subSetBilling(type) {
   _subBillingType = type;
   const isA = type === 'annual';
-  // Pro prices
+  // Pro prices — always show monthly price
   const ppv = document.getElementById('sub-price-pro-val');
   const ppb = document.getElementById('sub-price-pro-btn');
   if (ppv) ppv.textContent = isA ? '17' : '19.99';
   if (ppb) ppb.textContent = isA ? '17' : '19.99';
-  // Premium prices
+  // Premium prices — always show monthly price
   const rpv = document.getElementById('sub-price-prem-val');
   const rpb = document.getElementById('sub-price-prem-btn');
   if (rpv) rpv.textContent = isA ? '20' : '24.99';
   if (rpb) rpb.textContent = isA ? '20' : '24.99';
+  // Annual notes
+  const np = document.getElementById('sub-note-pro');
+  const nrp = document.getElementById('sub-note-prem');
+  if (np) np.innerHTML = isA ? '$204/yr · <s>$239.88</s>' : '';
+  if (nrp) nrp.innerHTML = isA ? '$240/yr · <s>$299.88</s>' : '';
   // Toggle buttons
   const active = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
   const inactive = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s';
@@ -56,8 +61,6 @@ function subSetBilling(type) {
   const ab = document.getElementById('sub-btn-annual');
   if (mb) mb.style.cssText = type === 'monthly' ? active : inactive;
   if (ab) ab.style.cssText = type === 'annual' ? active : inactive;
-  // Discount notes
-  document.querySelectorAll('.sub-discount-note').forEach(n => n.style.display = isA ? 'block' : 'none');
 }
 window.subSetBilling = subSetBilling;
 
@@ -105,11 +108,11 @@ export function showUpgradeModal(reason) {
       <!-- Billing toggle -->
       <div style="display:flex;justify-content:center;padding:16px 20px 0">
         <div style="display:inline-flex;align-items:center;gap:0;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:3px">
-          <button id="sub-btn-monthly" onclick="subSetBilling('monthly')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+          <button id="sub-btn-monthly" onclick="subSetBilling('monthly')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
             ${t('perMonth').replace('/','') || 'mies.'}
           </button>
-          <button id="sub-btn-annual" onclick="subSetBilling('annual')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
-            ${t('annual') || 'Rok'} <span style="background:rgba(74,222,128,.15);color:var(--green);padding:1px 6px;border-radius:20px;font-size:10px">-15%</span>
+          <button id="sub-btn-annual" onclick="subSetBilling('annual')" style="padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+            ${t('annual') || 'Rok'} <span style="background:rgba(0,0,0,.15);color:#111;padding:1px 6px;border-radius:20px;font-size:10px;font-weight:700">-15%</span>
           </button>
         </div>
       </div>
@@ -135,8 +138,8 @@ export function showUpgradeModal(reason) {
         <div style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));position:relative;overflow:hidden;display:flex;flex-direction:column">
           <div style="position:absolute;top:8px;right:-24px;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:2px 26px;transform:rotate(45deg)">HOT</div>
           <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Pro</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">19.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px;min-height:0">-15%</div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">17</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div id="sub-note-pro" style="font-size:10px;color:var(--text3);margin-bottom:4px">$204/yr · <s>$239.88</s></div>
           <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">100</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
@@ -144,14 +147,14 @@ export function showUpgradeModal(reason) {
             <div>PDF + Excel</div>
             <div>${t('prioritySupport')}</div>
           </div>
-          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('pro');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#e8a838,#d4883a);color:#0d0d14;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-pro-btn">19.99</span></button>
+          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('pro');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#e8a838,#d4883a);color:#0d0d14;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-pro-btn">17</span>${pm}</button>
         </div>
 
         <!-- Premium card -->
         <div style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface2));display:flex;flex-direction:column">
           <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:6px">Premium</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">24.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px;min-height:0">-20%</div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">20</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div id="sub-note-prem" style="font-size:10px;color:var(--text3);margin-bottom:4px">$240/yr · <s>$299.88</s></div>
           <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
@@ -159,7 +162,7 @@ export function showUpgradeModal(reason) {
             <div>PDF + Excel</div>
             <div>${t('dedicatedSupport')}</div>
           </div>
-          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('premium');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-prem-btn">24.99</span></button>
+          <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('premium');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-prem-btn">20</span>${pm}</button>
         </div>
       </div>
 
@@ -243,16 +246,16 @@ export function openSubscription(planType = 'pro') {
 
         <!-- Billing toggle -->
         <div style="display:inline-flex;align-items:center;gap:0;margin:12px 0 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:3px">
-          <button id="pay-btn-monthly" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+          <button id="pay-btn-monthly" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s">
             ${t('perMonth').replace('/','') || 'mies.'}
           </button>
-          <button id="pay-btn-annual" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s">
-            ${t('annual') || 'Rok'} <span style="background:rgba(74,222,128,.15);color:#4ade80;padding:1px 6px;border-radius:20px;font-size:10px">-15%</span>
+          <button id="pay-btn-annual" style="padding:6px 18px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+            ${t('annual') || 'Rok'} <span style="background:rgba(0,0,0,.15);color:#111;padding:1px 6px;border-radius:20px;font-size:10px;font-weight:700">-15%</span>
           </button>
         </div>
 
-        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:${accentColor}">$${prices.monthly}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
-        <div id="pay-discount-note" style="display:none;font-size:12px;color:#4ade80;margin-top:4px;font-weight:600">${t('discount15') || '-15%'}</div>
+        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:${accentColor}">$${prices.annual}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
+        <div id="pay-annual-note" style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">$${prices.annualTotal}/yr · <s>$${(prices.monthly * 12).toFixed(2)}</s></div>
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
       </div>
 
@@ -267,7 +270,7 @@ export function openSubscription(planType = 'pro') {
             transition:opacity .2s;box-sizing:border-box;
           "
           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          💳 Pay with Stripe — <span id="pay-btn-price">$${prices.monthly}/${t('perMonth').replace('/','') || 'mo.'}</span>
+          💳 Pay with Stripe — <span id="pay-btn-price">$${prices.annual}/${t('perMonth').replace('/','') || 'mo.'}</span>
         </a>
         <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px">
           Apple Pay · Google Pay · Card
@@ -333,6 +336,8 @@ export function openSubscription(planType = 'pro') {
 
   const links = STRIPE_LINKS[planType] || STRIPE_LINKS.pro;
 
+  const monthlyTotal = (prices.monthly * 12).toFixed(2);
+
   function updateBilling(type) {
     currentBilling = type;
     const isAnnual = type === 'annual';
@@ -340,15 +345,17 @@ export function openSubscription(planType = 'pro') {
     const link = isAnnual ? links.annual : links.monthly;
 
     el.querySelector('#pay-price-line').innerHTML = `$${price}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${pm}</span>`;
-    el.querySelector('#pay-discount-note').style.display = isAnnual ? 'block' : 'none';
-    el.querySelector('#pay-btn-price').textContent = isAnnual ? `$${prices.annualTotal}/${t('annual') || 'rok'}` : `$${prices.monthly}/${pm}`;
+    el.querySelector('#pay-annual-note').innerHTML = isAnnual
+      ? `$${prices.annualTotal}/yr · <s>$${monthlyTotal}</s>`
+      : '';
+    el.querySelector('#pay-btn-price').textContent = `$${price}/${pm}`;
     el.querySelector('#inv-pay-link').href = link + '?' + params.toString();
     el.querySelector('#pay-btn-monthly').style.cssText = isAnnual ? inactiveStyle : activeStyle;
     el.querySelector('#pay-btn-annual').style.cssText = isAnnual ? activeStyle : inactiveStyle;
   }
 
   // Init with the billing type selected on the upgrade modal
-  updateBilling(_subBillingType || 'monthly');
+  updateBilling(_subBillingType || 'annual');
 
   // Billing toggle clicks
   el.querySelector('#pay-btn-monthly').addEventListener('click', () => updateBilling('monthly'));

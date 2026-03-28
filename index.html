@@ -533,13 +533,13 @@
       <h2 class="sec-title" data-i18n="feat_h2" style="font-size:clamp(28px,4vw,42px)">Prosty, uczciwy cennik</h2>
 
       <!-- Billing toggle -->
-      <div style="display:inline-flex;align-items:center;gap:12px;margin-top:28px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:5px">
-        <button id="btn-monthly" onclick="setBilling('monthly')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
+      <div style="display:inline-flex;align-items:center;gap:0;margin-top:28px;background:var(--bg2);border:1px solid var(--border2);border-radius:100px;padding:4px">
+        <button id="btn-monthly" onclick="setBilling('monthly')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
           <span data-i18n="billing_monthly">Miesięcznie</span>
         </button>
-        <button id="btn-annual" onclick="setBilling('annual')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s">
+        <button id="btn-annual" onclick="setBilling('annual')" style="padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s">
           <span data-i18n="billing_annual">Rocznie</span>
-          <span style="background:rgba(74,222,128,.15);color:var(--green);padding:2px 7px;border-radius:20px;font-size:11px;margin-left:4px">-15%</span>
+          <span style="background:rgba(0,0,0,.15);color:#111;padding:2px 7px;border-radius:20px;font-size:11px;margin-left:4px;font-weight:700">-15%</span>
         </button>
       </div>
     </div>
@@ -565,8 +565,8 @@
       <div class="plan-card featured">
         <div class="plan-badge" data-i18n="plan_popular">Najpopularniejszy</div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price"><span id="price-pro">19.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
-        <div id="price-pro-annual" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-top:2px" data-i18n="plan_pro_annual">lub $204/rok <span style="background:rgba(74,222,128,.15);padding:1px 6px;border-radius:20px;font-size:11px">-15%</span></div>
+        <div class="plan-price"><span id="price-pro">17</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
+        <div id="price-pro-annual" style="font-size:12px;color:var(--text3);margin-top:2px"><span id="price-pro-note">$204/yr · <s style="color:var(--text4)">$239.88</s></span></div>
         <div class="plan-desc" data-i18n="plan_pro_desc">Dla firm z wieloma obiektami</div>
         <ul class="plan-features">
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>100</strong> <span data-i18n="plan_residents">mieszkańców</span></span></li>
@@ -582,8 +582,8 @@
       <!-- Premium -->
       <div class="plan-card" style="border-color:rgba(139,92,246,.3)">
         <div class="plan-name" style="color:#a78bfa">Premium</div>
-        <div class="plan-price"><span id="price-premium">24.99</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
-        <div id="price-premium-annual" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-top:2px" data-i18n="plan_prem_annual">lub $240/rok <span style="background:rgba(74,222,128,.15);padding:1px 6px;border-radius:20px;font-size:11px">-20%</span></div>
+        <div class="plan-price"><span id="price-premium">20</span> <sub>$</sub> <span class="period">/<span data-i18n="plan_mo">mies.</span></span></div>
+        <div id="price-premium-annual" style="font-size:12px;color:var(--text3);margin-top:2px"><span id="price-prem-note">$240/yr · <s style="color:var(--text4)">$299.88</s></span></div>
         <div class="plan-desc" data-i18n="plan_prem_desc">Dla firm z wieloma obiektami i pracownikami</div>
         <ul class="plan-features">
           <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="plan_unlimited_res">Nieograniczeni mieszkańcy</span></li>
@@ -656,8 +656,12 @@
       const isAnnual = type === 'annual';
       document.getElementById('price-pro').textContent = isAnnual ? '17' : '19.99';
       document.getElementById('price-premium').textContent = isAnnual ? '20' : '24.99';
-      document.getElementById('price-pro-annual').style.display = isAnnual ? 'block' : 'none';
-      document.getElementById('price-premium-annual').style.display = isAnnual ? 'block' : 'none';
+      document.getElementById('price-pro-note').innerHTML = isAnnual
+        ? '$204/yr · <s style="color:var(--text4)">$239.88</s>'
+        : '';
+      document.getElementById('price-prem-note').innerHTML = isAnnual
+        ? '$240/yr · <s style="color:var(--text4)">$299.88</s>'
+        : '';
       const active = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--accent);color:#111';
       const inactive = 'padding:7px 20px;border-radius:100px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text2)';
       document.getElementById('btn-monthly').style.cssText = type === 'monthly' ? active : inactive;
