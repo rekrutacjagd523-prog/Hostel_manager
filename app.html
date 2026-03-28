@@ -141,7 +141,7 @@
         </div>
       </div>
       <div class="header-right" id="hdr-right">
-        <button id="plan-badge" onclick="openSubscription()"
+        <button id="plan-badge" onclick="isPro() ? openManageSubscription() : showUpgradeModal()"
           style="display:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border3);background:var(--surface);color:var(--text3);font-family:inherit;transition:all .2s">🆓
           Free</button>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu(event)">
