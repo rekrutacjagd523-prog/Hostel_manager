@@ -118,28 +118,29 @@ export function showUpgradeModal(reason) {
       <div style="display:flex;gap:10px;padding:12px 16px 0">
 
         <!-- Free card -->
-        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid var(--border3);background:var(--surface2)">
+        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid var(--border3);background:var(--surface2);display:flex;flex-direction:column">
           <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">Start</div>
-          <div style="font-size:20px;font-weight:800;margin-bottom:10px">$0<span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px">$0<span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div style="height:16px"></div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">${FREE_LIMITS.residents}</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${FREE_LIMITS.properties}</b> ${t('properties').toLowerCase()}</div>
-            <div>1 ${t('user') || 'user'}</div>
+            <div><b style="color:var(--text)">1</b> ${t('user')}</div>
             <div>PDF</div>
           </div>
-          <div style="margin-top:12px;padding:7px;border-radius:8px;background:var(--surface);text-align:center;font-size:11px;font-weight:600;color:var(--text3)">${t('currentPlan')}</div>
+          <div style="margin-top:10px;padding:9px;border-radius:8px;background:var(--surface);text-align:center;font-size:12px;font-weight:600;color:var(--text3)">${t('currentPlan')}</div>
         </div>
 
         <!-- Pro card -->
-        <div style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));position:relative;overflow:hidden">
+        <div style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));position:relative;overflow:hidden;display:flex;flex-direction:column">
           <div style="position:absolute;top:8px;right:-24px;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:2px 26px;transform:rotate(45deg)">HOT</div>
           <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Pro</div>
-          <div style="font-size:20px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">19.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">-15%</div>
-          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">19.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px;min-height:0">-15%</div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">100</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
-            <div><b style="color:var(--text)">5</b> ${t('users') || 'users'}</div>
+            <div><b style="color:var(--text)">5</b> ${t('users')}</div>
             <div>PDF + Excel</div>
             <div>${t('prioritySupport')}</div>
           </div>
@@ -147,16 +148,16 @@ export function showUpgradeModal(reason) {
         </div>
 
         <!-- Premium card -->
-        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface2))">
+        <div style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface2));display:flex;flex-direction:column">
           <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:6px">Premium</div>
-          <div style="font-size:20px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">24.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">-20%</div>
-          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">24.99</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
+          <div class="sub-discount-note" style="display:none;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px;min-height:0">-20%</div>
+          <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
-            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('users') || 'users'}</div>
+            <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('users')}</div>
             <div>PDF + Excel</div>
-            <div>${t('dedicatedSupport') || 'Dedicated support'}</div>
+            <div>${t('dedicatedSupport')}</div>
           </div>
           <button onclick="document.getElementById('upgrade-overlay')?.remove(); openSubscription('premium');" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t('subscribe')} — $<span id="sub-price-prem-btn">24.99</span></button>
         </div>

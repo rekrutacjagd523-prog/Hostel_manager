@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lokum-v7';
+const CACHE_NAME = 'lokum-v8';
 const PRECACHE = [
   '/',
   '/index.html'
