@@ -347,8 +347,8 @@ export function openSubscription(planType = 'pro') {
     el.querySelector('#pay-btn-annual').style.cssText = isAnnual ? activeStyle : inactiveStyle;
   }
 
-  // Init with monthly
-  updateBilling('monthly');
+  // Init with the billing type selected on the upgrade modal
+  updateBilling(_subBillingType || 'monthly');
 
   // Billing toggle clicks
   el.querySelector('#pay-btn-monthly').addEventListener('click', () => updateBilling('monthly'));
