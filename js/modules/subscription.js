@@ -3,7 +3,7 @@ import { t } from './constants.js';
 import { residents, properties, expenses, bookings } from './utils.js';
 
 // Limits
-export const FREE_LIMITS = { residents: 10, properties: 3, expenses: 50, bookings: 30 };
+export const FREE_LIMITS = { residents: 6, properties: 3, expenses: 50, bookings: 30 };
 
 // Check plan
 export function isPro() {
