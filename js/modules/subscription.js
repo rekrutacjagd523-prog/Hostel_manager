@@ -52,8 +52,13 @@ function subSetBilling(type) {
   // Annual notes
   const np = document.getElementById('sub-note-pro');
   const nrp = document.getElementById('sub-note-prem');
-  if (np) np.innerHTML = isA ? '$204/yr · <s>$239.88</s>' : '';
-  if (nrp) nrp.innerHTML = isA ? '$240/yr · <s>$299.88</s>' : '';
+  if (np) np.innerHTML = isA ? '$204/yr (~799 zł) · <s>$239.88</s>' : '';
+  if (nrp) nrp.innerHTML = isA ? '$240/yr (~949 zł) · <s>$299.88</s>' : '';
+  // PLN prices
+  const plnPro = document.getElementById('sub-pln-pro');
+  const plnPrem = document.getElementById('sub-pln-prem');
+  if (plnPro) plnPro.textContent = isA ? '(~69 zł)' : '(~79 zł)';
+  if (plnPrem) plnPrem.textContent = isA ? '(~79 zł)' : '(~99 zł)';
   // Toggle buttons
   const active = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#111;transition:all .2s';
   const inactive = 'padding:5px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .2s';
@@ -138,8 +143,8 @@ export function showUpgradeModal(reason) {
         <div style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,168,56,.08),rgba(212,136,58,.04));position:relative;overflow:hidden;display:flex;flex-direction:column">
           <div style="position:absolute;top:8px;right:-24px;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:2px 26px;transform:rotate(45deg)">HOT</div>
           <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Pro</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">17</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div id="sub-note-pro" style="font-size:10px;color:var(--text3);margin-bottom:4px">$204/yr · <s>$239.88</s></div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:var(--accent)">$<span id="sub-price-pro-val">17</span><span style="font-size:11px;color:var(--text3)">${pm}</span> <span id="sub-pln-pro" style="font-size:12px;color:var(--text3);font-weight:400">(~69 zł)</span></div>
+          <div id="sub-note-pro" style="font-size:10px;color:var(--text3);margin-bottom:4px">$204/yr (~799 zł) · <s>$239.88</s></div>
           <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">100</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
@@ -153,8 +158,8 @@ export function showUpgradeModal(reason) {
         <!-- Premium card -->
         <div style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface2));display:flex;flex-direction:column">
           <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:6px">Premium</div>
-          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">20</span><span style="font-size:11px;color:var(--text3)">${pm}</span></div>
-          <div id="sub-note-prem" style="font-size:10px;color:var(--text3);margin-bottom:4px">$240/yr · <s>$299.88</s></div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;color:#a78bfa">$<span id="sub-price-prem-val">20</span><span style="font-size:11px;color:var(--text3)">${pm}</span> <span id="sub-pln-prem" style="font-size:12px;color:var(--text3);font-weight:400">(~79 zł)</span></div>
+          <div id="sub-note-prem" style="font-size:10px;color:var(--text3);margin-bottom:4px">$240/yr (~949 zł) · <s>$299.88</s></div>
           <div style="font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:5px;flex:1">
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('residents').toLowerCase()}</div>
             <div><b style="color:var(--text)">${t('unlimited')}</b> ${t('properties').toLowerCase()}</div>
@@ -213,8 +218,8 @@ const STRIPE_LINKS = {
   premium: { monthly: 'https://buy.stripe.com/cNiaEQ9M57PQ3gb0700Fi04', annual: 'https://buy.stripe.com/7sYeV6f6p1rsg2X9HA0Fi05' }
 };
 const PLAN_PRICES = {
-  pro:     { monthly: '19.99', annual: '17', annualTotal: '204' },
-  premium: { monthly: '24.99', annual: '20', annualTotal: '240' }
+  pro:     { monthly: '19.99', annual: '17', annualTotal: '204', plnMonthly: '79', plnAnnual: '69', plnYearly: '799' },
+  premium: { monthly: '24.99', annual: '20', annualTotal: '240', plnMonthly: '99', plnAnnual: '79', plnYearly: '949' }
 };
 
 export function openSubscription(planType = 'pro') {
@@ -254,8 +259,8 @@ export function openSubscription(planType = 'pro') {
           </button>
         </div>
 
-        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:${accentColor}">$${prices.annual}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span></div>
-        <div id="pay-annual-note" style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">$${prices.annualTotal}/yr · <s>$${(prices.monthly * 12).toFixed(2)}</s></div>
+        <div id="pay-price-line" style="font-size:22px;font-weight:800;color:${accentColor}">$${prices.annual}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${t('perMonth').replace('/','') || 'mo.'}</span> <span id="pay-pln" style="font-size:13px;color:rgba(255,255,255,.4);font-weight:400">(~${isPrem ? '79' : '69'} zł)</span></div>
+        <div id="pay-annual-note" style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">$${prices.annualTotal}/yr (~${isPrem ? '949' : '799'} zł) · <s>$${(prices.monthly * 12).toFixed(2)}</s></div>
         <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px">Unlimited residents · properties · bookings</div>
       </div>
 
@@ -344,9 +349,10 @@ export function openSubscription(planType = 'pro') {
     const price = isAnnual ? prices.annual : prices.monthly;
     const link = isAnnual ? links.annual : links.monthly;
 
-    el.querySelector('#pay-price-line').innerHTML = `$${price}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${pm}</span>`;
+    const plnPrice = isAnnual ? prices.plnAnnual : prices.plnMonthly;
+    el.querySelector('#pay-price-line').innerHTML = `$${price}<span style="font-size:13px;color:rgba(255,255,255,.4)">/${pm}</span> <span style="font-size:13px;color:rgba(255,255,255,.4);font-weight:400">(~${plnPrice} zł)</span>`;
     el.querySelector('#pay-annual-note').innerHTML = isAnnual
-      ? `$${prices.annualTotal}/yr · <s>$${monthlyTotal}</s>`
+      ? `$${prices.annualTotal}/yr (~${prices.plnYearly} zł) · <s>$${monthlyTotal}</s>`
       : '';
     el.querySelector('#pay-btn-price').textContent = `$${price}/${pm}`;
     el.querySelector('#inv-pay-link').href = link + '?' + params.toString();
