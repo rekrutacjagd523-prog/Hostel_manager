@@ -48,6 +48,31 @@
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 12px;
+      /* === RADIUS SCALE — role-based (design system) === */
+      --r-sm: 4px;    /* tag */
+      --r-md: 6px;    /* period btn, inline btn */
+      --r-lg: 8px;    /* .btn, fields */
+      --r-xl: 10px;   /* logo, prop card, user menu */
+      --r-2xl: 12px;  /* stat card, main card */
+      --r-3xl: 16px;  /* modal */
+      --r-pill: 999px;
+      /* === SEMANTIC TINTS — translucent washes === */
+      --tint-amber-hi:  rgba(232, 168, 56, .15);
+      --tint-amber-med: rgba(232, 168, 56, .12);
+      --tint-amber-lo:  rgba(232, 168, 56, .08);
+      --tint-amber-xlo: rgba(232, 168, 56, .05);
+      --tint-green-hi:  rgba(106, 184, 154, .15);
+      --tint-green-med: rgba(106, 184, 154, .12);
+      --tint-green-lo:  rgba(106, 184, 154, .10);
+      --tint-red-lo:    rgba(212, 85, 85, .10);
+      --tint-red-xlo:   rgba(212, 85, 85, .08);
+      --tint-purple-lo: rgba(150, 120, 200, .10);
+      /* === MOTION === */
+      --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-quick: .15s;
+      --dur-base: .2s;
+      --dur-soft: .25s;
+      --dur-slow: .3s;
       /* === SPACING SCALE (4px base) === */
       --sp-1: 4px;
       --sp-2: 8px;
@@ -200,7 +225,7 @@
     /* === FINANCE & BOOKINGS === */
     .fin-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:12px 24px 8px}
     .fin-stat{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;border:1px solid var(--border2);background:var(--card-bg);transition:border-color .2s,transform .2s}
-    .fin-stat:hover{border-color:rgba(245,158,11,.3);transform:translateY(-1px)}
+    .fin-stat:hover{border-color:rgba(232,168,56,.3);transform:translateY(-1px)}
     .fin-stat-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
     .fin-stat-value{font-size:16px;font-weight:800}
     .fin-stat-label{font-size:10px;color:var(--text3);margin-top:2px}
@@ -217,16 +242,16 @@
     .cal-day-num{font-size:11px;color:var(--text2);margin-bottom:2px}
     .cal-booking{padding:2px 4px;margin:1px 0;border-radius:3px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;border-left:2px solid var(--accent)}
     .cal-booking:hover{opacity:.8}
-    .cal-booking.pending{background:rgba(245,158,11,.1);border-left-color:var(--accent)}
-    .cal-booking.confirmed{background:rgba(74,222,128,.1);border-left-color:var(--green)}
-    .cal-booking.cancelled{background:rgba(248,113,113,.08);border-left-color:var(--red)}
-    .cal-booking.checkedIn{background:rgba(192,132,252,.1);border-left-color:var(--purple)}
+    .cal-booking.pending{background:var(--tint-amber-lo);border-left-color:var(--accent)}
+    .cal-booking.confirmed{background:var(--tint-green-lo);border-left-color:var(--green)}
+    .cal-booking.cancelled{background:var(--tint-red-xlo);border-left-color:var(--red)}
+    .cal-booking.checkedIn{background:var(--tint-purple-lo);border-left-color:var(--purple)}
     .book-card{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--card-bg);margin-bottom:6px}
     .book-status{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-    .book-status.pending{background:rgba(245,158,11,.12);color:var(--accent)}
-    .book-status.confirmed{background:rgba(74,222,128,.12);color:var(--green)}
-    .book-status.cancelled{background:rgba(248,113,113,.1);color:var(--red)}
-    .book-status.checkedIn{background:rgba(192,132,252,.12);color:var(--purple)}
+    .book-status.pending{background:var(--tint-amber-med);color:var(--accent)}
+    .book-status.confirmed{background:var(--tint-green-med);color:var(--green)}
+    .book-status.cancelled{background:var(--tint-red-lo);color:var(--red)}
+    .book-status.checkedIn{background:var(--tint-purple-lo);color:var(--purple)}
     @media(max-width:600px){.fin-summary{grid-template-columns:1fr 1fr;padding:12px 16px 8px}.cal-day{min-height:50px;padding:2px}.cal-day-num{font-size:10px}.cal-booking{font-size:9px;padding:1px 2px}.cal-header{font-size:10px;padding:4px 2px}}
 
     /* === UTILITY CLASSES — replacing inline styles === */
@@ -582,7 +607,7 @@
     .tab.active {
       background: var(--accent-subtle-2);
       color: var(--accent);
-      border-color: rgba(245, 158, 11, .3);
+      border-color: rgba(232, 168, 56, .3);
       font-weight: 600
     }
 
@@ -613,7 +638,7 @@
     .fp-type-btn.active {
       background: var(--accent-subtle-2);
       color: var(--accent);
-      border-color: rgba(245, 158, 11, .3);
+      border-color: rgba(232, 168, 56, .3);
       font-weight: 600;
     }
 
@@ -1281,7 +1306,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 500px;
-      background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse at 50% 0%, rgba(232,168,56,.06) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -1366,7 +1391,7 @@
 
     .auth-field:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(245,158,11,.12);
+      box-shadow: 0 0 0 3px var(--tint-amber-med);
     }
 
     .auth-btn {
@@ -1392,13 +1417,13 @@
     }
 
     .auth-btn.primary {
-      background: linear-gradient(135deg, #f59e0b 0%, #e08a00 100%);
+      background: linear-gradient(135deg, #e8a838 0%, #d4883a 100%);
       color: #0d0d14;
-      box-shadow: 0 4px 16px rgba(245,158,11,.30);
+      box-shadow: 0 4px 12px rgba(0,0,0,.10);
     }
 
     .auth-btn.primary:hover {
-      box-shadow: 0 6px 24px rgba(245,158,11,.40);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
     }
 
     .auth-btn.google {
