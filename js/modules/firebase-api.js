@@ -7,6 +7,7 @@ import {
 import {
     getAuth, onAuthStateChanged, signInWithEmailAndPassword,
     createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
+    getAdditionalUserInfo,
     signOut, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -86,13 +87,26 @@ function stopListening() {
 window._authLogin = async function (email, pass) {
     return signInWithEmailAndPassword(auth, email, pass);
 };
+function trackRegistration(method) {
+    if (typeof fbq === 'undefined') return;
+    fbq('track', 'CompleteRegistration', {
+        content_name: method,
+        currency: 'PLN',
+        value: 49.00,
+        status: true
+    });
+}
 window._authRegister = async function (email, pass, name) {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     if (name) await updateProfile(cred.user, { displayName: name });
+    trackRegistration('Email');
     return cred;
 };
 window._authGoogle = async function () {
-    return signInWithPopup(auth, googleProvider);
+    const cred = await signInWithPopup(auth, googleProvider);
+    const info = getAdditionalUserInfo(cred);
+    if (info && info.isNewUser) trackRegistration('Google');
+    return cred;
 };
 window._authLogout = async function () {
     stopListening();

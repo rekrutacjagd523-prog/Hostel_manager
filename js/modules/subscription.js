@@ -374,6 +374,14 @@ export function openSubscription(planType = 'pro') {
 
   // When Pay link is clicked — save invoice data if filled, then let <a> navigate
   el.querySelector('#inv-pay-link').addEventListener('click', async () => {
+    if (typeof fbq !== 'undefined') {
+      const isAnnual = currentBilling === 'annual';
+      fbq('track', 'InitiateCheckout', {
+        content_name: planType + '_' + (isAnnual ? 'annual' : 'monthly'),
+        currency: 'USD',
+        value: isAnnual ? prices.annual : prices.monthly
+      });
+    }
     const checked = el.querySelector('#inv-toggle').checked;
     if (checked && window._fb?.settingsDoc) {
       const company = el.querySelector('#inv-company').value.trim();
